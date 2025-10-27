@@ -1,13 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/index.css">
-  <script src="js/index.js"></script>
-  <title>html</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Agent Builder — Landing + Dashboard</title>
+
+  <!-- External libraries (CDN) -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#0f1724; --panel:rgba(255,255,255,0.04); --muted:#9CA3AF; --accent:#3b82f6;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:var(--bg);color:#eceff1;line-height:1.4}
+    .container{max-width:1200px;margin:0 auto;padding:20px}
+    /* Loader */
+    #site-loader{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#020617;z-index:99999}
+    .spinner{width:60px;height:60px;border:6px solid rgba(255,255,255,0.08);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    /* Header / nav */
+    header{position:fixed;left:0;right:0;top:0;z-index:900;background:linear-gradient(180deg, rgba(10,12,20,0.6), rgba(10,12,20,0.2));backdrop-filter:blur(6px)}
+    .nav{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;padding:14px 20px}
+    .brand{font-weight:700;color:white}
+    .nav .links a{color:var(--muted);margin-left:14px;text-decoration:none;font-weight:600}
+    /* Hero */
+    .hero{padding-top:120px;padding-bottom:60px;text-align:center}
+    .hero h1{font-size:36px;margin:10px 0}
+    .hero p{color:var(--muted);max-width:900px;margin:12px auto}
+    .hero .cta{margin-top:18px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .btn{background:var(--accent);color:#fff;padding:12px 20px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+    .btn.secondary{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.06)}
+    /* section */
+    section.panel{background:var(--panel);border:1px solid rgba(255,255,255,0.03);border-radius:12px;padding:18px;margin:20px 0}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .card{padding:14px;border-radius:10px;background:rgba(255,255,255,0.02)}
+    .muted{color:var(--muted)}
+    /* dashboard charts */
+    #chart1,#chart2,#chart3{width:100%;height:260px}
+    /* small screens */
+    @media (max-width:900px){
+      .grid{grid-template-columns:repeat(1,1fr)}
+      .hero h1{font-size:28px}
+    }
+    /* theme light override */
+    body.light{background:#f7fafc;color:#0b1220}
+    body.light .panel, body.light .card{background:#fff;border-color:rgba(0,0,0,0.06);color:#0b1220}
+    /* back to top & theme toggle & visitor badge */
+    #backToTop,#themeToggle,#visitor-badge{position:fixed;right:20px;border-radius:999px;padding:10px 12px;border:none;z-index:9999;cursor:pointer}
+    #backToTop{bottom:20px;background:var(--accent);color:#fff;display:none}
+    #themeToggle{bottom:80px;background:#111;color:#fff}
+    #visitor-badge{left:20px;bottom:20px;background:rgba(0,0,0,0.45);color:#fff;padding:8px 10px;border-radius:8px}
+    /* modal */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:10000;display:none}
+    .modal .box{background:#0b1220;padding:20px;border-radius:12px;max-width:480px;width:90%;color:#fff}
+    input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit;margin-top:6px}
+    .small{font-size:13px;color:var(--muted)}
+  </style>
 </head>
 <body>
-	<h1>html</h1>
-</body>
-</html>
+  <!-- Loader -->
+  <div id="site-loader"><div class="spinner"></div></div>
+
+  <!-- Header / Nav -->
+  <header>
+    <div class="nav container">
+      <div class="brand">AI Agent Builder</div>
+      <div class="links">
+        <a href="#home">Home</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#templates">Templates</a>
+        <a href="#contact" id="contactLink">Contact</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero / Landing -->
+  <main id="home" class="container hero">
+    <div data-aos="fade-up">
+      <h1><span id="type-target"></span></h1>
+      <p class="muted">Build, customize and deploy intelligent conversational agents without code. Try the demo dashboard below — sample data runs locally.</p>
+      <div class="cta">
+        <button class="btn" id="enterDash">Enter Dashboard</button>
+        <button class="btn secondary" id="openContact">Contact Us</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Dashboard (below hero) -->
+  <section id="dashboard" class="container panel" data-aos="fade-up">
+    <h2 style="margin-top:6px">Dashboard Overview</h2>
+    <p class="small muted">Sample data — replace with your backend when ready.</p>
+
+    <div class="grid" style="margin-top:18px">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong>Monthly Visitors</strong><div class="muted">Unique visits (sample)</div></div>
+          <div style="font-size:22px;color:var(--accent)" id="visitorsBig">0</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div><strong>Active Agents</strong><div class="muted">Live / Testing</div></div>
+        <div style="font-size:22px;color:#10b981">3</div>
+      </div>
+
+      <div class="card">
+        <div><strong>Estimated Revenue</strong><div class="muted">Monthly (sample)</div></div>
+        <div style="font-size:22px;color:#f59e0b">$1,250</div>
+      </div>
+    </div>
+
+    <div style="margin-top:18px" class="grid">
+      <div class="card panel">
+        <h4>Conversations Trend</h4>
+        <div id="chart1"></div>
+      </div>
+      <div class="card panel">
+        <h4>Agent Performance</h4>
+        <div id="chart2"></div>
+      </div>
+      <div class="card panel">
+        <h4>Revenue Breakdown</h4>
+        <div id="chart3"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:18px" class="panel">
+      <h3>Agents</h3>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px">
+        <div class="card" style="min-width:220px">
+          <div style="display:flex;justify-content:space-between"><strong>Customer Support</strong><span style="color:#10b981">● Live</span></div>
+          <div class="small muted">Handles incoming tickets & chats</div>
+        </div>
+        <div class="card" style="min-width:220px">
+          <div style="display:flex;justify-content:space-between"><strong>Sales Closer</strong><span style="color:#10b981">● Live</span></div>
+          <div class="small muted">Qualifies leads & schedules demos</div>
+        </div>
+        <div class="card" style="min-width:220px">
+          <div style="display:flex;justify-content:space-between"><strong>Content Genius</strong><span style="color:#F59E0B">● Testing</span></div>
+          <div class="small muted">Generates marketing content</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Templates placeholder -->
+  <section id="templates" class="container panel" data-aos="fade-up">
+    <h3>Popular Templates</h3>
+    <div style="display:flex;gap:12px;overflow:auto;padding:8px 0">
+      <div class="card" style="min-width:220px">🎧 Customer Support Pro</div>
+      <div class="card" style="min-width:220px">📈 Sales Closer</div>
+      <div class="card" style="min-width:220px">✍️ Content Genius</div>
+    </div>
+  </section>
+
+  <!-- Contact / Modal -->
+  <div id="contactModal" class="modal" aria-hidden="true">
+    <div class="box">
+      <h3>Contact Us</h3>
+      <p class="small muted">Leave a message and we'll get back to you.</p>
+      <form id="contactForm" style="margin-top:12px">
+        <label class="small">Name</label>
+        <input name="name" required />
+        <label class="small">Email</label>
+        <input name="email" type="email" required />
+        <label class="small">Message</label>
+        <textarea name="msg" rows="4" required></textarea>
+        <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
+          <button type="button" class="btn secondary" id="closeContact">Cancel</button>
+          <button type="submit" class="btn">Send</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="container" style="padding:28px 0 80px;color:var(--muted);text-align:center">
+    © 2025 AI Agent Builder • Demo site (sample data)
+  </footer>
+
+  <!-- UI helpers -->
+  <button id="themeToggle" title="Toggle theme">🌓 Theme</button>
+  <button id="backToTop" title="Back to top">⬆️</button>
+  <div id="visitor-badge">👀 Visits: <span id="vis-count">0</span></div>
+
+  <!-- Scripts -->
+  <script>
