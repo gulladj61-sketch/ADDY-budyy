@@ -729,4 +729,328 @@ window.addEventListener('load',()=>{
   }catch(e){console.log('restore fail',e);}
 });
 </script>
-<!-- END Part-2 (2/4) -->
+<!-- END Part-2 (2/4) --><!-- ADDY Part-2 (3/4): AI Chat (local) + HF Embed option + QR Gen/Scan + Quotes widget -->
+<!-- Paste this block before </body> in your index.html -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
+<script>
+/* ========== ADDY: Chat + QR + Quotes Module ========== */
+
+/* Helper to create tabs & content dynamically (adds "Chat" tab) */
+(function createChatTab(){
+  try{
+    const tabs = document.getElementById('tabs');
+    if(!tabs) return console.warn('Tabs element not found — ensure Part-1 present');
+    // avoid duplicate
+    if(document.querySelector('.tab[data-tab="chat"]')) return;
+    const chatTab = document.createElement('div');
+    chatTab.className='tab';
+    chatTab.dataset.tab='chat';
+    chatTab.textContent='AI Chat';
+    tabs.appendChild(chatTab);
+    chatTab.addEventListener('click', ()=> {
+      // activate tab UI (reuse existing showTab if available)
+      if(typeof showTab === 'function'){ showTab('chat'); }
+      else {
+        // fallback: hide others, show created
+        ['editor','voice','text','draw','help','chat'].forEach(t=>{
+          const el = document.getElementById(t);
+          if(el) el.style.display = (t==='chat' ? 'block' : 'none');
+        });
+        document.querySelectorAll('#tabs .tab').forEach(tab=> tab.classList.toggle('active', tab===chatTab));
+      }
+    });
+
+    // create chat content card
+    const contentWrap = document.getElementById('content') || document.body;
+    const chatCard = document.createElement('div');
+    chatCard.className='card';
+    chatCard.id='chat';
+    chatCard.style.display='none';
+    chatCard.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <h2 style="margin:0">🤖 ADDY Chat (Local)</h2>
+          <div class="small">Offline-friendly assistant + option to embed a live HF Space chat.</div>
+        </div>
+        <div class="hint">Tip: Use "Embed HF Chat" to connect a public Space (no key)</div>
+      </div>
+      <hr/>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:320px">
+          <div id="chatBox" style="height:360px;overflow:auto;border-radius:8px;padding:12px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03)"></div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <input id="chatInput" placeholder="Type a message..." style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#eaf7ff">
+            <button id="sendChat" class="btn">Send</button>
+            <button id="gptEmbedBtn" class="btn alt">Embed HF Chat</button>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button id="quickHello" class="btn">Say Hi</button>
+            <button id="quickHelp" class="btn alt">How to earn</button>
+            <button id="quickSEO" class="btn">Make site better</button>
+          </div>
+        </div>
+
+        <div style="width:360px">
+          <div class="small" style="margin-bottom:6px"><strong>Embed / Full LLM</strong></div>
+          <input id="embedChatUrl" placeholder="Paste public HuggingFace Space URL (https://...)" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#eaf7ff">
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button id="doEmbed" class="btn">Embed</button>
+            <button id="removeEmbed" class="btn alt">Remove</button>
+          </div>
+          <div id="embedArea" style="margin-top:10px;height:260px;border-radius:8px;overflow:hidden;background:#000;border:1px solid rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;color:var(--muted)">No embed</div>
+        </div>
+      </div>
+      <hr/>
+      <div class="small">Local chat uses fast rule-based and creative fallback generation. For full LLM behaviour embed a public HF Space in the box above.</div>
+    `;
+    // insert after main content start
+    contentWrap.insertBefore(chatCard, contentWrap.firstChild.nextSibling);
+  }catch(e){console.error(e);}
+})();
+
+/* ========== Simple local Chatbot engine ========== */
+(function chatEngine(){
+  const chatBox = () => document.getElementById('chatBox');
+  const input = () => document.getElementById('chatInput');
+
+  function appendMessage(who, text){
+    const box = chatBox();
+    if(!box) return;
+    const el = document.createElement('div');
+    el.style.marginBottom='8px';
+    el.innerHTML = `<div style="font-size:13px;color:${who==='user'?'#cfe9ff':'#022827'};display:inline-block;max-width:85%;padding:8px;border-radius:8px;background:${who==='user'?'rgba(0,0,0,0.25)':'linear-gradient(90deg,#00d4ff,#4ce6a1)'};color:${who==='user'?'#eaf7ff':'#012827'}">${text.replace(/\n/g,'<br>')}</div>`;
+    box.appendChild(el);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function generateReply(msg){
+    // simple rule-based checks (case-insensitive)
+    const t = (msg||'').toLowerCase();
+    if(!t.trim()) return "Bata bhai, kuch likh!"; 
+    const greetings = ['hi','hello','hey','yo','namaste'];
+    for(const g of greetings){ if(t.includes(g)) return `Hey! Main ADDY hoon — bata kya karna hai aaj?`;}
+
+    if(t.includes('price') || t.includes('kitne') || t.includes('sell') || t.includes('bech')){
+      return "Agar tu site bechna chahta hai to pehle design polish, traffic proof (analytics) aur custom domain add kar. Basic buyers ₹3k–10k tak de sakte hain; traffic/monetization ho to ₹30k+. Main help kar dunga listing text aur pitch.";
+    }
+    if(t.includes('how') && t.includes('earn') || t.includes('kamai') || t.includes('paise')){
+      return "Start free freelancing: gigs bana, Fiverr/Upwork pe listing, ya template-selling (web templates). Tu ADDY tools se social posts bana ke organic traffic le sakta hai — main step-by-step plan bana dunga agar chaahe.";
+    }
+    if(t.includes('bg') || t.includes('background')){
+      return "Background remove toggle BodyPix use kar — Image Editor → Remove BG (Lite). Agar background complex hai to try 'Fit' then 'Remove BG' for better results.";
+    }
+    if(t.includes('ocr') || t.includes('text')){
+      return "OCR button Image Editor me hai — use kar aur text ko summarize/translate kar. Agar text poor quality ho to Auto-Enhance pehle chala.";
+    }
+    if(t.includes('embed') || t.includes('huggingface') || t.includes('space')){
+      return "Embed a public HuggingFace Space URL in 'Embed HF Chat' box and click Embed. If the Space allows iframe, it'll load directly.";
+    }
+    // fallback: creative reply (mix)
+    const fallbacks = [
+      "Mast idea! Bata aur detail — main ek plan bana ke deta hoon.",
+      "Yeh feasible hai. Chota proof bana ke dikha: 1) deploy 2) share 3) collect feedback.",
+      "Sahi socha — main teri madad karunga step-by-step, bata pehla target kya hai (traffic/earn/sell).",
+      "Chalo — 1 hour me ek landing page bana kar de dunga. Ready?"
+    ];
+    // small transformation: repeat with enthusiasm
+    return fallbacks[Math.floor(Math.random()*fallbacks.length)];
+  }
+
+  function send(){
+    const txt = input().value.trim();
+    if(!txt) return;
+    appendMessage('user', txt);
+    input().value = '';
+    // simulate thinking
+    appendMessage('bot', '...thinking');
+    setTimeout(()=> {
+      // remove last '...thinking'
+      const box = chatBox();
+      if(box && box.lastChild){ box.removeChild(box.lastChild); }
+      const reply = generateReply(txt);
+      appendMessage('bot', reply);
+    }, 600 + Math.random()*700);
+  }
+
+  document.addEventListener('click', function(e){
+    if(e.target && e.target.id==='sendChat'){ send(); }
+    if(e.target && e.target.id==='quickHello'){ document.getElementById('chatInput').value='Hello'; send(); }
+    if(e.target && e.target.id==='quickHelp'){ document.getElementById('chatInput').value='How can I earn online with this site?'; send(); }
+    if(e.target && e.target.id==='quickSEO'){ document.getElementById('chatInput').value='How to improve site for buyers?'; send(); }
+  });
+
+  // Enter key
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Enter' && document.activeElement && document.activeElement.id==='chatInput'){ e.preventDefault(); send(); }
+  });
+})();
+
+/* ========== Embed HF Chat actions ========== */
+(function embedActions(){
+  const embedBtn = document.getElementById('doEmbed');
+  const removeBtn = document.getElementById('removeEmbed');
+  embedBtn && embedBtn.addEventListener('click', ()=>{
+    const url = document.getElementById('embedChatUrl').value.trim();
+    if(!url) return alert('Paste a public https://huggingface.co/spaces/... URL that allows embedding');
+    if(!url.startsWith('https://')) return alert('Use https:// URL');
+    const frame = document.createElement('iframe');
+    frame.src = url;
+    frame.style.width='100%'; frame.style.height='100%'; frame.style.border='0';
+    const area = document.getElementById('embedArea');
+    area.innerHTML=''; area.appendChild(frame);
+  });
+  removeBtn && removeBtn.addEventListener('click', ()=>{
+    const area = document.getElementById('embedArea');
+    area.innerHTML = 'No embed';
+    document.getElementById('embedChatUrl').value = '';
+  });
+})();
+
+/* ========== QR Generator & Scanner (creates new UI panel) ========== */
+(function qrModule(){
+  // create a small card under right side or append to content
+  const side = document.querySelector('.side') || document.querySelector('.card') || document.body;
+  const card = document.createElement('div');
+  card.className='card';
+  card.style.marginTop='12px';
+  card.innerHTML = `
+    <h3 style="margin:0">🔗 QR Tools</h3>
+    <hr/>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <input id="qrText" placeholder="Text / URL to encode" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#eaf7ff">
+      <button id="makeQR" class="btn">Generate</button>
+      <button id="downloadQR" class="btn alt">Download</button>
+    </div>
+    <div id="qrcode" style="margin-top:8px;display:flex;align-items:center;justify-content:center;min-height:120px"></div>
+    <hr/>
+    <div><strong>Scan QR (camera)</strong></div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="startScan" class="btn">Start Scan</button>
+      <button id="stopScan" class="btn alt">Stop Scan</button>
+    </div>
+    <div id="scanArea" style="margin-top:8px;min-height:140px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.02);border-radius:8px">Scanner off</div>
+  `;
+  side.appendChild(card);
+
+  // QR create
+  let qrObj = null;
+  document.addEventListener('click', function(e){
+    if(e.target && e.target.id==='makeQR'){
+      const v = document.getElementById('qrText').value.trim();
+      if(!v) return alert('Type text or URL to encode');
+      const wrap = document.getElementById('qrcode');
+      wrap.innerHTML = '';
+      qrObj = new QRCode(wrap, { text: v, width: 180, height: 180 });
+    }
+    if(e.target && e.target.id==='downloadQR'){
+      if(!qrObj){
+        return alert('Generate QR first');
+      }
+      // canvas img exists inside qrcode div or an img
+      const wrap = document.getElementById('qrcode');
+      const img = wrap.querySelector('img');
+      if(img){
+        const a = document.createElement('a'); a.href = img.src; a.download='addy_qr.png'; a.click();
+      } else {
+        // try toDataURL fallback
+        const canvas = wrap.querySelector('canvas');
+        if(canvas){ const a=document.createElement('a'); a.href = canvas.toDataURL(); a.download='addy_qr.png'; a.click(); }
+      }
+    }
+  });
+
+  /* QR Scanner using getUserMedia + jsQR */
+  let scanStream = null, scanReqId = null;
+  async function startScanner(){
+    const area = document.getElementById('scanArea');
+    area.innerHTML = '';
+    const video = document.createElement('video'); video.style.width='100%'; video.style.maxHeight='320px';
+    area.appendChild(video);
+    try{
+      scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode:'environment' }, audio:false });
+      video.srcObject = scanStream; await video.play();
+      const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+      async function scanFrame(){
+        if(video.readyState !== video.HAVE_ENOUGH_DATA){ scanReqId = requestAnimationFrame(scanFrame); return; }
+        canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+        ctx.drawImage(video,0,0,canvas.width,canvas.height);
+        const imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        if(code){
+          // show result
+          cancelAnimationFrame(scanReqId);
+          stopScanner();
+          area.innerHTML = `<div style="padding:10px">✅ Scanned: <a href="${escapeHtml(code.data)}" target="_blank">${escapeHtml(code.data)}</a></div>`;
+          return;
+        } else {
+          scanReqId = requestAnimationFrame(scanFrame);
+        }
+      }
+      scanReqId = requestAnimationFrame(scanFrame);
+    }catch(err){
+      area.innerHTML = `Camera error: ${err.message}`;
+    }
+  }
+  function stopScanner(){
+    if(scanReqId) cancelAnimationFrame(scanReqId);
+    if(scanStream){
+      scanStream.getTracks().forEach(t=>t.stop());
+      scanStream=null;
+    }
+    const area = document.getElementById('scanArea'); area.innerHTML='Scanner off';
+  }
+  document.getElementById('startScan').addEventListener('click', startScanner);
+  document.getElementById('stopScan').addEventListener('click', stopScanner);
+
+  function escapeHtml(s){ return (s+'').replace(/[&<>"']/g, function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
+})();
+
+/* ========== Quotes Widget ========== */
+(function quotesWidget(){
+  const side = document.querySelector('.side') || document.querySelector('.card') || document.body;
+  const card = document.createElement('div');
+  card.className='card';
+  card.style.marginTop='12px';
+  card.innerHTML = `
+    <h3 style="margin:0">💬 Quick Quotes</h3><hr/>
+    <div id="quoteText" style="min-height:80px;display:flex;align-items:center;justify-content:center;padding:10px;font-weight:600;color:#eaf7ff">Click Get Quote</div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button id="getQuote" class="btn">Get Quote</button>
+      <button id="copyQuote" class="btn alt">Copy</button>
+      <button id="shareQuote" class="btn">Share</button>
+    </div>
+  `;
+  side.appendChild(card);
+
+  const quotes = [
+    "रुकना नहीं है — बस एक और कोशिश करो।",
+    "छोटी जीतें भी बड़ी मंज़िलों तक पहुँचाती हैं।",
+    "काम करेगा इंसान, तो किस्मत भी साथ देगी।",
+    "हर सुबह एक नया मौका है — उठो और करो।",
+    "गलतियाँ सीखने का हिस्सा हैं — हार कर मत बैठो।",
+    "कभी-कभी धीमी प्रगति भी प्रगति है — रुकना नहीं।"
+  ];
+
+  document.addEventListener('click', function(e){
+    if(e.target && e.target.id==='getQuote'){
+      const q = quotes[Math.floor(Math.random()*quotes.length)];
+      document.getElementById('quoteText').innerText = q;
+    }
+    if(e.target && e.target.id==='copyQuote'){
+      const t = document.getElementById('quoteText').innerText;
+      if(t) navigator.clipboard.writeText(t).then(()=> alert('Copied quote'));
+    }
+    if(e.target && e.target.id==='shareQuote'){
+      const t = document.getElementById('quoteText').innerText;
+      if(!t) return;
+      if(navigator.share){ navigator.share({ text:t }).catch(()=>{}); }
+      else { navigator.clipboard.writeText(t).then(()=> alert('No share API — copied instead')); }
+    }
+  });
+})();
+
+/* ========== End of Module ========= */
+</script>
+<!-- END ADDY Part-2 (3/4) -->
