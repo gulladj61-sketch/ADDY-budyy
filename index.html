@@ -1,90 +1,352 @@
-import express from "express";
-import cors from "cors";
-const app = express();
-app.use(cors());
-app.use(express.json());
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ADDY AI Hub — Demo</title>
+<style>
+  /* Black glass premium theme */
+  :root{
+    --bg:#07070a;
+    --panel:#0f1724;
+    --card:#0b1220;
+    --muted:#9aa4b2;
+    --accent1:#7c3aed;
+    --accent2:#06b6d4;
+    --glass: rgba(255,255,255,0.03);
+    --glass-2: rgba(255,255,255,0.02);
+    --glow: 0 6px 30px rgba(12,12,20,0.6);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial;background:linear-gradient(180deg,#04060a 0%, #07070a 100%);color:#e6eef6}
+  .wrap{max-width:1100px;margin:24px auto;padding:18px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+  h1{font-size:20px;margin:0}
+  p.lead{color:var(--muted);margin:0 0 6px}
+  .grid{display:grid;grid-template-columns:1fr 420px;gap:18px}
+  .panel{background:linear-gradient(180deg,var(--panel), rgba(10,10,12,0.6));border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:var(--glow)}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)}
+  /* Chat panel */
+  .chat-panel{display:flex;flex-direction:column;height:640px}
+  .chat-window{flex:1;overflow:auto;padding:12px;border-radius:8px;background:linear-gradient(180deg,rgba(0,0,0,0.35),rgba(0,0,0,0.25));margin-bottom:12px}
+  .msg{margin:8px 0;padding:12px;border-radius:8px;max-width:85%}
+  .from-user{background:linear-gradient(90deg,var(--accent2),#13b6c7);color:#021218;margin-left:auto}
+  .from-addy{background:rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.02)}
+  .tools{display:flex;flex-wrap:wrap;gap:10px}
+  .tool{padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.03);background:transparent;cursor:pointer}
+  .tool:hover{transform:translateY(-3px)}
+  .controls{display:flex;gap:8px;align-items:center;margin-top:8px}
+  input[type="text"]{flex:1;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+  button.primary{padding:10px 14px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;cursor:pointer}
+  /* Right column */
+  .right{display:flex;flex-direction:column;gap:12px}
+  .tool-panel{height:320px;overflow:auto;padding:12px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01))}
+  .tool-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;margin-bottom:8px;background:rgba(0,0,0,0.14);border:1px solid rgba(255,255,255,0.02)}
+  .tool-item button{padding:8px 10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);cursor:pointer}
+  .footer-note{color:var(--muted);font-size:13px;margin-top:8px}
+  .status-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:8px}
+  .live{background:linear-gradient(90deg,#10b981,#16a34a)}
+  .sim{background:#6b7280}
+  /* responsive */
+  @media(max-width:980px){.grid{grid-template-columns:1fr;}.chat-panel{height:520px}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">MB</div>
+        <div>
+          <h1>ADDY AI Hub — Demo</h1>
+          <p class="lead">Black glass • Tools simulated if proxy missing. Replace proxy to enable real APIs.</p>
+        </div>
+      </div>
+      <div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="display:flex;align-items:center">
+            <span class="status-dot sim" id="proxyStatus"></span><small id="proxyText">Proxy: unknown</small>
+          </div>
+        </div>
+      </div>
+    </header>
 
-// 🔧 ENV KEYS (optional future ke liye)
-const OPENAI_KEY = process.env.OPENAI_KEY || null;
-const ELEVEN_KEY = process.env.ELEVEN_KEY || null;
+    <div class="grid">
+      <!-- LEFT: Chat + tools -->
+      <div class="panel card">
+        <div class="chat-panel">
+          <div class="chat-window" id="chatWindow" aria-live="polite"></div>
 
-// ✅ Health check
-app.get("/", (req, res) => {
-  res.send("✅ Addy Proxy Server is Running (No-key mode)");
+          <div class="tools card">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <strong>Tools — click to open</strong>
+              <small class="footer-note">Each tool opens a separate pane and runs via proxy.</small>
+            </div>
+            <div style="height:10px"></div>
+
+            <div class="tools" id="toolButtons">
+              <!-- Buttons inserted by JS -->
+            </div>
+
+            <div class="controls">
+              <input id="userInput" type="text" placeholder="Type a message and press Enter" />
+              <button id="micBtn" class="tool" title="Voice (record) 🎤">🎤</button>
+              <button id="sendBtn" class="primary">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Tools list / results -->
+      <div class="right">
+        <div class="panel tool-panel" id="toolPanel">
+          <strong>Selected tool output</strong>
+          <div id="toolOutput" style="margin-top:10px;color:var(--muted)">No tool selected</div>
+        </div>
+
+        <div class="panel card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong>Quick actions</strong><div class="footer-note">Proxy & demo controls</div></div>
+            <div>
+              <button id="refreshProxy" class="tool">Check Proxy</button>
+              <button id="clearChat" class="tool">Clear</button>
+            </div>
+          </div>
+          <div style="height:10px"></div>
+          <div class="footer-note">Note: For live LLM & TTS enable proxy and set keys on your server. Endpoints used: <code>/api/openai</code>, <code>/api/image</code>, <code>/api/voice</code>.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+<script>
+/*
+  Single-file frontend
+  - Update PROXY_URL below if your proxy is different.
+  - Proxy endpoints used:
+      POST /api/openai   { prompt, tool }
+      POST /api/image    { prompt }
+      POST /api/voice    { text, voice }
+*/
+const PROXY_URL = "https://server-js-k0d2.onrender.com"; // <-- CHANGE if needed
+
+const tools = [
+  { id: "ai-writer", name: "AI Writer" },
+  { id: "code-helper", name: "Code Helper" },
+  { id: "prompt-maker", name: "Prompt Maker" },
+  { id: "translator", name: "Translator" },
+  { id: "summarizer", name: "Summarizer" },
+  { id: "image-prompt", name: "Image Prompt" },
+  { id: "email-writer", name: "Email Writer" },
+  { id: "ad-copy", name: "Ad Copy" },
+  { id: "voice-tts", name: "Voice TTS" },
+  { id: "business-ideas", name: "Business Ideas" }
+];
+
+const chatWindow = document.getElementById("chatWindow");
+const toolButtons = document.getElementById("toolButtons");
+const toolOutput = document.getElementById("toolOutput");
+const userInput = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
+const proxyStatusDot = document.getElementById("proxyStatus");
+const proxyText = document.getElementById("proxyText");
+const refreshProxy = document.getElementById("refreshProxy");
+const clearChat = document.getElementById("clearChat");
+const micBtn = document.getElementById("micBtn");
+
+let selectedTool = null;
+let proxyAlive = false;
+
+/* render tool buttons */
+tools.forEach(t=>{
+  const btn = document.createElement("button");
+  btn.className = "tool";
+  btn.textContent = t.name;
+  btn.onclick = ()=> openTool(t);
+  toolButtons.appendChild(btn);
 });
 
-// 🧠 Chat + tools endpoint
-app.post("/api/openai", async (req, res) => {
-  const { prompt, tool } = req.body;
-  // simulation if no key
-  if (!OPENAI_KEY) {
-    const out = `Simulated ${tool || "chat"} reply: "${prompt?.slice(0, 120) || ""}" ...`;
-    return res.json({ fallback: true, text: out });
+/* helpers */
+function appendMsg(text, from="addy"){
+  const div = document.createElement("div");
+  div.className = "msg " + (from==="user" ? "from-user" : "from-addy");
+  div.textContent = text;
+  chatWindow.appendChild(div);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+function setToolOutput(html){
+  toolOutput.innerHTML = html;
+}
+
+/* check proxy health */
+async function checkProxy(){
+  try{
+    const res = await fetch(PROXY_URL + "/test", { method: "GET" , mode: 'cors' });
+    const txt = await res.text();
+    proxyAlive = res.ok;
+    proxyStatusDot.className = proxyAlive ? "status-dot live" : "status-dot sim";
+    proxyText.textContent = proxyAlive ? "Proxy: LIVE" : "Proxy: simulation";
+    return txt;
+  }catch(e){
+    proxyAlive = false;
+    proxyStatusDot.className = "status-dot sim";
+    proxyText.textContent = "Proxy: offline (using simulated mode)";
+    return null;
   }
-  // agar tu future me real API lagana chahe
-  try {
-    const r = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${OPENAI_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [{ role: "user", content: prompt }],
-      }),
+}
+refreshProxy.onclick = ()=> {
+  proxyText.textContent = "Checking...";
+  checkProxy().then(txt=>{
+    if(txt) toolOutput.innerText = txt;
+    setTimeout(()=>proxyText.textContent = proxyAlive ? "Proxy: LIVE" : "Proxy: offline (simulation)",400);
+  });
+}
+
+/* open a tool in right panel */
+function openTool(tool){
+  selectedTool = tool;
+  setToolOutput(`<strong>${tool.name}</strong><div style="height:8px"></div>
+    <div style="color:var(--muted)">Enter input below and press Run</div>
+    <div style="height:8px"></div>
+    <input id="toolInput" type="text" placeholder="Enter prompt for ${tool.name}" style="width:100%;padding:8px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:inherit" />
+    <div style="height:8px"></div>
+    <div style="display:flex;gap:8px">
+      <button id="runTool" class="primary">Run</button>
+      <button id="toolExample" class="tool">Example</button>
+    </div>
+  `);
+  document.getElementById("runTool").onclick = runSelectedTool;
+  document.getElementById("toolExample").onclick = ()=>{
+    document.getElementById("toolInput").value = `Sample input for ${tool.name}`;
+  };
+}
+
+/* run selected tool */
+async function runSelectedTool(){
+  const input = document.getElementById("toolInput").value || userInput.value || "Hello";
+  appendMsg(input,"user");
+  appendMsg(`${selectedTool.name} is thinking...`);
+  // use proxy if available
+  if(proxyAlive){
+    try{
+      const res = await fetch(PROXY_URL + "/api/openai", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ prompt: input, tool: selectedTool.id })
+      });
+      const j = await res.json();
+      if(j.fallback){
+        // server says fallback -> simulated
+        updateLastAddy(`(sim) ${j.text}`);
+        setToolOutput(`<pre>${escapeHtml(j.text)}</pre>`);
+      } else {
+        const out = j.output || j.text || JSON.stringify(j);
+        updateLastAddy(out);
+        setToolOutput(`<pre>${escapeHtml(out)}</pre>`);
+      }
+    }catch(err){
+      updateLastAddy("Proxy error — switching to simulation.");
+      setToolOutput("Proxy error — simulation: " + err.message);
+    }
+  } else {
+    // local simulation fallback
+    const sim = simulateResponse(selectedTool.id, input);
+    updateLastAddy(sim);
+    setToolOutput(`<pre>${escapeHtml(sim)}</pre>`);
+  }
+}
+
+/* small helper to update last addy bubble */
+function updateLastAddy(text){
+  // remove last addy msg placeholder if present
+  const msgs = chatWindow.querySelectorAll(".from-addy");
+  if(msgs.length){
+    msgs[msgs.length-1].textContent = text;
+  } else {
+    appendMsg(text,"addy");
+  }
+}
+
+/* simulate responses when proxy is missing */
+function simulateResponse(toolId, input){
+  switch(toolId){
+    case "ai-writer":
+      return `Simulated AI Writer output for: "${input}".\nTry replacing proxy for live text.`;
+    case "code-helper":
+      return `Simulated Code Helper:\nfunction example(){ console.log("Hello ${input}") }`;
+    case "prompt-maker":
+      return `Prompt Template: "Write a ${input} with steps and examples."`;
+    case "translator":
+      return `Translated (sim) "${input}" => [Translated text here]`;
+    case "image-prompt":
+      return `Image generated (sim) for: ${input}`;
+    case "voice-tts":
+      return `Voice audio simulated for: ${input}`;
+    default:
+      return `Simulated ${toolId} output for: ${input}`;
+  }
+}
+
+/* escape html for safety */
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]); }
+
+/* send chat message from bottom input (general chat) */
+sendBtn.onclick = ()=> {
+  const txt = userInput.value.trim();
+  if(!txt) return;
+  appendMsg(txt,"user");
+  userInput.value = "";
+  // send to proxy or simulate
+  appendMsg("Addy is thinking...");
+  if(proxyAlive){
+    fetch(PROXY_URL + "/api/openai", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ prompt: txt, tool: "chat" })
+    }).then(r=>r.json()).then(j=>{
+      if(j.fallback) updateLastAddy(`(sim) ${j.text}`);
+      else updateLastAddy(j.output || j.text || "No response");
+    }).catch(e=>{
+      updateLastAddy("Proxy error — simulation fallback.");
     });
-    const j = await r.json();
-    return res.json({ output: j.choices?.[0]?.message?.content || "No output" });
-  } catch (err) {
-    return res.json({ error: err.message });
+  } else {
+    setTimeout(()=> updateLastAddy(simulateResponse("chat", txt)), 600);
   }
-});
+};
 
-// 🖼️ Image generator
-app.post("/api/image", async (req, res) => {
-  const { prompt } = req.body;
-  if (!OPENAI_KEY) {
-    return res.json({ fallback: true, text: `Generated simulated image for: ${prompt}` });
-  }
-  try {
-    const r = await fetch("https://api.openai.com/v1/images/generations", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${OPENAI_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ model: "gpt-image-1", prompt }),
-    });
-    const j = await r.json();
-    return res.json({ output: j.data?.[0]?.url });
-  } catch (err) {
-    return res.json({ error: err.message });
-  }
-});
+/* mic / speech to text if available */
+let recognition=null;
+if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.onresult = (e)=> {
+    const t = e.results[0][0].transcript;
+    userInput.value = t;
+  };
+  recognition.onerror = ()=> { alert("Mic error"); };
+}
+micBtn.onclick = ()=> {
+  if(!recognition){ alert("Voice not supported on this browser."); return; }
+  recognition.start();
+};
 
-// 🔊 Voice endpoint
-app.post("/api/voice", async (req, res) => {
-  const { text, voice = "Addy", lang = "en-US" } = req.body;
-  if (!ELEVEN_KEY) {
-    return res.json({ fallback: true, text: `Simulated voice for: "${text.slice(0, 60)}"` });
-  }
-  try {
-    const r = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voice}`, {
-      method: "POST",
-      headers: {
-        "xi-api-key": ELEVEN_KEY,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ text }),
-    });
-    const arr = await r.arrayBuffer();
-    const b64 = Buffer.from(arr).toString("base64");
-    res.json({ audioBase64: b64 });
-  } catch (err) {
-    res.json({ error: err.message });
-  }
-});
+/* clear chat */
+clearChat.onclick = ()=> { chatWindow.innerHTML = ""; setToolOutput("Cleared"); };
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Addy Proxy running on port ${PORT}`));
+/* initial checks */
+(async ()=>{
+  const txt = await checkProxy();
+  if(txt && txt.indexOf("Proxy")>-1) setToolOutput(txt);
+  appendMsg("Hi — I'm Addy (demo). Try a tool or chat.");
+})();
+
+/* keyboard enter send */
+userInput.addEventListener("keydown", (e)=> {
+  if(e.key === "Enter") sendBtn.click();
+});
+</script>
+</body>
+</html>
