@@ -1802,4 +1802,80 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+</script><!-- 🌟 ADDY.AI Universal Animation & Glow Pack -->
+<style>
+/* Universal Fade & Zoom */
+.animate-fade {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 1s ease;
+}
+.animate-fade.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.animate-zoom {
+  opacity: 0;
+  transform: scale(0.85);
+  transition: all 0.8s ease;
+}
+.animate-zoom.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Hover Glow (for cards or buttons) */
+.glow-hover {
+  transition: 0.3s;
+  box-shadow: 0 0 0px transparent;
+}
+.glow-hover:hover {
+  box-shadow: 0 0 20px #00e5ff88;
+  transform: translateY(-5px);
+}
+
+/* Neon Text */
+.neon-text {
+  color: #00e5ff;
+  text-shadow: 0 0 5px #00e5ffaa, 0 0 15px #00e5ffaa;
+}
+
+/* Pulse Effect */
+.pulse {
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% {transform: scale(1);}
+  50% {transform: scale(1.05);}
+  100% {transform: scale(1);}
+}
+</style>
+
+<!-- ✨ Example Usage -->
+<div style="text-align:center;margin:40px 0;">
+  <h2 class="neon-text animate-fade">⚡ Smart AI Tools Section ⚡</h2>
+
+  <div class="animate-zoom glow-hover" style="background:#111;padding:20px;margin:20px auto;width:80%;border-radius:10px;">
+    <h3>🖼️ Image Enhancer</h3>
+    <p>Improve quality up to 8K instantly.</p>
+    <button class="glow-hover pulse" style="background:#00e5ff;color:#fff;border:none;padding:10px 20px;border-radius:8px;">Try Now</button>
+  </div>
+
+  <div class="animate-zoom glow-hover" style="background:#111;padding:20px;margin:20px auto;width:80%;border-radius:10px;">
+    <h3>🎤 Voice Cleaner</h3>
+    <p>Removes noise within 30 seconds.</p>
+    <button class="glow-hover" style="background:#00e5ff;color:#fff;border:none;padding:10px 20px;border-radius:8px;">Enhance Voice</button>
+  </div>
+</div>
+
+<!-- 🌈 Scroll Animation Script -->
+<script>
+window.addEventListener('scroll',()=>{
+  document.querySelectorAll('.animate-fade, .animate-zoom').forEach(el=>{
+    const rect=el.getBoundingClientRect();
+    if(rect.top<window.innerHeight-100) el.classList.add('visible');
+  });
+});
 </script>
+<!-- 🌟 END UNIVERSAL ANIMATION PACK -->
