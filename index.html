@@ -1,18 +1,22 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>MineBot AI Studio — Premium Demo (No Keys Required)</title>
-<meta name="description" content="MineBot AI Studio — Single-file demo: Chatbot + Voice + 20 tools. Demo mode (no API keys). Includes sales package generator and Pro-mode simulation to present a premium product."/>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Addy Bot AI Studio — Demo (Frontend-only)</title>
+<meta name="description" content="Addy Bot AI Studio — Chatbot + Voice + 20 demo tools. Frontend-only single-file demo (no API keys). Upload an audio clip to use your voice as reply playback." />
 <style>
 :root{
-  --bg:#060614; --panel:#0f1624; --card:#0b1220; --muted:#9aa4b2;
+  --bg:#050617; --panel:#0f1724; --card:#0b1220; --muted:#9aa4b2;
   --accent1:#7c3aed; --accent2:#06b6d4; --glass:rgba(255,255,255,0.03);
   --success:#10b981; --danger:#f87171; --gold:#f59e0b;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial;background:linear-gradient(180deg,var(--bg),#021028);color:#eaf1ff}
+html,body{height:100%}
+body{
+  margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial;
+  background:linear-gradient(180deg,var(--bg),#021028);color:#eaf1ff;-webkit-font-smoothing:antialiased;
+}
 .container{max-width:1200px;margin:18px auto;padding:18px}
 .header{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .brand{display:flex;gap:12px;align-items:center}
@@ -22,10 +26,10 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Helvet
 .controls{display:flex;gap:8px;align-items:center}
 .btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;padding:9px 12px;border-radius:10px;color:#031026;font-weight:800;cursor:pointer}
 .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-.row{display:flex;gap:14px}
 .grid{display:grid;grid-template-columns:1fr 380px;gap:18px;margin-top:16px}
-@media(max-width:980px){ .grid{grid-template-columns:1fr} .right{width:100%} .floating{display:none} }
+@media(max-width:980px){ .grid{grid-template-columns:1fr} .right{width:100%} }
 .panel{background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.005));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+.row{display:flex;gap:12px;align-items:center}
 .h1{font-size:20px;margin:0}
 .lead{color:var(--muted);margin-top:6px}
 .chat-panel{display:flex;flex-direction:column;height:520px}
@@ -41,199 +45,194 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Helvet
 .tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:12px}
 .tool-card{background:var(--card);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);cursor:pointer}
 .notice{font-size:13px;color:var(--gold);margin-top:8px}
-.kv{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.sale-badge{background:linear-gradient(90deg,#ffd966,#f59e0b);padding:6px 10px;border-radius:999px;color:#061021;font-weight:800}
-.footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
-.hr{height:1px;background:rgba(255,255,255,0.02);margin:12px 0;border-radius:2px}
-.downloads{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .preview-box{background:linear-gradient(180deg,rgba(255,255,255,0.008),transparent);padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.02);max-height:160px;overflow:auto}
+.badge{background:#1f2937;color:#fff;padding:6px 10px;border-radius:999px;font-weight:700}
+.footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
+.kv{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.switch{display:inline-flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
+hr.sep{border:none;height:1px;background:rgba(255,255,255,0.02);margin:12px 0;border-radius:2px}
+.upload-note{color:var(--muted);font-size:12px;margin-top:6px}
 </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
       <div class="brand">
-        <div class="logo">MB</div>
+        <div class="logo">AD</div>
         <div>
-          <div class="title">MineBot AI Studio — Demo Sale Kit</div>
-          <div class="sub">Single-file, no-keys required demo — Pro-simulations & sell package</div>
+          <div class="title">Addy Bot AI Studio</div>
+          <div class="sub">Chat, Voice & 20 Tools — Frontend-only demo</div>
         </div>
       </div>
 
       <div class="controls">
-        <div class="sale-badge">$2,000</div>
-        <button class="btn" id="generatePackage">Generate Sale Package</button>
-        <button class="btn ghost" id="togglePro">Enable PRO Preview</button>
+        <div class="kv">
+          <div class="badge">Demo Mode</div>
+        </div>
+        <button class="btn ghost" id="toggleProBtn">Enable PRO (Sim)</button>
+        <button class="btn" id="genPkg">Generate Sale Package</button>
       </div>
     </div>
 
     <div class="grid">
       <div>
-        <div class="panel chat-panel" id="chatSection">
+        <div class="panel chat-panel" id="chatPanel">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <div style="font-weight:800">Chatbot — MineBot (Demo)</div>
-            <div class="small" id="versionTag">demo v1.0</div>
+            <div style="font-weight:800">Chat — Addy Bot</div>
+            <div class="small" id="verTag">demo v1</div>
           </div>
-          <div class="chat-window" id="chatWindow">
-            <div class="msg bot">Hello! I'm MineBot. This is a demo-mode reply. For production: connect backend APIs.</div>
+
+          <div class="chat-window" id="chatWindow" aria-live="polite">
+            <div class="msg bot">Hello! I'm Addy — demo chat. Type or press mic. Enable PRO for richer simulated replies.</div>
           </div>
 
           <div class="footer-row">
-            <input id="chatInput" class="input" placeholder="Ask something or press mic" />
+            <input id="chatInput" class="input" placeholder="Ask something..." />
             <button class="mic" id="micBtn" title="Toggle mic">🎤</button>
             <button class="toggle" id="voiceToggle" title="Toggle voice">🔊</button>
             <button class="btn" id="sendBtn">Send</button>
           </div>
-          <div class="small notice">Tip: This demo simulates Pro replies locally. To convert to real AI integrate OpenAI + TTS backend (instructions included in package).</div>
+          <div class="small upload-note">Tip: For real voice in production you need a TTS backend. Here you can upload a short audio clip and enable "Use Uploaded Voice" to play your recording as bot replies (playback only).</div>
         </div>
 
-        <div class="panel" style="margin-top:12px" id="voiceSection">
+        <div class="panel" style="margin-top:12px">
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="font-weight:800">Voice Agent — Demo</div>
-            <div class="small">Browser TTS + STT (no keys)</div>
+            <div style="font-weight:800">Voice — Upload & Playback</div>
+            <div class="small" id="voiceStatus">Using browser TTS</div>
           </div>
-          <div style="margin-top:10px" class="row">
-            <button class="mic" onclick="startRecognition()">Start Mic</button>
-            <button class="btn" onclick="testSpeak()">Speak Test</button>
-            <button class="btn ghost" id="toggleElevenSim">ElevenLabs (Simulated)</button>
+
+          <div style="margin-top:8px" class="row">
+            <input type="file" id="voiceUpload" accept="audio/*" />
+            <button class="btn ghost" id="clearVoice">Clear</button>
           </div>
-          <div class="hr"></div>
-          <div class="small">Voice Mode: <span id="voiceMode">Browser TTS (demo)</span></div>
+          <div style="margin-top:8px" class="row">
+            <label class="switch" id="useUploadedToggle"><input type="checkbox" id="useUploaded" /> Use Uploaded Voice</label>
+            <label class="switch" id="autoSpeakToggle"><input type="checkbox" id="autoSpeak" checked /> Auto-play bot replies</label>
+          </div>
+          <div class="small upload-note">Upload a short MP3/WAV (5–30s). When "Use Uploaded Voice" is ON, that audio will play each time the bot replies (useful for demoing "Addy voice").</div>
         </div>
 
-        <div class="panel" style="margin-top:12px" id="toolsSection">
+        <div class="panel" style="margin-top:12px" id="toolsPanel">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div style="font-weight:800">20 Demo Tools</div>
-            <div class="small">Demo / Pro modes</div>
+            <div class="small">Click a tool → input → Run (works offline)</div>
           </div>
+
           <div class="tools-grid" id="toolsGrid"></div>
           <div id="toolUI" style="margin-top:12px"></div>
         </div>
-
       </div>
 
       <div class="right">
         <div class="panel">
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="font-weight:800">Seller Kit (Generated)</div>
-            <div class="small">Ready assets</div>
+            <div style="font-weight:800">Seller Assets</div>
+            <div class="small">Ready to download</div>
           </div>
-          <div style="margin-top:10px" class="small">Files generated will include:</div>
+          <div style="margin-top:10px" class="small">Files included:</div>
           <ul class="small">
-            <li>README-MineBot.txt (setup & upgrade steps)</li>
-            <li>SALES-LISTING.txt (copy for listing & justification)</li>
-            <li>LICENSE.txt (MIT sample)</li>
-            <li>DEMO-SCRIPT.txt (video walkthrough script)</li>
+            <li>README-MineBot.txt</li>
+            <li>SALES-LISTING.txt</li>
+            <li>DEMO-SCRIPT.txt</li>
+            <li>LICENSE.txt</li>
           </ul>
-          <div class="downloads" id="downloads"></div>
+          <div style="margin-top:10px" class="downloads" id="downloads"></div>
         </div>
 
         <div class="panel" style="margin-top:12px">
-          <div style="font-weight:800">Value justification</div>
-          <div class="small" style="margin-top:8px">Why $2,000?</div>
-          <div class="small" style="margin-top:6px">
-            - Premium UI + mobile support<br>
-            - Voice agent + 20 tools (demo ready to convert)<br>
-            - Included sale package (README, demo script, onboarding)<br>
-            - Easy to convert to production with provided hooks (server examples)
+          <div style="font-weight:800">Preview / Quick listing</div>
+          <div class="preview-box" id="previewBox">Click "Generate Sale Package" to download files. Use "Preview Listing" for listing copy.</div>
+          <div style="margin-top:8px">
+            <button class="btn ghost" id="previewListing">Preview Listing</button>
           </div>
-          <div style="margin-top:10px"><button class="btn" id="previewListing">Preview Listing Copy</button></div>
         </div>
 
         <div class="panel" style="margin-top:12px">
-          <div style="font-weight:700">Quick Preview</div>
-          <div class="preview-box" id="previewBox">
-            Live demo preview will appear here.
-          </div>
+          <div style="font-weight:800">Settings</div>
+          <div style="margin-top:8px" class="small">Brand name:</div>
+          <input id="brandName" class="input" value="Addy Bot AI Studio" />
+          <div style="margin-top:8px" class="small">Owner/Author name:</div>
+          <input id="ownerName" class="input" value="Addy" />
         </div>
       </div>
     </div>
 
-    <div class="footer">© <span id="yr"></span> MineBot AI Studio — Demo • <span class="small">Do not misrepresent demo responses as real LLM replies to buyers.</span></div>
+    <div class="footer">© <span id="year"></span> Addy Bot — Demo. To convert to production, add server-side APIs (OpenAI & TTS).</div>
   </div>
 
 <script>
-/* ================== Initialization ================== */
-document.getElementById('yr').innerText = new Date().getFullYear();
-const tools = [
-  'AI Writer','Code Helper','Prompt Maker','Translator','Image Prompt',
-  'Summarizer','SEO Title','Business Ideas','Story Maker','Study Helper',
-  'Email Writer','Ad Copy','Regex Maker','Motivator','Character Chat',
-  'Support Reply','Tweet Composer','Long Summarizer','Translator (brief)','Voice TTS'
+/*
+  Addy Bot — Single-file frontend demo
+  - All tools simulated locally (no API keys)
+  - Upload audio file if you want to use your recorded voice for bot reply playback
+  - PRO mode enables longer, richer simulated outputs
+  - Tools are implemented with deterministic/local logic (replace with backend later)
+*/
+
+/* ======= Init ======= */
+document.getElementById('year').innerText = new Date().getFullYear();
+
+const TOOLS = [
+  {id:'writer', name:'AI Writer'},
+  {id:'code', name:'Code Helper'},
+  {id:'prompt', name:'Prompt Maker'},
+  {id:'translate', name:'Translator'},
+  {id:'imageprompt', name:'Image Prompt'},
+  {id:'summarize', name:'Summarizer'},
+  {id:'seo', name:'SEO Title'},
+  {id:'ideas', name:'Business Ideas'},
+  {id:'story', name:'Story Maker'},
+  {id:'study', name:'Study Helper'},
+  {id:'email', name:'Email Writer'},
+  {id:'adcopy', name:'Ad Copy'},
+  {id:'regex', name:'Regex Maker'},
+  {id:'motivate', name:'Motivator'},
+  {id:'character', name:'Character Chat'},
+  {id:'numsupport', name:'Support Reply'},
+  {id:'tweet', name:'Tweet Composer'},
+  {id:'summarize-long', name:'Long Summarizer'},
+  {id:'translate-brief', name:'Translator (brief)'},
+  {id:'tts', name:'Voice TTS'}
 ];
+
 const toolsGrid = document.getElementById('toolsGrid');
-tools.forEach((t, i)=>{
-  const el = document.createElement('div'); el.className='tool-card';
-  el.innerHTML = `<div style="font-weight:700">${t}</div><div class="small" style="margin-top:6px">Demo</div>`;
-  el.onclick = ()=> openTool(t);
+TOOLS.forEach(t=>{
+  const el = document.createElement('div');
+  el.className='tool-card';
+  el.innerHTML = `<div style="font-weight:700">${escapeHtml(t.name)}</div><div class="small">Click to open</div>`;
+  el.onclick = ()=> openToolUI(t);
   toolsGrid.appendChild(el);
 });
 
-/* state */
-let PRO_MODE = false; // when true, simulated replies are richer
+/* ===== state ===== */
+let PRO_MODE = false;
 let MB_VOICE = true;
-let USE_ELEVEN_SIM = false;
+let uploadedAudioBlob = null;
+let uploadedAudioUrl = null;
 
-/* ================== Chat UI handlers ================== */
+/* ===== Chat UI ===== */
 const chatWindow = document.getElementById('chatWindow');
 const chatInput = document.getElementById('chatInput');
-document.getElementById('sendBtn').addEventListener('click', ()=> userSend());
-chatInput.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ e.preventDefault(); userSend(); }});
-document.getElementById('micBtn').addEventListener('click', ()=> startRecognition());
-document.getElementById('voiceToggle').addEventListener('click', ()=> { MB_VOICE = !MB_VOICE; alert('Voice: '+(MB_VOICE?'On':'Off')); });
+const sendBtn = document.getElementById('sendBtn');
+const micBtn = document.getElementById('micBtn');
+const voiceToggle = document.getElementById('voiceToggle');
+const useUploadedCheckbox = document.getElementById('useUploaded');
+const autoSpeakCheckbox = document.getElementById('autoSpeak');
+const voiceUpload = document.getElementById('voiceUpload');
 
-document.getElementById('togglePro').addEventListener('click', ()=>{
+document.getElementById('toggleProBtn').addEventListener('click', ()=>{
   PRO_MODE = !PRO_MODE;
-  document.getElementById('togglePro').innerText = PRO_MODE ? 'PRO Preview ON' : 'Enable PRO Preview';
-  document.getElementById('versionTag').innerText = PRO_MODE ? 'pro-preview v3' : 'demo v1.0';
-  flashPreview(`PRO Preview ${PRO_MODE ? 'Activated': 'Deactivated'} — simulated longer replies will be used.`);
+  document.getElementById('toggleProBtn').innerText = PRO_MODE ? 'PRO (Sim) ON' : 'Enable PRO (Sim)';
+  document.getElementById('verTag').innerText = PRO_MODE ? 'pro-preview' : 'demo v1';
+  flashPreview(`PRO mode ${PRO_MODE ? 'activated' : 'deactivated'}`);
 });
 
-/* floating Eleven simulated toggle */
-document.getElementById('toggleElevenSim').addEventListener('click', ()=>{
-  USE_ELEVEN_SIM = !USE_ELEVEN_SIM;
-  document.getElementById('voiceMode').innerText = USE_ELEVEN_SIM ? 'ElevenLabs (simulated)' : 'Browser TTS (demo)';
-  flashPreview('ElevenLabs simulation: ' + (USE_ELEVEN_SIM ? 'ON' : 'OFF'));
-});
+sendBtn.addEventListener('click', ()=> { userSend(); });
+chatInput.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ e.preventDefault(); userSend(); } });
 
-/* user send */
-function appendMsg(text, who='bot', target=chatWindow){
-  const d = document.createElement('div'); d.className = 'msg ' + (who==='user'?'user':'bot'); d.innerText = text; target.appendChild(d); target.scrollTop = target.scrollHeight;
-}
-function showTyping(target=chatWindow){
-  const el = document.createElement('div'); el.className='msg bot typing'; el.innerHTML='MineBot is typing <span style="opacity:.6">...</span>'; target.appendChild(el); target.scrollTop = target.scrollHeight; return el;
-}
+voiceToggle.addEventListener('click', ()=> { MB_VOICE = !MB_VOICE; voiceToggle.style.opacity = MB_VOICE ? '1' : '0.5'; flashPreview('Auto voice ' + (MB_VOICE ? 'on' : 'off')); });
 
-async function userSend(){
-  const t = chatInput.value.trim(); if(!t) return;
-  appendMsg(t,'user'); chatInput.value='';
-  const typing = showTyping();
-  // simulated delay
-  await wait(500 + Math.min(2000, t.length*30));
-  typing.remove();
-  const reply = simulateReply(t);
-  appendMsg(reply,'bot');
-  if(MB_VOICE) speakDemo(reply);
-}
-
-/* ================== Simulated reply generator ================== */
-function simulateReply(text){
-  const t = text.toLowerCase();
-  // more elaborate when PRO_MODE true
-  if(t.includes('hello') || t.includes('hi')) return PRO_MODE ? "Hello! I'm MineBot, your demo AI assistant. I can write, summarize, translate, and speak. Try 'write an outline' or 'voice test'." : "Hello! I'm MineBot — demo mode.";
-  if(t.includes('price')||t.includes('sell')) return PRO_MODE ? "Suggested listing: $2,000 (one-time license). Includes source, README, onboarding, and 7-day support. Provide buyer upgrade guide to connect real APIs." : "Suggested start price: $150+ (demo).";
-  if(t.includes('voice')) return "Voice in demo uses your browser TTS. To get studio voices, integrate ElevenLabs via backend — steps included in generated README.";
-  if(t.includes('write')||t.includes('blog')) return PRO_MODE ? `Pro Writer Output — Intro:\n${simpleUpper(text)}\n\nOutline:\n1) Problem\n2) Solution\n3) Steps to implement\n\nCTA: Convert this demo to a production tool by connecting an LLM.` : `Short writer intro about ${text}`;
-  if(t.includes('code')) return PRO_MODE ? `Code Helper (pro): Found these quick tips for your snippet:\n- Check for missing semicolons\n- Use async/await where needed\n- Add try/catch for network calls` : 'Code helper: paste code and run in tool.';
-  // default
-  return PRO_MODE ? `Pro simulated reply — based on "${text}". This is a high-quality demo response intended to illustrate how a connected LLM would reply.` : `Demo reply: I can help with that (enable PRO for richer replies).`;
-}
-
-/* small helper */
-function simpleUpper(s){ if(!s) return s; const s2 = s.trim(); return s2.charAt(0).toUpperCase()+s2.slice(1); }
-function wait(ms){ return new Promise(res=>setTimeout(res,ms)); }
-
-/* ================== Speech (STT/TTS demo) ================== */
+/* mic (browser SpeechRecognition) */
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
 let recognizer = null;
 if(SpeechRecognition){
@@ -243,148 +242,256 @@ if(SpeechRecognition){
   recognizer.maxAlternatives = 1;
   recognizer.onresult = (ev) => {
     const txt = ev.results[0][0].transcript || '';
-    appendMsg(txt,'user'); chatInput.value='';
-    // simulate response
-    const r = simulateReply(txt);
-    appendMsg(r,'bot');
-    if(MB_VOICE) speakDemo(r);
+    appendMsg(txt, 'user');
+    // process as user message
+    processUserMessage(txt);
   };
-  recognizer.onerror = ()=>{ console.warn('STT error'); };
+  recognizer.onerror = (e) => { console.warn('STT error', e); };
+}
+micBtn.addEventListener('click', ()=>{
+  if(!recognizer){ alert('SpeechRecognition not supported. Use Chrome/Edge.'); return; }
+  try{ recognizer.start(); flashPreview('Listening...'); }catch(e){ console.warn(e); }
+});
+
+/* functions */
+function appendMsg(text, who='bot'){
+  const d = document.createElement('div'); d.className = 'msg ' + (who==='user' ? 'user' : 'bot'); d.innerText = text; chatWindow.appendChild(d); chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+function showTyping(){
+  const el = document.createElement('div'); el.className='msg bot typing'; el.innerText='Addy is typing...'; chatWindow.appendChild(el); chatWindow.scrollTop = chatWindow.scrollHeight; return el;
+}
+function flashPreview(msg){
+  const box = document.getElementById('previewBox');
+  const prev = box.innerText;
+  box.innerText = msg;
+  setTimeout(()=>{ if(box.innerText===msg) box.innerText = prev; }, 2400);
 }
 
-function startRecognition(){
-  if(!recognizer){ alert('SpeechRecognition not supported in this browser. Use Chrome/Edge.'); return; }
-  try { recognizer.start(); } catch(e){ console.warn(e); }
+/* user send handler */
+async function userSend(){
+  const t = chatInput.value.trim(); if(!t) return;
+  appendMsg(t, 'user');
+  chatInput.value = '';
+  await processUserMessage(t);
 }
-
-/* TTS: browser or "Eleven simulated" which just tweaks voice parameters */
-function speakDemo(text){
-  // If user chose Eleven simulation, we slightly change rate/pitch for "studio" feel (still browser TTS)
-  const utter = new SpeechSynthesisUtterance(text);
-  if(USE_ELEVEN_SIM){
-    utter.rate = 0.98; utter.pitch = 0.9;
-  } else {
-    utter.rate = 1; utter.pitch = 1;
+async function processUserMessage(text){
+  const typing = showTyping();
+  // simulate network / thinking delay
+  await wait(400 + Math.min(2200, text.length*30));
+  typing.remove();
+  const reply = makeReply(text);
+  appendMsg(reply, 'bot');
+  if(MB_VOICE && autoSpeakCheckbox.checked){
+    // If user uploaded a clip and enabled useUploaded, play clip; otherwise use browser TTS
+    if(useUploadedCheckbox.checked && uploadedAudioBlob){
+      playUploadedAudio();
+    } else {
+      browserSpeak(reply);
+    }
   }
-  utter.lang = 'en-US';
-  window.speechSynthesis.cancel(); window.speechSynthesis.speak(utter);
 }
-function testSpeak(){ speakDemo('This is a MineBot voice test. Demo mode active.'); }
 
-/* ================== Tools UI & demo logic ================== */
-function openTool(name){
-  const toolUI = document.getElementById('toolUI');
+/* simulated reply generator */
+function makeReply(text){
+  const t = (text||'').toLowerCase();
+  if(t.includes('hello')||t.includes('hi')) return PRO_MODE ? "Hello! I'm Addy — your AI studio demo. Try 'write blog intro' or open Tools." : "Hello! I'm Addy (demo).";
+  if(t.includes('price')||t.includes('sell')) return PRO_MODE ? `Suggested listing template included. Use the Generate Sale Package button for README & listing copy.` : `Try Generate Sale Package for listing assets.`;
+  if(t.includes('voice test')) return PRO_MODE ? "Voice test: uploaded voice will play for demo replies. For production, integrate TTS backend." : "Voice test: playing sample (demo).";
+  if(t.includes('write')||t.includes('blog')) return PRO_MODE ? `Pro Writer Output — Intro:\n${capitalize(text)}\n\nOutline:\n1) Problem\n2) Solution\n3) How to implement\n\nCTA: Try Tools -> AI Writer.` : `Short intro about ${text}.`;
+  if(t.includes('code')) return PRO_MODE ? `Pro Code Helper:\n- Check async/await\n- Validate inputs\n- Add error handling` : `Code helper: paste code in Tools -> Code Helper.`;
+  return PRO_MODE ? `Pro simulated reply: thoughtful, multi-paragraph answer for "${text}". This demo shows how Addy will perform when connected to a real backend.` : `Demo reply: I can help with that (enable PRO for richer replies).`;
+}
+
+/* ====== Browser TTS ====== */
+function browserSpeak(text){
+  if(!('speechSynthesis' in window)) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 1; u.pitch = 1; u.lang = 'en-US';
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(u);
+}
+
+/* Uploaded audio handling (playback only) */
+voiceUpload.addEventListener('change', async (e)=>{
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  // store blob URL
+  if(uploadedAudioUrl) URL.revokeObjectURL(uploadedAudioUrl);
+  uploadedAudioBlob = f;
+  uploadedAudioUrl = URL.createObjectURL(f);
+  document.getElementById('voiceStatus').innerText = `Uploaded: ${f.name}`;
+  flashPreview('Uploaded voice clip ready — toggle "Use Uploaded Voice" to play it for bot replies.');
+});
+document.getElementById('clearVoice').addEventListener('click', ()=>{
+  if(uploadedAudioUrl) URL.revokeObjectURL(uploadedAudioUrl);
+  uploadedAudioBlob = null; uploadedAudioUrl = null;
+  document.getElementById('voiceStatus').innerText = 'Using browser TTS';
+  document.getElementById('voiceUpload').value = '';
+});
+
+/* play uploaded audio */
+function playUploadedAudio(){
+  if(!uploadedAudioUrl) return browserSpeak('No uploaded audio found.');
+  const a = new Audio(uploadedAudioUrl);
+  a.play().catch(()=> browserSpeak('Could not play uploaded audio.'));
+}
+
+/* ===== Tools UI & logic (20 tools) ===== */
+const toolUI = document.getElementById('toolUI');
+
+function openToolUI(tool){
   toolUI.innerHTML = '';
-  const wrap = document.createElement('div'); wrap.className='panel';
-  wrap.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:800">${name}</div><div class="small">Demo</div></div>
-    <div style="margin-top:8px"><textarea id="inp" rows="5" style="width:100%;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:inherit" placeholder="Enter input for ${name}"></textarea></div>
-    <div style="display:flex;gap:8px;margin-top:8px"><button class="btn" id="runBtn">Run</button><button class="btn ghost" id="copyBtn">Copy</button></div>
-    <div style="margin-top:8px"><textarea id="out" rows="6" style="width:100%;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:inherit" readonly></textarea></div>`;
+  const wrap = document.createElement('div');
+  wrap.className = 'panel';
+  wrap.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div style="font-weight:800">${escapeHtml(tool.name)}</div><div class="small">Demo</div></div>
+    <div style="margin-top:8px"><textarea id="inp" rows="5" style="width:100%;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:inherit" placeholder="Enter input for ${escapeHtml(tool.name)}"></textarea></div>
+    <div style="display:flex;gap:8px;margin-top:8px"><button id="runBtn" class="btn">Run</button><button id="copyBtn" class="btn ghost">Copy</button></div>
+    <div style="margin-top:8px"><textarea id="out" rows="8" style="width:100%;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:inherit" readonly></textarea></div>`;
   toolUI.appendChild(wrap);
-  document.getElementById('runBtn').addEventListener('click', ()=>{
+
+  document.getElementById('runBtn').addEventListener('click', async ()=>{
     const v = document.getElementById('inp').value.trim();
     document.getElementById('out').value = 'Processing...';
-    setTimeout(()=>{ document.getElementById('out').value = demoToolRun(name, v); }, 300);
+    // simulate small delay
+    await wait(200 + Math.min(800, v.length * 8));
+    try{
+      const res = await runToolDemo(tool.id, v);
+      document.getElementById('out').value = res;
+      // if TTS tool, speak it
+      if(tool.id === 'tts' && (MB_VOICE && autoSpeakCheckbox.checked)){
+        if(useUploadedCheckbox.checked && uploadedAudioBlob) playUploadedAudio(); else browserSpeak(res);
+      }
+    }catch(e){
+      document.getElementById('out').value = 'Error: '+String(e);
+    }
   });
   document.getElementById('copyBtn').addEventListener('click', ()=>{ navigator.clipboard.writeText(document.getElementById('out').value||''); document.getElementById('copyBtn').innerText='Copied'; setTimeout(()=>document.getElementById('copyBtn').innerText='Copy',900); });
 }
 
-function demoToolRun(name, input){
+/* implement demo tool behaviors */
+function runToolDemo(id, input){
   input = (input||'').trim();
   const rich = PRO_MODE;
-  switch(name){
-    case 'AI Writer': if(!input) return 'Give a topic'; return rich ? `Pro Intro for ${input}:\n${simpleUpper(input)} — This article covers core steps...\n\nOutline:\n1) Problem\n2) Solution\n3) Implementation\n\n(Use this to demo to buyers.)` : `Intro: ${input} — short demo.`;
-    case 'Code Helper': if(!input) return 'Paste code or describe error'; return rich ? `Pro Code Notes:\n- Check async usage\n- Add input validation\n- Suggest unit tests\n` : 'Basic code hints';
-    case 'Translator': if(!input) return 'Enter text'; return `Demo translation (en→hi): ${input.split('').reverse().join('')}`;
-    case 'Summarizer': if(!input) return 'Paste text'; return rich ? `Long summary:\n- Key insight A\n- Key insight B\n- Next steps` : 'Short summary: ...';
-    case 'Prompt Maker': if(!input) return 'Describe image'; return `"${input}, cinematic, ultra-detailed, 8k"`;
-    case 'Image Prompt': if(!input) return 'Describe scene'; return `"${input}, photorealistic"`;
-    case 'SEO Title': if(!input) return 'Enter keyword'; return `${input} — The Ultimate Guide (2025)`;
-    case 'Business Ideas': if(!input) return 'Enter industry'; return `Ideas for ${input}:\n1) Niche SaaS\n2) Local marketplace\n3) B2B automation`;
-    case 'Story Maker': if(!input) return 'Give a hook'; return `${simpleUpper(input)} — Once upon a time...`;
-    case 'Study Helper': if(!input) return 'Ask question'; return `Explain simply: ${input}\nExample: ...\nQuiz: ...`;
-    case 'Email Writer': if(!input) return 'Context'; return `Hi [Name],\n${input}\nRegards,`;
-    case 'Ad Copy': if(!input) return 'Product + benefit'; return `Headline: ${input} — Try now.`;
-    case 'Regex Maker': if(!input) return 'Pattern request'; if(/phone/i.test(input)) return '(India) /(?:\\+91|0)?[6789]\\d{9}/'; return '/pattern/';
-    case 'Motivator': if(!input) return 'Name'; return `Hey ${input||'friend'}, keep going!`;
-    case 'Character Chat': if(!input) return 'Character'; return `${input} says: "Do or do not."`;
-    case 'Support Reply': if(!input) return 'Ticket'; return `Support reply:\nThanks for reaching out. Steps: ...`;
-    case 'Tweet Composer': if(!input) return 'Topic'; return `${input} — Excited to share. #AI`;
-    case 'Long Summarizer': if(!input) return 'Long text'; return `Long summary (bullets):\n- A\n- B\n- C`;
-    case 'Translator (brief)': if(!input) return 'Short phrase'; return `Translated (demo): ${input}`;
-    case 'Voice TTS': if(!input) return 'Text'; speakDemo(input); return 'Spoken (browser TTS)';
-    default: return 'Tool demo: replace with real API for production';
+  switch(id){
+    case 'writer':
+      if(!input) return 'Give a topic or prompt.';
+      return rich ? `Pro Intro for ${input}:\n${capitalize(input)} — This article explores the main problems and presents a clear solution.\n\nOutline:\n1) Problem\n2) Solution\n3) Implementation\n4) CTA` : `Short intro about ${input}.`;
+    case 'code':
+      if(!input) return 'Paste code or describe the error.';
+      if(/error/i.test(input)) return 'Hint: Check variable names and console output. Add try/catch around async calls.';
+      return `Explanation (demo): ${input.split(/\s+/).slice(0,8).join(' ')}...`;
+    case 'prompt':
+    case 'imageprompt':
+      if(!input) return 'Describe scene to generate a prompt.';
+      return `"${input}, cinematic, ultra-detailed, 4k, photorealistic"`;
+    case 'translate':
+      if(!input) return 'Enter text to translate';
+      return rich ? `Hindi (demo): ${reverseString(input)}\n\nEnglish paraphrase: ${input}` : `Translated (demo): ${input}`;
+    case 'summarize':
+    case 'summarize-long':
+      if(!input) return 'Paste text to summarize';
+      return `Summary:\n- Key point A\n- Key point B\n- Next steps`;
+    case 'seo':
+      if(!input) return 'Enter keyword';
+      return `${input} — 3 SEO titles:\n1) ${input} Guide\n2) ${input} for Beginners\n3) Use ${input} Today`;
+    case 'ideas':
+      if(!input) return 'Enter industry or interest';
+      return `Ideas for ${input}:\n1) Niche SaaS\n2) Local marketplace\n3) Consulting + templates`;
+    case 'story':
+      if(!input) return 'Give a hook';
+      return `${capitalize(input)} — Once upon a time... (demo)`;
+    case 'study':
+      if(!input) return 'Ask a topic';
+      return `Explain: ${input}\n- definition\n- example\n- mini quiz`;
+    case 'email':
+      if(!input) return 'Give context';
+      return `Hi [Name],\n${input}\nRegards,\nAddy`;
+    case 'adcopy':
+      if(!input) return 'Provide product + benefit';
+      return `Headline: ${input} — Try it now.`;
+    case 'regex':
+      if(!input) return 'Describe pattern';
+      if(/phone/i.test(input)) return '(India) /(?:\\+91|0)?[6789]\\d{9}/';
+      return '/pattern/';
+    case 'motivate':
+      return `Hey ${input||'friend'}, keep going — small steps every day.`;
+    case 'character':
+      if(!input) return 'Character name';
+      return `${input} says: "Do or do not. There is no try."`;
+    case 'numsupport':
+      if(!input) return 'Ticket text';
+      return `Support reply:\nThanks for reaching out. Please provide steps to reproduce.`;
+    case 'tweet':
+      if(!input) return 'Topic';
+      return `${input} — Quick tweet: excited to share ${input}. #AI`;
+    case 'translate-brief':
+      if(!input) return 'Short phrase';
+      return `Translated (brief): ${input}`;
+    case 'tts':
+      if(!input) return 'Text to speak';
+      // return the text that will be spoken
+      return `Spoken text (demo): ${input}`;
+    default:
+      return 'Tool demo: replace with backend integration for real results';
   }
 }
 
-/* ================== Generate Seller Package ================== */
-document.getElementById('generatePackage').addEventListener('click', generatePackage);
+/* ======== Generate Sale Package (downloads) ======== */
+document.getElementById('genPkg').addEventListener('click', generatePackage);
 document.getElementById('previewListing').addEventListener('click', ()=> {
   const text = generateSalesListingText();
   document.getElementById('previewBox').innerText = text;
-  flashPreview('Preview listing loaded.');
+  flashPreview('Listing preview loaded');
 });
 
 function generatePackage(){
-  // Create README
-  const readme = `MineBot AI Studio — Demo\n\nThis package includes:\n- index.html (single-file demo)\n- Instructions to convert to production (OpenAI + ElevenLabs backend)\n\nHow to use:\n1) Paste index.html into repo root and publish via GitHub Pages.\n2) For real AI: deploy backend (server examples included in docs) and update API_BASE in frontend.\n\nSecurity: Never commit API keys to GitHub.\n`;
-  createAndDownload('README-MineBot.txt', readme);
+  const owner = document.getElementById('ownerName').value.trim() || 'Addy';
+  const brand = document.getElementById('brandName').value.trim() || 'Addy Bot AI Studio';
+  const readme = `${brand} — Demo Package\n\nAuthor: ${owner}\n\nThis package includes: index.html (single file demo), README, demo script and listing copy.\n\nTo convert to production: add OpenAI & ElevenLabs keys on a backend and replace demo-run functions with API calls.`;
+  downloadText('README-MineBot.txt', readme);
 
-  // Sales listing
-  createAndDownload('SALES-LISTING.txt', generateSalesListingText());
+  const sales = generateSalesListingText();
+  downloadText('SALES-LISTING.txt', sales);
 
-  // LICENSE
-  const lic = `MIT License\n\nCopyright (c) ${new Date().getFullYear()} MineBot AI Studio\n\nPermission is hereby granted... (short sample license)`;
-  createAndDownload('LICENSE.txt', lic);
+  const demo = `DEMO VIDEO SCRIPT\n1) Intro: Show brand & 1-liner.\n2) Show chat + voice test.\n3) Show 3 tools: Writer, Code, Voice TTS.\n4) Closing: what buyer gets.`;
+  downloadText('DEMO-SCRIPT.txt', demo);
 
-  // Demo script
-  const demo = `DEMO VIDEO SCRIPT\n1) Intro (10s): Show brand & one-line pitch.\n2) Show chat + voice test (30s): Ask "write a blog intro".\n3) Show 3 tools: Writer, Code, Voice TTS (30s). \n4) Close with price & what buyer receives.`;
-  createAndDownload('DEMO-SCRIPT.txt', demo);
+  const lic = `MIT License\n\nCopyright (c) ${new Date().getFullYear()} ${owner}\n\nPermission is hereby granted... (sample)`;
+  downloadText('LICENSE.txt', lic);
 
-  flashPreview('Package generated — check your downloads.');
+  flashPreview('Files downloaded to your device.');
 }
 
-function createAndDownload(filename, text){
+function generateSalesListingText(){
+  const brand = document.getElementById('brandName').value.trim() || 'Addy Bot AI Studio';
+  return `${brand} — Single-file Demo (Frontend-only)\n\nWhat's included:\n- Single index.html (chat + voice + 20 demo tools)\n- Demo responses (no keys required)\n- Upload-your-voice feature (playback)\n- README, DEMO script, LICENSE\n\nEasy to convert to production by adding backend APIs (OpenAI & ElevenLabs).`;
+}
+
+function downloadText(filename, text){
   const blob = new Blob([text], {type:'text/plain'});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),60000);
+  const a = document.createElement('a'); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=> URL.revokeObjectURL(url), 30000);
 }
 
-/* Sales listing text generator */
-function generateSalesListingText(){
-  return `MineBot AI Studio — Premium Demo (Single-file) — $2,000 listing copy
+/* ======= Helpers ======= */
+function wait(ms){ return new Promise(res=>setTimeout(res,ms)); }
+function capitalize(s){ if(!s) return s; return s.charAt(0).toUpperCase() + s.slice(1); }
+function reverseString(s){ return s.split('').reverse().join(''); }
+function escapeHtml(s){ if(!s) return ''; return s.replace(/[&<>"']/g, (m)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[m]); }
 
-Overview:
-- Modern dark UI with voice-enabled chatbot + 20 demo tools.
-- Single-file deliverable (index.html) — GitHub Pages ready.
-- Includes seller package: README, LICENSE, Demo script, onboarding notes.
+/* lightweight UX: update voiceStatus text based on toggles */
+useUploadedCheckbox.addEventListener('change', ()=> {
+  const p = document.getElementById('voiceStatus');
+  p.innerText = (useUploadedCheckbox.checked && uploadedAudioBlob) ? `Uploaded: ${uploadedAudioBlob.name}` : 'Using browser TTS';
+});
 
-Why buy:
-- Save weeks of frontend UI & voice integration work.
-- Easy to convert to production: backend hooks included in README.
-- Mobile-first responsive UI and premium branding.
+/* Small keyboard shortcuts */
+document.addEventListener('keydown', (e)=>{
+  if(e.key === '/' && document.activeElement !== chatInput){ e.preventDefault(); chatInput.focus(); }
+});
 
-What buyer receives:
-- index.html (single file)
-- README (setup & backend guide)
-- Demo script + listing copy
-- 7-day email support (optional, negotiate)
-
-Price justification: premium UI, voice demo, 20 tools and sale-ready assets.`;
-
-}
-
-/* ================== Small helpers & UX ================== */
-function flashPreview(msg){
-  const box = document.getElementById('previewBox');
-  box.innerText = msg;
-  setTimeout(()=>{ if(box.innerText===msg) box.innerText=''; }, 3500);
-}
-
-/* small convenience */
-function speakDemoAsync(text){ return new Promise(res=>{ const u=new SpeechSynthesisUtterance(text); u.onend=res; window.speechSynthesis.speak(u); }); }
-
-/* ================== End ================== */
+/* End of file */
 </script>
 </body>
 </html>
