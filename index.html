@@ -1,1 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MineBot AI Studio – Voice + 20 Tools (ElevenLabs Ready)</title>
+<meta name="description" content="MineBot AI Studio – 20 AI tools with voice assistant. Supports mic input, TTS voice output, and GPT-style chat. Deployed on GitHub Pages.">
+<style>
+:root {
+  --bg: #0a0a1a;
+  --panel: #12122b;
+  --accent: #7c3aed;
+  --text: #e4e4f5;
+  --muted: #7b7b94;
+  --glow: rgba(124, 58, 237, 0.25);
+}
+* {box-sizing:border-box;}
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin:0; background: var(--bg); color: var(--text);
+  display:flex; flex-direction:column; align-items:center;
+}
+header {
+  text-align:center; padding:20px; font-size:26px;
+  font-weight:bold; background: linear-gradient(90deg, var(--accent), #4c1d95);
+  width:100%; color:white; box-shadow:0 0 10px var(--glow);
+}
+main {max-width:900px; width:90%; margin:30px auto;}
+.chat-box {
+  background: var(--panel); border-radius:12px;
+  padding:15px; box-shadow:0 0 20px var(--glow);
+}
+.output {
+  min-height:150px; padding:10px; border:1px solid #333;
+  border-radius:8px; margin-bottom:10px; overflow:auto;
+}
+input, button {
+  border:none; border-radius:8px; padding:10px;
+  font-size:15px;
+}
+input {width:70%; margin-right:10px;}
+button {
+  background: var(--accent); color:white; cursor:pointer;
+  transition:0.3s;
+}
+button:hover {background:#5b21b6;}
+.tools {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:10px; margin-top:20px;
+}
+.tool {
+  background: var(--panel); padding:10px;
+  border-radius:8px; text-align:center;
+  border:1px solid #333; cursor:pointer;
+  transition:0.3s;
+}
+.tool:hover {background:#1e1e3b;}
+.voice-btn {
+  background:#10b981; margin-left:5px;
+}
+</style>
+</head>
+<body>
+<header>MineBot AI Studio 🎙️</header>
+<main>
+  <section class="chat-box">
+    <div class="output" id="output">Hi 👋 I'm MineBot. I can talk and listen!</div>
+    <div style="display:flex;align-items:center;">
+      <input type="text" id="userInput" placeholder="Type a message or speak..." />
+      <button onclick="sendMessage()">Send</button>
+      <button class="voice-btn" onclick="startListening()">🎤</button>
+    </div>
+  </section>
 
+  <h3 style="margin-top:30px;text-align:center;">🧰 20 AI Tools</h3>
+  <div class="tools" id="toolList"></div>
+</main>
+
+<script>
+const tools = [
+  "AI Writer", "SEO Helper", "Prompt Maker", "Translator", "Image Prompt",
+  "Summarizer", "Ad Copy", "Email Writer", "Story Maker", "Business Ideas",
+  "Study Helper", "Grammar Fixer", "Poem Creator", "Blog Outline",
+  "YouTube Script", "Social Caption", "Headline Generator", "Code Helper",
+  "Math Solver", "Diet Planner"
+];
+
+const toolList = document.getElementById("toolList");
+tools.forEach(t => {
+  const div = document.createElement("div");
+  div.className = "tool";
+  div.innerText = t;
+  div.onclick = () => showResponse(`You selected ${t}. (Demo mode: connect API for real response.)`);
+  toolList.appendChild(div);
+});
+
+function showResponse(text) {
+  document.getElementById("output").innerHTML += `<br><b>Bot:</b> ${text}`;
+}
+
+function sendMessage() {
+  const input = document.getElementById("userInput");
+  const msg = input.value.trim();
+  if(!msg) return;
+  document.getElementById("output").innerHTML += `<br><b>You:</b> ${msg}`;
+  input.value = "";
+  setTimeout(()=>showResponse("This is a demo response. Connect GPT API for live chat."), 1000);
+}
+
+// 🎙️ Voice Input + Speech Output
+function startListening() {
+  if (!('webkitSpeechRecognition' in window)) {
+    alert("Voice input not supported on this browser.");
+    return;
+  }
+  const recognition = new webkitSpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.onresult = function(event) {
+    const text = event.results[0][0].transcript;
+    document.getElementById("userInput").value = text;
+    sendMessage();
+  };
+  recognition.start();
+}
+
+// 🔊 Speak Output (TTS Demo)
+function speak(text) {
+  const speech = new SpeechSynthesisUtterance(text);
+  speech.lang = "en-US";
+  speech.pitch = 1;
+  speech.rate = 1;
+  window.speechSynthesis.speak(speech);
+}
+</script>
+</body>
+</html>
