@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Kashyap AI — Premium Agent</title>
+<meta name="description" content="Premium AI agents portal — demo-ready, mobile-first, single-file." />
+<style>
+  /* ---------- BASIC THEME ---------- */
+  :root{
+    --bg1:#0f1724; --bg2:#0b1020; --card:#0f1728;
+    --accent:#8b5cf6; --accent2:#06b6d4; --muted:#9aa4b2;
+    --glass: rgba(255,255,255,0.03);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto, "Helvetica Neue";background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#e9f0ff;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1100px;margin:28px auto;padding:18px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo .mark{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#041024}
+  nav a{color:var(--muted);text-decoration:none;margin-left:18px;font-weight:600}
+  /* ---------- HERO ---------- */
+  .hero{display:grid;grid-template-columns:1fr 420px;gap:24px;align-items:center;margin-top:20px}
+  .hero h1{font-size:34px;margin:0 0 10px}
+  .lead{color:var(--muted);margin-bottom:18px}
+  .cta{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{background:linear-gradient(90deg,var(--accent),var(--accent2));border:none;padding:12px 16px;border-radius:10px;color:#041024;font-weight:700;cursor:pointer;box-shadow:0 8px 30px rgba(11,12,40,0.5)}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+  /* ---------- CARD / AGENT ---------- */
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:14px;box-shadow:0 10px 30px rgba(2,6,23,0.6)}
+  .agent-box{display:flex;flex-direction:column;gap:12px}
+  .agent-header{display:flex;justify-content:space-between;align-items:center}
+  .agent-title{font-weight:700}
+  /* chat UI */
+  .chat{height:380px;overflow:auto;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005))}
+  .msg{max-width:78%;padding:10px;border-radius:10px;margin:8px 0;line-height:1.4}
+  .msg.user{margin-left:auto;background:linear-gradient(90deg,#00c897,#00f5a0);color:#012018}
+  .msg.bot{background:var(--glass);color:inherit;border:1px solid rgba(255,255,255,0.02)}
+  .input-row{display:flex;gap:8px;align-items:center;margin-top:10px}
+  .input-row input{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+  .small{font-size:13px;color:var(--muted)}
+  /* features & price */
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+  .feature{background:rgba(255,255,255,0.02);padding:14px;border-radius:10px;text-align:left}
+  .price{font-size:28px;font-weight:800}
+  /* responsive */
+  @media (max-width:980px){.hero{grid-template-columns:1fr}.features{grid-template-columns:1fr}}
+  footer{margin-top:26px;text-align:center;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">
+        <div class="mark">AI</div>
+        <div>
+          <div style="font-weight:800">Kashyap AI</div>
+          <div class="small">Premium Agent Portal — Demo</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#features">Features</a>
+        <a href="#agent">Agent</a>
+        <a href="#pricing">Pricing</a>
+      </nav>
+    </header>
+
+    <main class="hero">
+      <section>
+        <h1>Ship AI agents — demo-ready, clean UI, customizable</h1>
+        <p class="lead">Premium single-page product with agent chat, demo flows, and easy integration for OpenAI or any AI API. Includes install & sell-ready packaging.</p>
+        <div class="cta">
+          <button class="btn" onclick="gotoAgent()">Try Agent</button>
+          <button class="btn ghost" onclick="downloadPackage()">Get Source</button>
+        </div>
+
+        <div id="features" class="features" style="margin-top:20px">
+          <div class="feature">
+            <strong>Premium UI</strong>
+            <div class="small">Modern gradients, mobile-first layout, smooth shadows</div>
+          </div>
+          <div class="feature">
+            <strong>Agent Chat</strong>
+            <div class="small">Typing animation, message history, easy API hook</div>
+          </div>
+          <div class="feature">
+            <strong>Ready to Sell</strong>
+            <div class="small">Include README, demo, and setup guide to justify higher price</div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card agent-box" id="agent">
+        <div class="agent-header">
+          <div>
+            <div class="agent-title">Aira — Your AI Assistant</div>
+            <div class="small">Demo mode — replace with your API key to enable real responses</div>
+          </div>
+          <div class="small">v1.0</div>
+        </div>
+
+        <div class="chat" id="chat">
+          <!-- messages will appear here -->
+          <div class="msg bot">Hi! I am Aira. Ask me anything — demo responses only.</div>
+        </div>
+
+        <div class="input-row">
+          <input id="userInput" placeholder="Type a question e.g. 'Summarize my text' or 'Give me marketing ideas'">
+          <button class="btn" onclick="send()">Send</button>
+        </div>
+
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn ghost" onclick="useQuick('Write an email to a client about delay')">Email</button>
+          <button class="btn ghost" onclick="useQuick('Summarize the following: ...')">Summarize</button>
+          <button class="btn ghost" onclick="useQuick('Create 5 catchy ad copy lines')">Ad Copy</button>
+        </div>
+
+        <div style="margin-top:12px" class="small">Tip: To enable real AI, set <code>API_MODE = true</code> and provide <code>API_ENDPOINT</code> with your key (docs below).</div>
+      </aside>
+    </main>
+
+    <section style="margin-top:20px" id="pricing" class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <div>
+          <h3 style="margin:0">Sell package</h3>
+          <div class="small">What to deliver to buyer</div>
+          <ul style="margin-top:10px;color:var(--muted)">
+            <li>Full source (this file + assets)</li>
+            <li>README with setup & API instructions</li>
+            <li>Demo video (30s) + 7 days initial support</li>
+          </ul>
+        </div>
+        <div style="text-align:right">
+          <div class="small">Suggested listing</div>
+          <div class="price">$1,000</div>
+          <div class="small">One-time license — transfer repo + assets</div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      © <span id="year"></span> Kashyap AI — Demo. <span class="small">Replace demo API with your own to enable production mode.</span>
+    </footer>
+  </div>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  /* ======= CONFIG =======
+     Set API_MODE = true to call your server endpoint.
+     Provide API_ENDPOINT which should accept POST {message:"..."} and respond {reply:"..."}
+     IMPORTANT: never embed your secret key in client-side JS for production.
+  */
+  const API_MODE = false; // set true only if you proxy through your server
+  const API_ENDPOINT = ""; // example: "https://your-server.com/ai"
+
+  const chatEl = document.getElementById('chat');
+  function appendMessage(text, who='bot'){
+    const div = document.createElement('div');
+    div.className = 'msg ' + (who==='user' ? 'user' : 'bot');
+    div.innerText = text;
+    chatEl.appendChild(div);
+    chatEl.scrollTop = chatEl.scrollHeight;
+  }
+
+  function typingSimulation(text, who='bot'){
+    // simple typing animation
+    const div = document.createElement('div');
+    div.className = 'msg bot';
+    chatEl.appendChild(div);
+    let i=0;
+    const id = setInterval(()=>{
+      div.innerText = text.slice(0,i) + (i%3===0 ? '|' : (i%3===1 ? '..' : '...'));
+      i++;
+      if(i>text.length){
+        clearInterval(id);
+        div.innerText = text;
+        chatEl.scrollTop = chatEl.scrollHeight;
+      }
+    },18);
+  }
+
+  async function send(){
+    const input = document.getElementById('userInput');
+    const text = input.value.trim();
+    if(!text) return;
+    appendMessage(text,'user');
+    input.value = '';
+    // If API_MODE is enabled, call your endpoint. Else return canned demo.
+    if(API_MODE && API_ENDPOINT){
+      appendMessage('Thinking...','bot');
+      try{
+        const res = await fetch(API_ENDPOINT, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({message:text})
+        });
+        const j = await res.json();
+        // expected {reply: "..." }
+        chatEl.querySelectorAll('.msg.bot').forEach(n=>{ if(n.innerText==='Thinking...') n.remove(); });
+        if(j && j.reply) typingSimulation(j.reply);
+        else typingSimulation('Sorry, no reply from API (invalid response).');
+      }catch(e){
+        chatEl.querySelectorAll('.msg.bot').forEach(n=>{ if(n.innerText==='Thinking...') n.remove(); });
+        typingSimulation('Network error: ' + (e.message||'failed'));
+      }
+    } else {
+      // demo responses — make these sound premium
+      const demo = demoReply(text);
+      typingSimulation(demo);
+    }
+  }
+
+  function demoReply(text){
+    const lower = text.toLowerCase();
+    if(lower.includes('summar') || lower.includes('short')) return 'Short summary: Focus on the main value props, keep sentences crisp, and call-to-action clear.';
+    if(lower.includes('email')) return 'Email draft: Hi [Name], I hope you are well. I wanted to update you on the project timeline...';
+    if(lower.includes('ad') || lower.includes('copy')) return 'Ad ideas: 1) "Launch faster with smart AI" 2) "Turn ideas into copy in seconds" 3) "Scale support with agents"';
+    if(lower.includes('how') || lower.includes('what')) return 'Great question — specify the domain (marketing, code, research) and I will propose steps.';
+    return "I can help with summaries, emails, marketing copy, or idea generation. Try: 'Summarize X' or 'Write an email about...'";
+  }
+
+  function useQuick(text){
+    document.getElementById('userInput').value = text;
+    send();
+  }
+
+  function gotoAgent(){ location.hash='#agent'; }
+  function downloadPackage(){
+    // This triggers a small prepared README download (demo). You should replace with actual ZIP link to repo package.
+    const readme = `Kashyap AI — Package
