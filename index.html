@@ -3,404 +3,362 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>ADDY AI Hub — Frontend Only Demo</title>
-<meta name="description" content="ADDY AI Hub — Frontend-only demo. 20 simulated AI tools, browser TTS, voice input, premium black glass UI."/>
-<link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+<title>ADDY AI Hub — Frontend Demo</title>
+<meta name="description" content="ADDY AI Hub — Frontend-only demo. 20 simulated AI tools, browser TTS & mic, premium UI."/>
 <style>
   :root{
-    --bg0:#04060a; --bg1:#07111a;
-    --card:rgba(255,255,255,0.03);
+    --bg0:#040617; --bg1:#07111a;
+    --muted:#99a7b8;
     --glass:rgba(255,255,255,0.04);
-    --muted:#98a3b3;
     --accent1:#7c3aed; --accent2:#06b6d4;
-    --success:#16a34a;
   }
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial;color:#e8f0ff;background:linear-gradient(180deg,var(--bg0),var(--bg1));-webkit-font-smoothing:antialiased}
-  .container{max-width:1200px;margin:18px auto;padding:18px}
-  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,-apple-system;background:linear-gradient(180deg,var(--bg0),var(--bg1));color:#e8f6ff;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1150px;margin:20px auto;padding:18px}
+  header{display:flex;justify-content:space-between;align-items:center;gap:12px}
   .brand{display:flex;gap:12px;align-items:center}
   .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;color:#021018}
-  h1{font-size:20px;margin:0}
+  h1{margin:0;font-size:20px}
   .sub{font-size:13px;color:var(--muted)}
   .layout{display:grid;grid-template-columns:1fr 380px;gap:16px;margin-top:16px}
   @media(max-width:980px){.layout{grid-template-columns:1fr}}
-  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008));border-radius:12px;padding:14px;border:1px solid var(--glass)}
-  .chat-area{display:flex;flex-direction:column;height:74vh;gap:12px}
-  .messages{flex:1;overflow:auto;padding:12px;border-radius:10px;background:rgba(0,0,0,0.24);border:1px solid rgba(255,255,255,0.02)}
-  .msg{margin:10px 0;max-width:84%;display:block}
-  .msg .who{font-size:12px;color:var(--muted);margin-bottom:6px}
-  .bubble{padding:12px;border-radius:12px;display:inline-block}
-  .bubble.user{background:linear-gradient(90deg,#00c3a3,#7ef2cc);color:#021b18;font-weight:700}
-  .bubble.bot{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);color:#eaf6ff}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008));border-radius:12px;padding:14px;border:1px solid var(--glass)}
+  .chat{display:flex;flex-direction:column;height:72vh;gap:12px}
+  .messages{flex:1;overflow:auto;padding:12px;border-radius:10px;background:rgba(0,0,0,0.26);border:1px solid rgba(255,255,255,0.02)}
+  .msg{margin:8px 0;max-width:82%}
+  .who{font-size:12px;color:var(--muted);margin-bottom:6px}
+  .bubble{padding:10px 12px;border-radius:12px;display:inline-block}
+  .bubble.user{background:linear-gradient(90deg,#00d0a3,#7ef2cc);color:#021613;font-weight:800}
+  .bubble.bot{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03)}
   .controls{display:flex;gap:8px;align-items:center}
-  input[type="text"], textarea{flex:1;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
-  .btn{padding:10px 14px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#021018;font-weight:800;cursor:pointer}
-  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:8px 10px;border-radius:8px;cursor:pointer}
-  .tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:12px}
-  .tool{padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.01);cursor:pointer;display:flex;align-items:center;justify-content:center}
-  .right-column{display:flex;flex-direction:column;gap:12px}
+  input[type="text"], textarea{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
+  .btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;padding:9px 14px;border-radius:10px;color:#021018;font-weight:800;cursor:pointer}
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:8px;border-radius:8px;cursor:pointer}
+  .tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:12px}
+  .tool{padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.01);cursor:pointer;text-align:center}
   .small{font-size:13px;color:var(--muted)}
   footer{margin-top:16px;color:var(--muted);font-size:13px;text-align:center}
-  .stats{display:flex;gap:8px;flex-wrap:wrap}
-  .stat{background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;font-weight:700;color:#dbeefe}
+  .stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .stat{background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;font-weight:700}
   .modal{position:fixed;left:0;top:0;width:100%;height:100%;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:60}
   .modal-card{width:94%;max-width:720px;background:linear-gradient(180deg,#071018,#001217);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
-  .example{font-size:13px;color:var(--muted);margin-top:6px}
-  .kbd{background:#08121a;padding:4px 8px;border-radius:6px;font-weight:700}
-  /* nice small touches */
-  .micro{font-size:18px}
-  .chip{background:#081827;padding:6px 10px;border-radius:999px;color:var(--muted);font-weight:700}
-  .center{display:flex;align-items:center;gap:8px}
   .preview-image{max-width:100%;border-radius:8px;margin-top:8px;border:1px solid rgba(255,255,255,0.03)}
 </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="brand">
-        <div class="logo">ADD</div>
-        <div>
-          <h1>ADDY AI Hub — Demo (Frontend only)</h1>
-          <div class="sub">Black glass • 20 simulated tools • Browser TTS & mic • Paste into GitHub Pages</div>
-        </div>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">ADD</div>
+      <div>
+        <h1>ADDY AI Hub — Demo (Frontend)</h1>
+        <div class="sub">No proxy • No keys • 20 simulated tools • Browser TTS + Mic</div>
       </div>
-      <div class="center">
-        <div class="chip" id="ownerChip">Owner: Addy</div>
-      </div>
-    </header>
-
-    <div class="layout">
-      <!-- LEFT -->
-      <div class="panel chat-area">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <strong>Chat — Addy</strong>
-          <div class="small">Mode: <strong id="modeLabel">No-proxy demo</strong></div>
-        </div>
-
-        <div class="messages" id="messages" aria-live="polite"></div>
-
-        <div class="controls">
-          <input id="mainInput" placeholder="Type a message or press Enter..." />
-          <button id="sendBtn" class="btn">Send</button>
-          <button id="micBtn" class="ghost micro">🎤</button>
-        </div>
-
-        <div style="margin-top:10px">
-          <div class="small">Tools — click to open input modal</div>
-          <div class="tools-grid" id="toolsGrid"></div>
-        </div>
-      </div>
-
-      <!-- RIGHT -->
-      <aside class="panel right-column">
-        <div>
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <strong>Controls</strong>
-            <div class="small" id="versionTag">v1.0 • frontend-only</div>
-          </div>
-          <div style="margin-top:10px">
-            <label class="small">Owner name</label>
-            <input id="ownerInput" style="width:100%;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:inherit" value="Addy" />
-            <div class="example">Change owner name to update branding instantly.</div>
-          </div>
-        </div>
-
-        <div>
-          <strong>Session stats</strong>
-          <div class="stats" style="margin-top:8px">
-            <div class="stat">Chats: <span id="statChats">0</span></div>
-            <div class="stat">Tools used: <span id="statTools">0</span></div>
-            <div class="stat">Visitors est.: <span id="statVisitors">1,234</span></div>
-          </div>
-        </div>
-
-        <div>
-          <strong>Quick</strong>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button id="clearChat" class="ghost">Clear</button>
-            <button id="downloadReadme" class="btn">Download README</button>
-          </div>
-        </div>
-
-        <div>
-          <strong>Preview image</strong>
-          <div id="imagePreview" style="margin-top:8px;color:var(--muted)">No image generated yet.</div>
-        </div>
-      </aside>
     </div>
+    <div>
+      <div class="small">Owner: <strong id="ownerLabel">Addy</strong></div>
+    </div>
+  </header>
 
-    <footer>© <span id="year"></span> ADDY AI Hub — Demo (no keys). When you have keys/proxy I will give the one-line swap to enable real APIs.</footer>
-  </div>
-
-  <!-- modal for tool input -->
-  <div id="toolModal" class="modal" role="dialog" aria-hidden="true">
-    <div class="modal-card">
+  <div class="layout">
+    <main class="card chat">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="font-weight:800" id="modalTitle">Tool</div>
-        <button id="modalClose" class="ghost">Close</button>
+        <div style="font-weight:800">Chat — Addy</div>
+        <div class="small">Mode: <strong id="mode">Demo (No-backend)</strong></div>
       </div>
-      <div style="margin-top:8px">
-        <textarea id="modalInput" rows="6" style="width:100%;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:inherit"></textarea>
-        <div class="example" id="modalExample"></div>
+
+      <div class="messages" id="messages" aria-live="polite"></div>
+
+      <div class="controls">
+        <input id="chatInput" placeholder="Type a message and press Enter or Send..." />
+        <button id="sendBtn" class="btn">Send</button>
+        <button id="micBtn" class="ghost">🎤</button>
       </div>
-      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px">
-        <button id="modalRun" class="btn">Run</button>
-        <button id="modalSimulate" class="ghost">Simulate</button>
+
+      <div style="margin-top:10px">
+        <div class="small">Tools — click to open</div>
+        <div class="tools" id="tools"></div>
       </div>
-      <div id="modalOutput" style="margin-top:10px;display:none"></div>
-    </div>
+    </main>
+
+    <aside class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:800">Controls & Stats</div>
+        <div class="small">Session</div>
+      </div>
+
+      <div style="margin-top:10px">
+        <label class="small">Owner</label>
+        <input id="owner" value="Addy" style="width:100%;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:inherit;margin-top:6px" />
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="small">Usage</div>
+        <div class="stats" id="stats">
+          <div class="stat">Chats: <span id="statChats">0</span></div>
+          <div class="stat">Tools used: <span id="statTools">0</span></div>
+          <div class="stat">Visitors est.: <span id="statVisitors">1,245</span></div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div style="display:flex;gap:8px">
+          <button id="clearBtn" class="ghost">Clear Chat</button>
+          <button id="downloadBtn" class="btn">Download README</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px" class="small">
+        To enable real AI later, add a proxy and API keys. I will give one-line swap instructions.
+      </div>
+    </aside>
   </div>
+
+  <footer>© <span id="year"></span> ADDY AI Hub — Demo (no keys)</footer>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal" role="dialog" aria-hidden="true">
+  <div class="modal-card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-weight:800" id="modalTitle">Tool</div>
+      <button id="modalClose" class="ghost">Close</button>
+    </div>
+    <div style="margin-top:8px">
+      <textarea id="modalInput" rows="6" style="width:100%;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:inherit"></textarea>
+      <div class="small" id="modalExample" style="margin-top:6px;color:var(--muted)"></div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px">
+      <button id="modalRun" class="btn">Run</button>
+      <button id="modalSim" class="ghost">Simulate</button>
+    </div>
+    <div id="modalOutput" style="margin-top:12px;display:none"></div>
+  </div>
+</div>
 
 <script>
-/*
-  Full frontend-only ADDY AI Hub demo.
-  - No external APIs required.
-  - All tools simulate outputs using templates, heuristics, and small deterministic randomness.
-  - Replace simulation with proxy calls later (I will show one-line change).
+/* Frontend-only ADDY demo
+   - No external API calls.
+   - Simulated outputs designed to feel realistic.
 */
 
-/* ======= Config ======= */
-const TOOL_LIST = [
-  { id:'chat', label:'Chat (Addy)' },
-  { id:'writer', label:'AI Writer' },
-  { id:'code', label:'Code Helper' },
-  { id:'prompt', label:'Prompt Maker' },
-  { id:'translate', label:'Translator' },
-  { id:'summarize', label:'Summarizer' },
-  { id:'image', label:'Image Generator' },
-  { id:'story', label:'Story Maker' },
-  { id:'seo', label:'SEO Title' },
-  { id:'email', label:'Email Writer' },
-  { id:'ad', label:'Ad Copy' },
-  { id:'ideas', label:'Business Ideas' },
-  { id:'study', label:'Study Helper' },
-  { id:'regex', label:'Regex Maker' },
-  { id:'support', label:'Support Reply' },
-  { id:'tweet', label:'Tweet Composer' },
-  { id:'data', label:'Data Summarizer' },
-  { id:'voice', label:'Voice TTS' },
-  { id:'image_prompt', label:'Image Prompt' },
-  { id:'brainstorm', label:'Brainstorm' }
+/* Config */
+const TOOLS = [
+  {id:'writer', label:'AI Writer'},
+  {id:'code', label:'Code Helper'},
+  {id:'prompt', label:'Prompt Maker'},
+  {id:'translate', label:'Translator'},
+  {id:'imageprompt', label:'Image Prompt'},
+  {id:'summarize', label:'Summarizer'},
+  {id:'seo', label:'SEO Title'},
+  {id:'ideas', label:'Business Ideas'},
+  {id:'story', label:'Story Maker'},
+  {id:'study', label:'Study Helper'},
+  {id:'email', label:'Email Writer'},
+  {id:'adcopy', label:'Ad Copy'},
+  {id:'regex', label:'Regex Maker'},
+  {id:'motivate', label:'Motivator'},
+  {id:'character', label:'Character Chat'},
+  {id:'support', label:'Support Reply'},
+  {id:'tweet', label:'Tweet Composer'},
+  {id:'longsum', label:'Long Summarizer'},
+  {id:'brieftrans', label:'Translator (brief)'},
+  {id:'tts', label:'Voice TTS'}
 ];
 
-const state = {
-  chats: 0,
-  toolsUsed: 0,
-  conversation: [],
-  owner: localStorage.getItem('addy_owner') || 'Addy'
-};
-
-/* ======= DOM ======= */
-const messagesEl = document.getElementById('messages');
-const toolsGrid = document.getElementById('toolsGrid');
-const mainInput = document.getElementById('mainInput');
+const messages = document.getElementById('messages');
+const toolsDiv = document.getElementById('tools');
+const chatInput = document.getElementById('chatInput');
 const sendBtn = document.getElementById('sendBtn');
 const micBtn = document.getElementById('micBtn');
+const ownerInput = document.getElementById('owner');
 const statChats = document.getElementById('statChats');
 const statTools = document.getElementById('statTools');
-const ownerInput = document.getElementById('ownerInput');
-const ownerChip = document.getElementById('ownerChip');
-const clearChatBtn = document.getElementById('clearChat');
-const downloadReadme = document.getElementById('downloadReadme');
-const modal = document.getElementById('toolModal');
+const clearBtn = document.getElementById('clearBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const modal = document.getElementById('modal');
 const modalTitle = document.getElementById('modalTitle');
 const modalInput = document.getElementById('modalInput');
 const modalExample = document.getElementById('modalExample');
-const modalClose = document.getElementById('modalClose');
 const modalRun = document.getElementById('modalRun');
-const modalSimulate = document.getElementById('modalSimulate');
+const modalSim = document.getElementById('modalSim');
+const modalClose = document.getElementById('modalClose');
 const modalOutput = document.getElementById('modalOutput');
-const imagePreview = document.getElementById('imagePreview');
-const modeLabel = document.getElementById('modeLabel');
-const yearSpan = document.getElementById('year');
+const year = document.getElementById('year');
 
-yearSpan.innerText = new Date().getFullYear();
+year.innerText = new Date().getFullYear();
 
-/* ======= Utilities ======= */
-function appendMessage(text, who='bot') {
-  const wrapper = document.createElement('div');
-  wrapper.className = 'msg';
-  const whoDiv = document.createElement('div'); whoDiv.className='who'; whoDiv.innerText = (who==='user'? state.owner : 'Addy');
-  const bubble = document.createElement('div'); bubble.className = 'bubble ' + (who==='user' ? 'user' : 'bot');
-  bubble.innerText = text;
-  wrapper.appendChild(whoDiv);
-  wrapper.appendChild(bubble);
-  messagesEl.appendChild(wrapper);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-}
-function setOwner(name){ state.owner = name || 'Addy'; ownerInput.value = state.owner; ownerChip.innerText = 'Owner: ' + state.owner; localStorage.setItem('addy_owner', state.owner); }
+/* state */
+let chats = 0, toolsUsed = 0;
+let owner = localStorage.getItem('addy_owner') || 'Addy';
 
-/* ======= Tools render ======= */
-TOOL_LIST.forEach(t=>{
-  const el = document.createElement('div');
-  el.className = 'tool';
-  el.innerText = t.label;
-  el.onclick = ()=> openTool(t);
-  toolsGrid.appendChild(el);
+ownerInput.value = owner;
+document.getElementById('ownerLabel').innerText = owner;
+
+/* init tools */
+TOOLS.forEach(t=>{
+  const b = document.createElement('div'); b.className='tool'; b.innerText=t.label;
+  b.onclick = ()=> openTool(t);
+  toolsDiv.appendChild(b);
 });
 
-/* ======= Chat functions ======= */
-function sendChat(){
-  const txt = mainInput.value.trim();
-  if(!txt) return;
-  appendMessage(txt, 'user');
-  mainInput.value = '';
-  state.chats++; statChats.innerText = state.chats;
-  // simulated thinking
-  appendMessage('Addy is thinking...', 'bot');
-  setTimeout(()=>{
-    const reply = simulateChatReply(txt);
-    // replace last bot 'thinking' bubble
-    const bots = messagesEl.querySelectorAll('.msg .bubble.bot');
-    if(bots && bots.length) bots[bots.length-1].innerText = reply;
-    else appendMessage(reply, 'bot');
-    speak(reply);
-  }, 700 + Math.random()*900);
+/* initial message */
+appendBot('Welcome — I am Addy. Try chat or any tool. (Demo simulation)');
+
+function appendUser(text){
+  const div = document.createElement('div'); div.className='msg user';
+  const who = document.createElement('div'); who.className='who'; who.innerText = owner;
+  const bubble = document.createElement('div'); bubble.className='bubble user'; bubble.innerText = text;
+  div.appendChild(who); div.appendChild(bubble); messages.appendChild(div); messages.scrollTop = messages.scrollHeight;
 }
-function simulateChatReply(input){
-  if(!input) return 'Kuch bolo, main help karunga.';
-  const low = input.toLowerCase();
-  if(low.includes('how') || low.includes('kaise') || low.includes('help')) return 'Simple steps: 1) Break problem 2) Prototype 3) Test & iterate. Need example?';
-  if(low.length < 40) return `Short answer: ${input.split('').reverse().join('').slice(0,80)} (sim)`;
-  return `Summary: ${input.slice(0,140)}... (simulated)`;
+function appendBot(text){
+  const div = document.createElement('div'); div.className='msg bot';
+  const who = document.createElement('div'); who.className='who'; who.innerText = 'Addy';
+  const bubble = document.createElement('div'); bubble.className='bubble bot'; bubble.innerText = text;
+  div.appendChild(who); div.appendChild(bubble); messages.appendChild(div); messages.scrollTop = messages.scrollHeight;
 }
 
-/* ======= Tool modal ======= */
+/* chat send */
+sendBtn.onclick = sendChat;
+chatInput.addEventListener('keydown', (e)=> { if(e.key==='Enter'){ e.preventDefault(); sendChat(); }});
+
+function sendChat(){
+  const t = chatInput.value.trim(); if(!t) return;
+  appendUser(t); chatInput.value=''; chats++; statChats.innerText = chats;
+  appendBot('Addy is thinking...');
+  setTimeout(()=> {
+    const r = simulateChatReply(t);
+    // replace last bot thinking
+    const bots = messages.querySelectorAll('.msg.bot .bubble.bot');
+    if(bots && bots.length) bots[bots.length-1].innerText = r;
+    else appendBot(r);
+    speak(r);
+  }, 600 + Math.random()*900);
+}
+function simulateChatReply(text){
+  if(!text) return 'Kuch likh bhai, main help karunga.';
+  const l = text.toLowerCase();
+  if(l.includes('how') || l.includes('kaise') || l.includes('help')) return 'Simple: 1) Problem define karo 2) Break karo 3) Test karo. Chahiye example?';
+  if(text.length < 40) return `Short answer: ${text.split('').reverse().join('').slice(0,80)} (sim)`;
+  return `Summary: ${text.slice(0,140)}... (simulated)`;
+}
+
+/* tools modal */
 let activeTool = null;
 function openTool(tool){
   activeTool = tool;
+  modal.style.display='flex';
+  modal.setAttribute('aria-hidden','false');
   modalTitle.innerText = tool.label;
   modalInput.value = '';
-  modalOutput.style.display='none'; modalOutput.innerHTML='';
+  modalOutput.style.display='none'; modalOutput.innerText='';
   modalExample.innerText = toolExample(tool.id);
-  modal.style.display = 'flex';
-  modal.setAttribute('aria-hidden','false');
 }
 modalClose.onclick = ()=> { modal.style.display='none'; modal.setAttribute('aria-hidden','true'); }
-modalSimulate.onclick = ()=> runTool(true);
 modalRun.onclick = ()=> runTool(false);
+modalSim.onclick = ()=> runTool(true);
 
-/* tool examples */
 function toolExample(id){
   switch(id){
-    case 'writer': return 'Example: Write a 150-word intro about remote work productivity.';
-    case 'code': return 'Example: Fix my JS function that returns undefined when using map.';
-    case 'translate': return 'Example: Translate to Hindi: How do I deploy on Render?';
-    case 'image': return 'Example: Cinematic portrait of a traveler in neon city at night';
-    default: return 'Enter the prompt and press Run';
+    case 'writer': return 'Write a 120-word intro about remote work productivity.';
+    case 'code': return 'Fix my JS map() returning undefined.';
+    case 'translate': return 'Translate to Hindi: How to deploy on Render?';
+    case 'imageprompt': return 'Cinematic portrait of a traveler in neon city.';
+    default: return 'Enter input and press Run or Simulate';
   }
 }
 
-/* run tool (simulate or real if you later swap) */
 function runTool(simulateOnly){
   const prompt = modalInput.value.trim() || '[no input]';
-  modalOutput.style.display='block'; modalOutput.innerHTML = 'Processing...';
-  state.toolsUsed++; statTools.innerText = state.toolsUsed;
-  // small typing simulation
+  modalOutput.style.display='block'; modalOutput.innerText = 'Processing...';
+  toolsUsed++; statTools.innerText = toolsUsed;
   setTimeout(()=>{
     let out;
-    if(simulateOnly || true /* always simulate in this frontend-only version */){
-      out = simulateToolOutput(activeTool.id, prompt);
-      modalOutput.innerHTML = `<pre style="white-space:pre-wrap">${escapeHtml(out)}</pre>`;
-      appendMessage(`${activeTool.label}: ${out}`, 'bot');
-      if(activeTool.id === 'image'){
-        // show a placeholder generated image (data uri with gradient)
-        const img = generatePlaceholderImage(prompt);
-        imagePreview.innerHTML = `<img src="${img}" class="preview-image" alt="generated">`;
-      }
-      if(activeTool.id === 'voice' || activeTool.id === 'chat'){
-        speak(out);
-      }
-    } else {
-      // on real version you'd call proxy here
-      out = 'Real proxy call (not available in demo)';
-      modalOutput.innerText = out;
-      appendMessage(out, 'bot');
+    out = simulateTool(activeTool.id, prompt);
+    modalOutput.innerHTML = `<pre style="white-space:pre-wrap">${escapeHtml(out)}</pre>`;
+    appendBot(`${activeTool.label}: ${out}`);
+    if(activeTool.id==='imageprompt'){
+      // show placeholder svg
+      const svg = generateSVG(prompt);
+      const img = `<img src="${svg}" class="preview-image" alt="preview">`;
+      modalOutput.innerHTML += '<div style="margin-top:8px">' + img + '</div>';
+      document.querySelector('#chatInput').focus();
     }
-  }, 700 + Math.random()*800);
+    if(activeTool.id==='tts' || activeTool.id==='chat') speak(out);
+  }, 600 + Math.random()*900);
 }
 
-/* simulate outputs */
-function simulateToolOutput(toolId, prompt){
-  prompt = prompt || '';
-  switch(toolId){
+function simulateTool(id, prompt){
+  switch(id){
     case 'writer':
-      return `Intro:\n${prompt}\n\n1. Hook\n2. Context\n3. Call to action\n\n(150 words simulated)`;
+      return `Intro (sim): ${prompt}\n\n1) Hook\n2) Context\n3) CTA`;
     case 'code':
-      return `// Example fix (simulated)\nfunction example(x){ return x ? x.map(v=>v*2) : []; }`;
+      return `// Simulated fix\nfunction example(a){ return Array.isArray(a)? a.map(x=>x*2): []; }`;
     case 'prompt':
-      return `Image prompt: Ultra-detailed cinematic shot of ${prompt}, 8k, dramatic lighting.`;
+      return `Prompt: A cinematic portrait of ${prompt} with dramatic lighting, ultra-detailed.`;
     case 'translate':
-      return `Hindi: ${prompt.split('').reverse().join('')} \n(English paraphrase: ${prompt.slice(0,80)})`;
-    case 'image':
-      return `Generated image for: ${prompt}\n(placeholder preview shown)`;
+    case 'brieftrans':
+      return `Hindi (sim): ${prompt.split('').reverse().join('')} \n(English paraphrase: ${prompt.slice(0,80)})`;
     case 'summarize':
-      return `Summary:\n1. ${prompt.slice(0,60)}\n2. ${prompt.slice(60,120)}`;
+    case 'longsum':
+      const p = prompt.match(/(.{1,80})(?:\s|$)/g) || [prompt];
+      return p.slice(0,4).map((s,i)=>`${i+1}. ${s.trim()}`).join('\n');
+    case 'imageprompt':
+      return `Image prompt generated for: ${prompt}`;
+    case 'seo':
+      return `${prompt} — Best guide to ${prompt.split(' ')[0] || 'this'}`;
+    case 'email':
+      return `Hi,\n\n${prompt}\n\nRegards,\n${owner}`;
+    case 'adcopy':
+      return `${prompt} — Buy now! Limited offer.`;
+    case 'ideas':
+      return `1) ${prompt} as a service\n2) ${prompt} marketplace\n3) niche product`;
     case 'story':
       return `Story: Once upon a time about ${prompt}... (simulated)`;
-    case 'seo':
-      return `SEO title: ${prompt} - How to ${prompt.split(' ')[0]} in 5 steps`;
-    case 'email':
-      return `Hi [Name],\n\nI hope you are well. ${prompt}\n\nRegards,\n${state.owner}`;
-    case 'ad':
-      return `${prompt} — get it now! Limited offer.`;
-    case 'ideas':
-      return `1) ${prompt} subscription\n2) ${prompt} marketplace\n3) AI assistant for ${prompt}`;
     case 'study':
-      return `Explain: ${prompt}\nSimple example: ...`;
+      return `Explain ${prompt} in simple steps:\n1) ...\n2) ...`;
     case 'regex':
       return `Regex (sim): /${prompt.replace(/\s+/g,'.')}/g`;
     case 'support':
-      return `Support reply:\nHi, thanks for reporting ${prompt}. We'll investigate and revert in 24h.`;
+      return `Support reply: Thanks for reporting ${prompt}. We'll check and update.`;
     case 'tweet':
-      return `Tweet: ${prompt} #${state.owner}`;
+      return `Tweet: ${prompt} #${owner}`;
     case 'data':
       return `Data summary (sim): mean=42, median=40, insights: ...`;
-    case 'voice':
-      return `TTS ready: will speak via browser. Text: ${prompt}`;
-    case 'image_prompt':
-      return `Image prompt variants for ${prompt}:\n- cinematic\n- minimal\n- surreal`;
+    case 'tts':
+      return `TTS ready (browser): ${prompt}`;
+    case 'character':
+      return `Character chat with ${prompt}: Hello, I'm ${prompt}.`;
+    case 'motivate':
+      return `Motivation: Keep going! Small steps daily lead to big wins.`;
     case 'brainstorm':
-      return `Brainstorm ideas for ${prompt}:\n- Idea A\n- Idea B\n- Idea C`;
+      return `Brainstorm for ${prompt}:\n- Idea A\n- Idea B\n- Idea C`;
     default:
-      return `Simulated output for ${toolId}: ${prompt}`;
+      return `Simulated ${id} output for: ${prompt}`;
   }
 }
 
-/* placeholder image generator (small SVG data URL) */
-function generatePlaceholderImage(prompt){
-  const bg1 = '#071126', bg2 = '#0b2b3a';
-  const text = escapeHtml(prompt.slice(0,60) || 'ADDY Image');
-  const svg = `
-  <svg xmlns='http://www.w3.org/2000/svg' width='1200' height='700'>
-    <defs>
-      <linearGradient id='g' x1='0' x2='1'>
-        <stop offset='0' stop-color='${bg1}'/>
-        <stop offset='1' stop-color='${bg2}'/>
-      </linearGradient>
-    </defs>
-    <rect width='100%' height='100%' fill='url(#g)'/>
-    <text x='50%' y='48%' fill='#9fd6f2' font-size='36' font-family='Arial' text-anchor='middle'>${text}</text>
-  </svg>`;
+/* small svg placeholder */
+function generateSVG(text){
+  const t = encodeURIComponent(text.slice(0,60) || 'ADDY Image');
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='700'><defs><linearGradient id='g' x1='0' x2='1'><stop offset='0' stop-color='#071126'/><stop offset='1' stop-color='#0b2b3a'/></linearGradient></defs><rect width='100%' height='100%' fill='url(#g)'/><text x='50%' y='50%' fill='#9fd6f2' font-size='36' font-family='Arial' text-anchor='middle'>${t}</text></svg>`;
   return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
 }
 
-/* escape html */
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]); }
 
-/* ======= TTS: browser fallback ======= */
+/* TTS (browser) */
 function speak(text){
   try{
     if(!window.speechSynthesis) return;
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = document.getElementById('lang-code')?.value || 'en-US';
+    u.lang = document.getElementById('owner')?.value?.includes('Addy') ? 'en-US' : 'en-US';
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
-  }catch(e){ console.warn('TTS err', e); }
+  }catch(e){ console.warn('TTS', e); }
 }
 
-/* ======= Speech recognition (mic) ======= */
+/* Mic (speech to text) */
 let recognition = null;
 if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -408,51 +366,52 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
   recognition.lang = 'en-US';
   recognition.interimResults = false;
   recognition.onresult = (ev) => {
-    const t = ev.results[0][0].transcript;
-    mainInput.value = t;
+    chatInput.value = ev.results[0][0].transcript;
   };
-  recognition.onerror = ()=> appendMessage('Voice input error', 'bot');
+  recognition.onerror = ()=> appendBot('Voice input error');
 }
 micBtn.onclick = ()=>{
-  if(!recognition){ alert('Voice not supported in this browser'); return; }
-  try{ recognition.start(); }catch(e){ console.warn(e); appendMessage('Mic start error', 'bot'); }
+  if(!recognition){ alert('Mic not supported'); return; }
+  try{ recognition.start(); }catch(e){ appendBot('Mic start error'); }
 };
 
-/* ======= Keyboard and UI events ======= */
-sendBtn.onclick = sendChat;
-mainInput.addEventListener('keydown', e=> { if(e.key==='Enter'){ e.preventDefault(); sendChat(); }});
-ownerInput.addEventListener('input', ()=> setOwner(ownerInput.value));
-clearChatBtn.onclick = ()=> { messagesEl.innerHTML=''; setOwner(ownerInput.value); appendMessage('Cleared. Ready.'); state.chats=0; state.toolsUsed=0; statChats.innerText='0'; statTools.innerText='0'; imagePreview.innerHTML='No image generated yet.';};
-downloadReadme.onclick = ()=> {
-  const txt = `ADDY AI Hub — README\nOwner: ${state.owner}\nDemo: frontend-only. To enable real APIs, add a proxy server and API keys.`;
-  const b = new Blob([txt], {type:'text/plain'}); const url=URL.createObjectURL(b); const a=document.createElement('a'); a.href=url; a.download='README-ADDY.txt'; a.click(); URL.revokeObjectURL(url);
-}
-
-/* ======= Tool run helper when pressing Enter inside modal ======= */
-modalInput.addEventListener('keydown', (e)=>{
+/* modal enter */
+modalInput.addEventListener('keydown', (e)=> {
   if(e.key==='Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); runTool(true); }
 });
 
-/* ======= Accessibility and initial render ======= */
-setOwner(state.owner);
-statChats.innerText = state.chats;
-statTools.innerText = state.toolsUsed;
-appendMessage('Welcome — I am Addy. Use the tools on the right or chat below (demo simulation).');
+/* run from modal by Enter */
+function runToolFromModal(){
+  runTool(true);
+}
 
-/* ======= One-line guide for switching to real proxy later =======
-When you have a proxy/API, replace simulateToolOutput & simulateChatReply calls
-with a fetch to your proxy endpoint, e.g.:
-
-const res = await fetch(PROXY_URL + '/api/openai', {
-  method:'POST', headers:{'Content-Type':'application/json'},
-  body: JSON.stringify({ prompt, tool: toolId })
+/* wire up controls */
+clearBtn.onclick = ()=> { messages.innerHTML=''; appendBot('Cleared. Ready.'); chats=0; toolsUsed=0; statChats.innerText='0'; statTools.innerText='0'; }
+downloadBtn.onclick = ()=> {
+  const txt = `ADDY AI Hub — README\nOwner: ${owner}\nDemo: frontend-only (no keys).`;
+  const blob = new Blob([txt], {type:'text/plain'}); const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='README-ADDY.txt'; a.click(); URL.revokeObjectURL(url);
+}
+ownerInput.addEventListener('input', ()=> {
+  owner = ownerInput.value || 'Addy';
+  localStorage.setItem('addy_owner', owner);
+  document.getElementById('ownerLabel').innerText = owner;
 });
-const json = await res.json();
-const output = json.output || json.text || json.choices?.[0]?.message?.content;
 
-I will provide exact one-line replacements when you add keys. 
-======================== */
+/* modal run wrapper */
+function runTool(real=false){
+  runTool(real?false:true);
+}
 
+/* initial attach listeners for modal buttons properly */
+modalRun.addEventListener('click', ()=> runTool(false));
+modalSim.addEventListener('click', ()=> runTool(true));
+
+/* initial message */
+appendBot('Welcome — I am Addy. Click tools or chat.');
+
+/* focus */
+chatInput.focus();
 </script>
 </body>
 </html>
