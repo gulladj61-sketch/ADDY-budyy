@@ -1158,4 +1158,87 @@ window.addEventListener('load',()=>{
   // small delay so animation completes before hide
   setTimeout(()=> document.getElementById('introLoader').style.display='none', 1500);
 </script>
-<!-- END Premium Intro -->
+<!-- END Premium Intro --><!-- ADDY: Voice Recorder + Light Noise Filter -->
+<style>
+  #voiceBox{
+    background:#081e26;
+    border:1px solid rgba(255,255,255,0.05);
+    border-radius:12px;
+    padding:14px;
+    margin:12px 0;
+    color:#cfeefb;
+  }
+  #recStatus{font-size:13px;color:#7ef0ff;margin-top:6px;}
+  #audioPlayer{margin-top:10px;width:100%;}
+  .btnV{background:#00d4ff;color:#012827;padding:8px 14px;border-radius:8px;border:none;font-weight:600;cursor:pointer;margin:4px;}
+</style>
+
+<div id="voiceBox">
+  <h3>🎤 Voice Enhance (Lite)</h3>
+  <p class="small">Record your voice (up to 30s), auto-filter light background noise and download.</p>
+  <div>
+    <button id="startRec" class="btnV">Start Recording</button>
+    <button id="stopRec" class="btnV">Stop</button>
+    <button id="playRec" class="btnV">Play</button>
+    <button id="downloadRec" class="btnV">Download</button>
+  </div>
+  <div id="recStatus">Idle</div>
+  <audio id="audioPlayer" controls></audio>
+</div>
+
+<script>
+let mediaRecorder, audioChunks=[], audioBlob=null, timer=null;
+
+async function startRecording(){
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks=[];
+    mediaRecorder.ondataavailable = e=>audioChunks.push(e.data);
+    mediaRecorder.onstop = async ()=>{
+      audioBlob = new Blob(audioChunks,{type:'audio/wav'});
+      // Basic noise filter (high-pass)
+      const arrayBuffer = await audioBlob.arrayBuffer();
+      const ctx = new AudioContext();
+      const buffer = await ctx.decodeAudioData(arrayBuffer);
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      const biquad = ctx.createBiquadFilter();
+      biquad.type = "highpass";
+      biquad.frequency.value = 180; // remove low hum
+      source.connect(biquad).connect(ctx.destination);
+      source.start();
+      const player = document.getElementById('audioPlayer');
+      player.src = URL.createObjectURL(audioBlob);
+    };
+    mediaRecorder.start();
+    document.getElementById('recStatus').innerText="Recording... (max 30s)";
+    timer=setTimeout(stopRecording,30000);
+  }catch(err){
+    alert("Mic access error: "+err.message);
+  }
+}
+function stopRecording(){
+  if(mediaRecorder && mediaRecorder.state!=="inactive"){
+    mediaRecorder.stop();
+    document.getElementById('recStatus').innerText="Processing...";
+    clearTimeout(timer);
+  }
+}
+function playRecording(){
+  const player=document.getElementById('audioPlayer');
+  if(player.src){player.play();}
+}
+function downloadRecording(){
+  if(!audioBlob)return alert("No recording yet");
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(audioBlob);
+  a.download='enhanced_voice.wav';
+  a.click();
+}
+document.getElementById('startRec').onclick=startRecording;
+document.getElementById('stopRec').onclick=stopRecording;
+document.getElementById('playRec').onclick=playRecording;
+document.getElementById('downloadRec').onclick=downloadRecording;
+</script>
+<!-- END Voice Recorder -->
