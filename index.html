@@ -1604,4 +1604,71 @@ document.querySelectorAll('button').forEach(btn=>{
   btn.classList.add('glow-hover');
 });
 </script>
-<!-- END Polish Booster Pack -->
+<!-- END Polish Booster Pack --><!-- ADDY Final Booster Pack -->
+<!-- ✅ PWA installable setup -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#00e6ff">
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js')
+      .then(()=>console.log('Service Worker registered'))
+      .catch(err=>console.log('SW fail',err));
+    });
+  }
+</script>
+
+<!-- ✅ Smooth Fade Animations -->
+<style>
+  html{scroll-behavior:smooth;}
+  [data-fade]{opacity:0;transform:translateY(30px);transition:all .8s ease;}
+  [data-fade].show{opacity:1;transform:translateY(0);}
+  .neon-btn:hover{box-shadow:0 0 15px #00f0ff88, inset 0 0 10px #00f0ff33;transform:scale(1.04);}
+  #visCounter{color:#8ff0ff;text-align:right;font-size:13px;margin-top:10px;}
+  #adSpace{margin:20px auto;padding:20px;border:1px dashed rgba(255,255,255,0.2);
+           border-radius:12px;text-align:center;color:#7ecae0;background:rgba(255,255,255,0.02);}
+</style>
+
+<!-- ✅ Visitor counter -->
+<div id="visCounter">Visitors: loading...</div>
+
+<!-- ✅ Ad-ready section -->
+<div id="adSpace" data-fade>
+  <h3>🌟 Sponsored Section</h3>
+  <p>Your Ad / Partner content will appear here.</p>
+</div>
+
+<!-- ✅ Contact section -->
+<div id="contactBox" data-fade>
+  <h3>📩 Contact</h3>
+  <p>Email: <a href="mailto:addy.ai.contact@gmail.com" style="color:#00e6ff;text-decoration:none;">addy.ai.contact@gmail.com</a></p>
+</div>
+
+<footer data-fade style="margin-top:20px;text-align:center;font-size:13px;color:#9fd8f0;">
+  © 2025 <strong>ADDY.AI</strong> — Smart Free AI Tools Hub
+</footer>
+
+<script>
+/* Fade on scroll */
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')})});
+document.querySelectorAll('[data-fade]').forEach(el=>obs.observe(el));
+
+/* Visitor counter (local mock + analytics ping) */
+(function(){
+  let c=localStorage.getItem('addy_visit');
+  if(!c){c=Math.floor(Math.random()*80)+20;}
+  else{c=parseInt(c)+1;}
+  localStorage.setItem('addy_visit',c);
+  document.getElementById('visCounter').innerText="👁 Visitors: "+c;
+})();
+
+/* Simple analytics ping (optional Cloudflare/Google tag ready) */
+(function(){
+  const img=new Image();
+  img.src="https://example-analytics-ping.vercel.app/ping?ref=addy-ai&t="+Date.now();
+})();
+
+/* Neon hover for buttons */
+document.querySelectorAll('button').forEach(b=>b.classList.add('neon-btn'));
+</script>
+<!-- END ADDY Booster -->
