@@ -621,4 +621,112 @@ bgBtn.className="btn alt";
 bgBtn.onclick=removeBg;
 $('applyEd').after(bgBtn);
 </script>
-<!-- END Part-2 (1/4) -->
+<!-- END Part-2 (1/4) --><!-- ADDY Part-2 (2/4): OCR + Palette Extractor + Auto-Backup -->
+<script>
+/* ================= OCR (Tesseract.js lite) ================= */
+async function loadTesseract(){
+  if(window.TessLoaded) return window.Tesseract;
+  const s=document.createElement('script');
+  s.src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
+  document.body.appendChild(s);
+  await new Promise(r=>s.onload=r);
+  window.TessLoaded=true;
+  return window.Tesseract;
+}
+async function runOCR(){
+  if(!edImg.src) return alert("Upload an image first");
+  const T=await loadTesseract();
+  const worker=T.createWorker();
+  await worker.loadLanguage('eng');
+  await worker.initialize('eng');
+  const result=await worker.recognize(edImg.src);
+  await worker.terminate();
+  const txt=result.data.text.trim();
+  if(!txt){alert("No text found");return;}
+  localStorage.setItem('addy_ocr',txt);
+  alert("OCR Done ✓  Text copied below output box");
+  // create output area if not exists
+  let box=document.getElementById('ocrBox');
+  if(!box){
+    box=document.createElement('textarea');
+    box.id='ocrBox';
+    box.placeholder='Extracted text will appear here...';
+    box.style.width='100%';box.style.minHeight='120px';
+    box.style.marginTop='10px';box.style.background='rgba(255,255,255,0.03)';
+    box.style.color='#fff';
+    $('editor').appendChild(box);
+  }
+  box.value=txt;
+}
+const ocrBtn=document.createElement('button');
+ocrBtn.textContent="Run OCR (Read Text)";
+ocrBtn.className="btn";
+ocrBtn.onclick=runOCR;
+$('applyEd').after(ocrBtn);
+
+/* ================= Palette Extractor ================= */
+function extractPalette(){
+  if(!edImg.src) return alert("Upload an image first");
+  const ctx=editorCanvas.getContext('2d');
+  const imgData=ctx.getImageData(0,0,editorCanvas.width,editorCanvas.height).data;
+  const colors={}, step=20;
+  for(let i=0;i<imgData.length;i+=4*step){
+    const r=imgData[i],g=imgData[i+1],b=imgData[i+2];
+    const key=`${r>>4}${g>>4}${b>>4}`;
+    colors[key]={r,g,b};
+  }
+  const keys=Object.keys(colors).slice(0,12);
+  let wrap=document.getElementById('paletteWrap');
+  if(!wrap){
+    wrap=document.createElement('div');
+    wrap.id='paletteWrap';
+    wrap.style.display='flex';
+    wrap.style.flexWrap='wrap';
+    wrap.style.marginTop='10px';
+    $('editor').appendChild(wrap);
+  }
+  wrap.innerHTML='';
+  keys.forEach(k=>{
+    const {r,g,b}=colors[k];
+    const hex="#"+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
+    const box=document.createElement('div');
+    box.style.width='60px';box.style.height='60px';
+    box.style.borderRadius='8px';
+    box.style.margin='4px';
+    box.style.background=hex;
+    box.title=hex;
+    box.onclick=()=>{navigator.clipboard.writeText(hex);alert(`Copied ${hex}`);};
+    wrap.appendChild(box);
+  });
+  alert("Palette generated — tap a color to copy its HEX");
+}
+const palBtn=document.createElement('button');
+palBtn.textContent="Palette Extract";
+palBtn.className="btn alt";
+palBtn.onclick=extractPalette;
+$('applyEd').after(palBtn);
+
+/* ================= Auto-Backup / Restore ================= */
+function autoSave(){
+  try{
+    const session={
+      img:edCurrentData||edOriginal,
+      text:$('textInput').value,
+      notes:$('sessionNotes').value
+    };
+    localStorage.setItem('addy_auto',JSON.stringify(session));
+  }catch(e){console.warn('autosave fail',e);}
+}
+setInterval(autoSave,15000);
+window.addEventListener('load',()=>{
+  const d=localStorage.getItem('addy_auto');
+  if(!d)return;
+  try{
+    const s=JSON.parse(d);
+    if(s.img){edImg=new Image();edImg.onload=()=>{edOriginal=s.img;fitEditorCanvas();};edImg.src=s.img;}
+    if(s.text)$('textInput').value=s.text;
+    if(s.notes)$('sessionNotes').value=s.notes;
+  }catch(e){console.log('restore fail',e);}
+});
+</script>
+<!-- END Part-2 (2/4) -->
