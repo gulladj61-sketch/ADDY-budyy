@@ -1548,4 +1548,60 @@ document.getElementById('downloadRec').onclick=downloadRecording;
 
 })();
 </script>
-<!-- END ADDY Voice Enhance -->
+<!-- END ADDY Voice Enhance --><!-- ADDY Final Polish Booster Pack -->
+<!-- ✅ Meta & SEO polish -->
+<meta name="title" content="ADDY.AI — Smart Free AI Tools Hub">
+<meta name="description" content="Use free AI-powered tools for voice enhancement, image effects, text summary and more. 100% browser-based and secure.">
+<meta property="og:title" content="ADDY.AI — Free Smart Tools">
+<meta property="og:description" content="Premium free AI tools — built for everyone. Try now.">
+<meta name="theme-color" content="#00e6ff">
+
+<style>
+  html{scroll-behavior:smooth;}
+  [data-animate]{opacity:0;transform:translateY(30px);transition:all 0.8s ease;}
+  [data-animate].visible{opacity:1;transform:translateY(0);}
+  .glow-hover:hover{box-shadow:0 0 15px #00f6ff66, inset 0 0 10px #00f6ff33;transform:scale(1.03);}
+  #visitorBox{color:#9fe7ff;font-size:13px;text-align:right;margin:10px 0;}
+  #contactBox{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:10px;margin-top:20px;}
+  #contactBox a{color:#00e6ff;text-decoration:none;font-weight:500;}
+  footer{margin-top:20px;text-align:center;font-size:13px;color:#8dcde8;}
+</style>
+
+<!-- ✅ Visitor Counter -->
+<div id="visitorBox">👁 Visitors loading...</div>
+
+<!-- ✅ Contact / About section -->
+<div id="contactBox" data-animate>
+  <h3>📩 Contact</h3>
+  <p>Want to collaborate or buy this project?<br>
+  <strong>Email:</strong> <a href="mailto:addy.ai.contact@gmail.com">addy.ai.contact@gmail.com</a></p>
+  <p style="font-size:12px;color:#7ca9bd">Your messages are welcome — suggestions, feedback, or purchase interest.</p>
+</div>
+
+<footer data-animate>© 2025 <strong>ADDY.AI</strong> — Smart Free AI Tools Hub</footer>
+
+<script>
+/* Fade-in on scroll animation */
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){entry.target.classList.add('visible');}
+  });
+});
+document.querySelectorAll('[data-animate]').forEach(el=>observer.observe(el));
+
+/* Live Visitor Counter (localStorage based mock) */
+(function(){
+  const box=document.getElementById('visitorBox');
+  let count=localStorage.getItem('addy_visitors');
+  if(!count){count=Math.floor(Math.random()*50)+10;}
+  else{count=parseInt(count)+1;}
+  localStorage.setItem('addy_visitors',count);
+  box.innerText="👁 Total Visitors: "+count;
+})();
+
+/* Neon hover effect for all buttons */
+document.querySelectorAll('button').forEach(btn=>{
+  btn.classList.add('glow-hover');
+});
+</script>
+<!-- END Polish Booster Pack -->
