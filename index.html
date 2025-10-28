@@ -1120,4 +1120,42 @@ window.addEventListener('load',()=>{
     <a href="mailto:your-email@example.com?subject=Interested%20in%20ADDY%20Buyer%20Pack" style="margin-left:10px;color:#9fb7d8;text-decoration:underline">Email to buy</a>
   </div>
 </section>
-<!-- END sale UI -->
+<!-- END sale UI --><!-- ADDY Premium Intro Animation -->
+<style>
+  #introLoader {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, #00151f, #000a12);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeOut 1.4s ease-in-out forwards;
+    animation-delay: 1.3s;
+  }
+  #introLoader .logo {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.2em;
+    letter-spacing: 2px;
+    color: #00e6ff;
+    text-shadow: 0 0 12px #00ffffaa;
+    animation: pulse 1.2s ease-in-out infinite alternate;
+  }
+  @keyframes pulse {
+    from { transform: scale(1); opacity: 0.8; }
+    to { transform: scale(1.2); opacity: 1; }
+  }
+  @keyframes fadeOut {
+    to { opacity: 0; visibility: hidden; }
+  }
+</style>
+
+<div id="introLoader">
+  <div class="logo">ADDY.AI</div>
+</div>
+
+<script>
+  // small delay so animation completes before hide
+  setTimeout(()=> document.getElementById('introLoader').style.display='none', 1500);
+</script>
+<!-- END Premium Intro -->
