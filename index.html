@@ -2393,4 +2393,347 @@ document.addEventListener('DOMContentLoaded', ()=>{ /* nothing for now */ });
 </script>
 
 </body>
+</html><!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ADDY.AI — Image Enhance Demo</title>
+<meta name="description" content="Client-side Image Enhance & Background Blur demo. Visual enhancement only, no external paid APIs."/>
+<style>
+  :root{--bg:#07121a;--card:#0b2430;--accent:#00e6ff;--muted:#9fd8ea;}
+  body{margin:0;background:linear-gradient(180deg,#020612,var(--bg));font-family:Inter,system-ui,Segoe UI,Roboto,'Poppins',sans-serif;color:#eaf9ff;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;}
+  .wrap{width:100%;max-width:1000px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 10px 40px rgba(0,0,0,0.6)}
+  h1{margin:0 0 8px 0;color:var(--accent);font-size:20px}
+  p.lead{margin:0 0 12px 0;color:var(--muted);font-size:13px}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .btn{background:var(--accent);color:#00211f;padding:10px 14px;border-radius:8px;border:0;font-weight:700;cursor:pointer}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#cfeffb}
+  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  #canvasWrap{margin-top:14px;background:#000;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:10px;overflow:hidden}
+  canvas{max-width:100%;height:auto;border-radius:6px;display:block}
+  input[type=file]{display:none}
+  .small{font-size:13px;color:var(--muted)}
+  #status{font-size:13px;color:#bfefff;margin-left:8px}
+  #progressBar{height:8px;background:rgba(255,255,255,0.04);border-radius:8px;overflow:hidden;margin-top:12px}
+  #progressInner{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#00ffa0);transition:width .3s ease}
+  footer{margin-top:14px;text-align:center;color:#86d6e8;font-size:13px}
+  /* small responsive */
+  @media(max-width:640px){ .row{flex-direction:column;align-items:stretch} .controls{justify-content:flex-start} }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="card">
+    <h1>ADDY — Image Enhance & Background Blur (Demo)</h1>
+    <p class="lead">Upload an image → try Background Blur (person-aware if supported) → Enhance (sharpen + contrast). Visual improvements only — no paid API.</p>
+
+    <div class="controls">
+      <label class="btn" id="uploadLabel">Upload Image
+        <input type="file" id="fileInput" accept="image/*">
+      </label>
+
+      <button class="btn ghost" id="blurBtn">Background Blur</button>
+      <button class="btn" id="enhanceBtn">Enhance (Visual)</button>
+      <button class="btn ghost" id="resetBtn">Reset</button>
+      <button class="btn" id="downloadBtn">Download PNG</button>
+
+      <div id="status" class="small">Idle</div>
+    </div>
+
+    <div id="progressBar" aria-hidden="true"><div id="progressInner"></div></div>
+
+    <div id="canvasWrap" style="margin-top:12px">
+      <canvas id="workCanvas" width="800" height="500" style="background:#111"></canvas>
+    </div>
+
+    <p class="small" style="margin-top:8px">Tip: For best blur, use portrait photos with clear subject. Enhance applies sharpen + contrast + upscale trick (visual).</p>
+  </div>
+
+  <footer>© ADDY.AI — Demo • No paid keys • Client-side</footer>
+</div>
+
+<!-- optional: body-pix for person-aware mask (loaded on demand) -->
+<script>
+/*
+ Single-file client-side visual enhancer + bg blur (demo).
+ - Uses optional BodyPix if available -> person-aware BG blur.
+ - Enhance: upscale -> unsharp mask -> downscale -> contrast -> sharpen (visual improvement).
+ - No false claims. This is a visual demo only.
+*/
+
+const fileInput = document.getElementById('fileInput');
+const workCanvas = document.getElementById('workCanvas');
+const ctx = workCanvas.getContext('2d',{alpha:true});
+const blurBtn = document.getElementById('blurBtn');
+const enhanceBtn = document.getElementById('enhanceBtn');
+const resetBtn = document.getElementById('resetBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const status = document.getElementById('status');
+const progressInner = document.getElementById('progressInner');
+
+let originalImage = null;
+let originalImageDataURL = null;
+let bodyPixNet = null;
+let busy = false;
+
+function setStatus(text){ status.innerText = text; }
+function setProgress(p){ progressInner.style.width = Math.max(0,Math.min(100,p)) + '%'; }
+
+function fitCanvasTo(img){
+  // Fit canvas to image but keep max width reasonably for display
+  const maxW = 1200, maxH = 800;
+  let w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+  const ratio = Math.min(maxW/w, maxH/h, 1);
+  w = Math.round(w*ratio); h = Math.round(h*ratio);
+  workCanvas.width = w; workCanvas.height = h;
+  ctx.clearRect(0,0,w,h);
+  ctx.drawImage(img,0,0,w,h);
+}
+
+fileInput.addEventListener('change', (e)=>{
+  const f = e.target.files[0]; if(!f) return;
+  const url = URL.createObjectURL(f);
+  const img = new Image();
+  img.onload = ()=>{ originalImage = img; fitCanvasTo(img); originalImageDataURL = workCanvas.toDataURL('image/png'); setStatus('Image loaded'); setProgress(0); };
+  img.src = url;
+});
+
+// Optional: load BodyPix on demand
+async function loadBodyPix(){
+  if(window.bodyPix && bodyPixNet) return bodyPixNet;
+  setStatus('Loading person segmentation model...');
+  try{
+    // dynamically insert CDN if not present
+    if(!window.bodyPix){
+      await new Promise((res,rej)=>{
+        const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s);
+      });
+      await new Promise((res,rej)=>{
+        const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.2.0/dist/body-pix.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s);
+      });
+    }
+    bodyPixNet = await bodyPix.load({architecture:'MobileNetV1', multiplier:0.5});
+    setStatus('Segmentation model ready');
+    return bodyPixNet;
+  }catch(err){
+    console.warn('BodyPix load failed',err);
+    setStatus('Segmentation not available (fallback will be used)');
+    return null;
+  }
+}
+
+// Background blur: person-aware if possible; fallback: overall blur
+blurBtn.addEventListener('click', async ()=>{
+  if(!originalImage) return alert('Upload an image first');
+  if(busy) return;
+  busy = true; setStatus('Preparing blur...'); setProgress(5);
+  // draw original to offscreen full-res canvas for mask
+  const tmp = document.createElement('canvas'); tmp.width = originalImage.naturalWidth || originalImage.width; tmp.height = originalImage.naturalHeight || originalImage.height;
+  const tctx = tmp.getContext('2d');
+  tctx.drawImage(originalImage,0,0,tmp.width,tmp.height);
+  setProgress(20);
+
+  // try person-aware segmentation
+  let mask = null;
+  try{
+    await loadBodyPix();
+    if(bodyPixNet){
+      setStatus('Detecting person...');
+      const segmentation = await bodyPixNet.segmentPerson(tmp, {internalResolution:'medium', segmentationThreshold:0.6});
+      // create mask imageData (1=person)
+      const segData = segmentation.data;
+      const w = tmp.width, h = tmp.height;
+      const maskCanvas = document.createElement('canvas'); maskCanvas.width=w; maskCanvas.height=h; const mctx = maskCanvas.getContext('2d');
+      const imgd = mctx.createImageData(w,h);
+      for(let i=0;i<segData.length;i++){
+        const v = segData[i] ? 255 : 0;
+        imgd.data[i*4+0]=v; imgd.data[i*4+1]=v; imgd.data[i*4+2]=v; imgd.data[i*4+3]=255;
+      }
+      mctx.putImageData(imgd,0,0);
+      mask = maskCanvas;
+      setProgress(55);
+    }
+  }catch(e){
+    console.warn('seg fail',e);
+    setStatus('Segmentation failed — using fallback blur');
+  }
+
+  // create blurred background
+  setStatus('Applying blur...');
+  const off = document.createElement('canvas'); off.width = tmp.width; off.height = tmp.height; const offCtx = off.getContext('2d');
+  offCtx.filter = 'blur(24px)'; offCtx.drawImage(tmp,0,0);
+  setProgress(75);
+
+  if(mask){
+    // composite: where mask (person) => original, else blurred
+    const orig = tctx.getImageData(0,0,tmp.width,tmp.height);
+    const blur = offCtx.getImageData(0,0,tmp.width,tmp.height);
+    const maskCtx = mask.getContext('2d'); const maskData = maskCtx.getImageData(0,0,tmp.width,tmp.height).data;
+    const res = offCtx.createImageData(tmp.width,tmp.height);
+    for(let i=0;i<maskData.length;i+=4){
+      const isPerson = maskData[i] > 128;
+      const idx = i;
+      if(isPerson){
+        // copy original pixel
+        res.data[idx]=orig.data[idx]; res.data[idx+1]=orig.data[idx+1]; res.data[idx+2]=orig.data[idx+2]; res.data[idx+3]=255;
+      } else {
+        // copy blurred pixel
+        res.data[idx]=blur.data[idx]; res.data[idx+1]=blur.data[idx+1]; res.data[idx+2]=blur.data[idx+2]; res.data[idx+3]=255;
+      }
+    }
+    offCtx.putImageData(res,0,0);
+  }
+  setProgress(90);
+  // draw scaled to display canvas
+  const finalImg = new Image();
+  finalImg.onload = ()=>{
+    fitCanvasTo(finalImg);
+    busy=false; setStatus('Background blurred'); setProgress(100);
+    setTimeout(()=>setProgress(0),600);
+  };
+  finalImg.src = off.toDataURL('image/png');
+});
+
+// Enhance (visual) — upscale → unsharp → downscale → contrast
+enhanceBtn.addEventListener('click', async ()=>{
+  if(!originalImage) return alert('Upload an image first');
+  if(busy) return;
+  busy = true; setStatus('Enhancing (visual)...'); setProgress(5);
+  // start from current canvas content (so can enhance after blur)
+  const srcCanvas = document.createElement('canvas'); srcCanvas.width = workCanvas.width; srcCanvas.height = workCanvas.height;
+  const sctx = srcCanvas.getContext('2d'); sctx.drawImage(workCanvas,0,0);
+  setProgress(15);
+
+  // upscale (2x) to create more detail for filtering
+  const upW = Math.min(srcCanvas.width*2, 2600); // limit large upscales
+  const upH = Math.min(srcCanvas.height*2, 1800);
+  const up = document.createElement('canvas'); up.width = upW; up.height = upH;
+  const uctx = up.getContext('2d'); uctx.imageSmoothingEnabled = true; uctx.imageSmoothingQuality = 'high';
+  uctx.drawImage(srcCanvas,0,0,upW,upH);
+  setProgress(35);
+
+  // apply unsharp mask (simple convolution)
+  try{
+    let imgd = uctx.getImageData(0,0,upW,upH);
+    imgd = unsharpMask(imgd, upW, upH, 1.0, 1); // radius/amount approx
+    uctx.putImageData(imgd,0,0);
+  }catch(e){
+    console.warn('sharpen fail',e);
+  }
+  setProgress(65);
+
+  // downscale back to canvas size with high quality
+  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+  ctx.clearRect(0,0,workCanvas.width,workCanvas.height);
+  ctx.drawImage(up,0,0,workCanvas.width,workCanvas.height);
+  setProgress(85);
+
+  // final contrast / brightness / slight vibrance
+  try{
+    tweakCanvas(ctx, workCanvas.width, workCanvas.height, {contrast:1.08,brightness:1.03,saturation:1.06});
+  }catch(e){console.warn(e);}
+  setProgress(98);
+  setStatus('Enhancement applied (visual).');
+  busy=false;
+  setTimeout(()=>setProgress(0),700);
+});
+
+// Reset
+resetBtn.addEventListener('click', ()=>{
+  if(!originalImageDataURL) return;
+  const img = new Image();
+  img.onload = ()=>{ fitCanvasTo(img); setStatus('Reset to original'); };
+  img.src = originalImageDataURL;
+});
+
+// Download
+downloadBtn.addEventListener('click', ()=>{
+  if(!workCanvas.width) return alert('No image to download');
+  const a = document.createElement('a'); a.href = workCanvas.toDataURL('image/png'); a.download = 'addy_enhanced.png'; a.click();
+});
+
+/* ---------- small image processing helpers ---------- */
+
+// Unsharp mask (simple implementation) - applies a lightweight kernel sharpening
+function unsharpMask(imageData, w, h, amount=1.0, radius=1){
+  // We'll do a simple approximate unsharp using a kernel [-1 -1 -1; -1 9 -1; -1 -1 -1] scaled by amount
+  const data = imageData.data;
+  const copy = new Uint8ClampedArray(data); // original copy
+  const k = [
+    -1, -1, -1,
+    -1,  9, -1,
+    -1, -1, -1
+  ];
+  const div = 1;
+  for(let y=1;y<h-1;y++){
+    for(let x=1;x<w-1;x++){
+      for(let c=0;c<3;c++){
+        let sum = 0, ki=0;
+        for(let ky=-1;ky<=1;ky++){
+          for(let kx=-1;kx<=1;kx++){
+            const px = (y+ky)*w + (x+kx);
+            sum += copy[px*4 + c] * k[ki++];
+          }
+        }
+        const idx = (y*w + x)*4 + c;
+        let val = sum/div;
+        // blend with original based on amount
+        val = copy[idx] + (val - copy[idx]) * amount;
+        data[idx] = Math.max(0, Math.min(255, val));
+      }
+      data[(y*w+x)*4+3] = 255;
+    }
+  }
+  return imageData;
+}
+
+// contrast/brightness tweak
+function tweakCanvas(ctx, w, h, {contrast=1, brightness=1, saturation=1}){
+  const img = ctx.getImageData(0,0,w,h);
+  const d = img.data;
+  // contrast formula
+  const cFactor = (259 * (contrast*255 + 255)) / (255 * (259 - contrast*255));
+  for(let i=0;i<d.length;i+=4){
+    // convert to linear-ish, apply brightness and contrast
+    for(let ch=0;ch<3;ch++){
+      let val = d[i+ch];
+      val = cFactor * (val - 128) + 128; // contrast
+      val = val * brightness; // brightness
+      d[i+ch] = Math.max(0, Math.min(255, val));
+    }
+    // saturation (approx) - convert to gray and lerp
+    const r=d[i], g=d[i+1], b=d[i+2];
+    const gray = 0.2989*r + 0.5870*g + 0.1140*b;
+    d[i]   = Math.max(0, Math.min(255, gray + (r - gray) * saturation));
+    d[i+1] = Math.max(0, Math.min(255, gray + (g - gray) * saturation));
+    d[i+2] = Math.max(0, Math.min(255, gray + (b - gray) * saturation));
+  }
+  ctx.putImageData(img,0,0);
+}
+
+// fitCanvasTo from image or final result
+function fitCanvasTo(img){
+  const maxW = 1000, maxH = 700;
+  let w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
+  const ratio = Math.min(maxW/w, maxH/h, 1);
+  w = Math.round(w*ratio); h = Math.round(h*ratio);
+  workCanvas.width = w; workCanvas.height = h;
+  ctx.clearRect(0,0,w,h);
+  ctx.drawImage(img,0,0,w,h);
+}
+
+// also allow direct DataURL (for blurred result)
+function fitCanvasToDataURL(dataURL){
+  const im = new Image();
+  im.onload = ()=> fitCanvasTo(im);
+  im.src = dataURL;
+}
+
+/* End of helpers */
+</script>
+
+</body>
 </html>
