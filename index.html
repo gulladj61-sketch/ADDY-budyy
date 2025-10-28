@@ -1790,4 +1790,16 @@ document.querySelectorAll('button').forEach(b=>b.classList.add('neon-btn'));
     <p>Simplify long paragraphs into key points — fully offline NLP logic built-in.</p>
   </div>
 </section>
-<!-- 🧭 END PRESENTATION SECTION -->
+<!-- 🧭 END PRESENTATION SECTION --><!-- 🔹 REMOVE PRICE SECTION (₹6000–₹12000 wala) -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const removeTexts = ["₹6,000", "₹12,000", "Asking price"];
+  removeTexts.forEach(text => {
+    document.querySelectorAll("body *").forEach(el => {
+      if (el.innerText && el.innerText.includes(text)) {
+        el.style.display = "none";
+      }
+    });
+  });
+});
+</script>
