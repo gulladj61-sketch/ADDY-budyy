@@ -1,167 +1,181 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>ADDY AI Hub — Demo (No Keys) — Black Glass</title>
-<meta name="description" content="ADDY AI Hub — No-key demo. Simulated AI tools, voice via browser TTS. Replace with real proxy when ready."/>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ADDY AI Hub — Premium (proxy enabled)</title>
+<meta name="description" content="ADDY AI Hub — Chat + 20 AI tools. Backend proxy enabled. Voice via browser or proxy TTS."/>
 <style>
-  :root{
-    --bg0:#05060a; --bg1:#07111a; --glass:rgba(255,255,255,0.04);
-    --muted:#9aa4b2; --accent1:#7c3aed; --accent2:#06b6d4;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,-apple-system;background:linear-gradient(180deg,var(--bg0),var(--bg1));color:#e6eef6;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1150px;margin:18px auto;padding:18px}
-  header{display:flex;align-items:center;justify-content:space-between}
-  .brand{display:flex;gap:12px;align-items:center}
-  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;color:#021018}
-  h1{font-size:18px;margin:0}
-  .sub{font-size:13px;color:var(--muted)}
-  .grid{display:grid;grid-template-columns:1fr 380px;gap:16px;margin-top:16px}
-  @media(max-width:980px){.grid{grid-template-columns:1fr}}
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008));border-radius:12px;padding:14px;border:1px solid var(--glass)}
-  .chat{display:flex;flex-direction:column;height:72vh;gap:12px}
-  .messages{flex:1;overflow:auto;padding:12px;border-radius:10px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.02)}
-  .msg{margin:8px 0;max-width:80%}
-  .user{align-self:flex-end;text-align:right}
-  .bubble{padding:10px 12px;border-radius:12px;display:inline-block}
-  .bubble.user{background:linear-gradient(90deg,#00d0a3,#7ef2cc);color:#021613;font-weight:700}
-  .bubble.bot{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03)}
-  .who{font-size:12px;color:var(--muted);margin-bottom:6px}
-  .controls{display:flex;gap:8px;align-items:center}
-  input[type="text"], textarea{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
-  .btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;padding:9px 14px;border-radius:10px;color:#021018;font-weight:800;cursor:pointer}
-  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-  .tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:12px}
-  .tool{padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.01);cursor:pointer;text-align:center}
-  .small{font-size:13px;color:var(--muted)}
-  .preview{background:rgba(255,255,255,0.01);padding:8px;border-radius:8px;margin-top:8px;color:var(--muted)}
-  .center{display:flex;align-items:center;gap:8px}
-  footer{margin-top:16px;color:var(--muted);font-size:13px;text-align:center}
-  .badge{background:#111827;color:#f8fafc;padding:8px 12px;border-radius:999px;font-weight:800}
-  .stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-  .stat{background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;font-weight:700}
-  /* typing */
-  .typing{opacity:0.7;font-style:italic}
+:root{
+  --bg0:#05060a; --bg1:#07111a; --glass:rgba(255,255,255,0.04);
+  --muted:#9aa4b2; --accent1:#7c3aed; --accent2:#06b6d4;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto;-webkit-font-smoothing:antialiased;background:linear-gradient(180deg,var(--bg0),var(--bg1));color:#e6eef6}
+.wrap{max-width:1150px;margin:18px auto;padding:18px}
+header{display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;color:#021018}
+h1{font-size:18px;margin:0}
+.sub{font-size:13px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:1fr 380px;gap:16px;margin-top:16px}
+@media(max-width:980px){.grid{grid-template-columns:1fr}}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008));border-radius:12px;padding:14px;border:1px solid var(--glass)}
+.chat{display:flex;flex-direction:column;height:72vh;gap:12px}
+.messages{flex:1;overflow:auto;padding:12px;border-radius:10px;background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.02)}
+.msg{margin:8px 0;max-width:80%}
+.user{align-self:flex-end;text-align:right}
+.bubble{padding:10px 12px;border-radius:12px;display:inline-block}
+.bubble.user{background:linear-gradient(90deg,#00d0a3,#7ef2cc);color:#021613;font-weight:700}
+.bubble.bot{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03)}
+.who{font-size:12px;color:var(--muted);margin-bottom:6px}
+.controls{display:flex;gap:8px;align-items:center}
+input[type="text"], textarea{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit}
+.btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;padding:9px 14px;border-radius:10px;color:#021018;font-weight:800;cursor:pointer}
+.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+.tools{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:12px}
+.tool{padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:rgba(255,255,255,0.01);cursor:pointer;text-align:center}
+.small{font-size:13px;color:var(--muted)}
+.preview{background:rgba(255,255,255,0.01);padding:8px;border-radius:8px;margin-top:8px;color:var(--muted)}
+.center{display:flex;align-items:center;gap:8px}
+footer{margin-top:16px;color:var(--muted);font-size:13px;text-align:center}
+.badge{background:#111827;color:#f8fafc;padding:8px 12px;border-radius:999px;font-weight:800}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.stat{background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;font-weight:700}
+.modal{position:fixed;left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6)}
+.modal-card{width:92%;max-width:520px;background:linear-gradient(180deg,#071018,#001216);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+.typing{opacity:0.7;font-style:italic}
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="brand">
-        <div class="logo">ADD</div>
-        <div>
-          <h1>ADDY AI Hub — Demo (No Keys)</h1>
-          <div class="sub">Black glass • All tools simulated for demo • Replace with real proxy later</div>
-        </div>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="logo">ADD</div>
+      <div>
+        <h1>ADDY AI Hub</h1>
+        <div class="sub">Black glass • Proxy-enabled • Voice: Addy (browser fallback)</div>
       </div>
-      <div class="center">
-        <div class="badge">$20,000</div>
-        <div class="small">Premium demo</div>
-      </div>
-    </header>
+    </div>
+    <div class="center">
+      <div class="small">Owner: <strong id="ownerLabel">Addy</strong></div>
+    </div>
+  </header>
 
-    <div class="grid">
-      <div class="card chat">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="font-weight:800">Chat — ADDY</div>
-          <div class="small" id="demoStatus">Mode: <strong>No-key simulation</strong></div>
-        </div>
-
-        <div class="messages" id="messages" aria-live="polite"></div>
-
-        <div class="controls">
-          <input id="chatInput" placeholder="Type a message and press Enter or Send..." />
-          <button id="sendBtn" class="btn">Send</button>
-          <button id="micBtn" class="ghost">🎤</button>
-        </div>
-
-        <div style="margin-top:10px">
-          <div class="small">Tools — click a tool to open prompt UI</div>
-          <div class="tools" id="tools"></div>
-        </div>
+  <div class="grid">
+    <div class="card chat">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:800">Chat — ADDY</div>
+        <div class="small" id="demoStatus">Mode: <strong>Proxy-enabled (if backend reachable)</strong></div>
       </div>
 
-      <aside class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="font-weight:800">Settings & Controls</div>
-          <div class="small">Session only</div>
-        </div>
+      <div class="messages" id="messages" aria-live="polite"></div>
 
-        <div style="margin-top:10px">
-          <label class="small">Language (TTS)</label>
-          <select id="lang" style="width:100%;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:inherit">
-            <option value="en-US">English (en-US)</option>
-            <option value="hi-IN">Hindi (hi-IN)</option>
-          </select>
-        </div>
+      <div class="controls">
+        <input id="chatInput" placeholder="Type a message and press Enter or Send..." />
+        <button id="sendBtn" class="btn">Send</button>
+        <button id="micBtn" class="ghost">🎤</button>
+      </div>
 
-        <div style="margin-top:10px">
-          <div class="small">Usage stats</div>
-          <div class="stats" id="stats">
-            <div class="stat">Chats: <span id="statChats">0</span></div>
-            <div class="stat">Tools used: <span id="statTools">0</span></div>
-            <div class="stat">Visitors est.: <span id="statVisitors">1,245</span></div>
-          </div>
-        </div>
-
-        <div style="margin-top:12px">
-          <div class="small">Quick actions</div>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button id="clearBtn" class="ghost">Clear Chat</button>
-            <button id="downloadBtn" class="btn">Download README</button>
-          </div>
-        </div>
-
-        <div style="margin-top:12px">
-          <div class="small">Owner</div>
-          <input id="owner" value="Addy" style="width:100%;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:inherit;margin-top:6px" />
-        </div>
-      </aside>
+      <div style="margin-top:10px">
+        <div class="small">Tools — click a tool to open its input</div>
+        <div class="tools" id="tools"></div>
+      </div>
     </div>
 
-    <footer>© <span id="year"></span> ADDY AI Hub — No-key demo. Replace simulation with real proxy to enable production AI & TTS.</footer>
+    <aside class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:800">Settings & Controls</div>
+        <div class="small">Session</div>
+      </div>
+
+      <div style="margin-top:10px">
+        <label class="small">Language (TTS)</label>
+        <select id="lang" style="width:100%;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:inherit">
+          <option value="en-US">English (en-US)</option>
+          <option value="hi-IN">Hindi (hi-IN)</option>
+        </select>
+      </div>
+
+      <div style="margin-top:10px">
+        <div class="small">Usage stats</div>
+        <div class="stats" id="stats">
+          <div class="stat">Chats: <span id="statChats">0</span></div>
+          <div class="stat">Tools used: <span id="statTools">0</span></div>
+          <div class="stat">Visitors est.: <span id="statVisitors">1,245</span></div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="small">Quick actions</div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button id="clearBtn" class="ghost">Clear Chat</button>
+          <button id="downloadBtn" class="btn">Download README</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="small">Owner</div>
+        <input id="owner" value="Addy" style="width:100%;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:inherit;margin-top:6px" />
+      </div>
+    </aside>
   </div>
 
+  <footer>© <span id="year"></span> ADDY AI Hub — Proxy-enabled demo (replace proxy or add keys in backend to enable real APIs).</footer>
+</div>
+
+<!-- Modal template -->
+<div id="modal" style="display:none" class="modal">
+  <div class="modal-card">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-weight:800" id="modalTitle">Tool</div>
+      <button id="modalClose" class="ghost">Close</button>
+    </div>
+    <div style="margin-top:8px">
+      <textarea id="modalInput" rows="5" style="width:100%;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:inherit"></textarea>
+    </div>
+    <div style="margin-top:8px;display:flex;gap:8px;justify-content:flex-end">
+      <button id="modalAction" class="btn">Run</button>
+    </div>
+    <div id="modalOutput" class="preview" style="margin-top:10px;display:none"></div>
+  </div>
+</div>
+
 <script>
-/* No-Key Simulated AI Studio
-   - All outputs are generated locally using patterns, templates and randomness to feel real.
-   - Browser TTS used for voice (speechSynthesis).
-   - When ready, replace with proxy calls: callOpenAIChat() -> POST to ${PROXY_BASE}/api/openai
-*/
-document.getElementById('year').innerText = new Date().getFullYear();
+/* ----------------------------
+   CONFIG
+   - PROXY_URL: Render proxy (node backend) that should expose endpoints like:
+     POST /api/openai   -> chat
+     POST /api/voice    -> tts
+     POST /api/image    -> image
+   If proxy not reachable, code falls back to local simulation.
+-----------------------------*/
+const PROXY_URL = "https://server-js-k0d2.onrender.com"; // <- your render proxy
+const USE_PROXY = true; // keep true; if proxy unreachable, code will simulate
 
 /* Tools list */
 const TOOLS = [
-  {id:'writer',label:'AI Writer'},
-  {id:'code',label:'Code Helper'},
-  {id:'prompt',label:'Prompt Maker'},
-  {id:'translate',label:'Translator'},
-  {id:'imageprompt',label:'Image Prompt'},
-  {id:'summarize',label:'Summarizer'},
-  {id:'seo',label:'SEO Title'},
-  {id:'ideas',label:'Business Ideas'},
-  {id:'story',label:'Story Maker'},
-  {id:'study',label:'Study Helper'},
-  {id:'email',label:'Email Writer'},
-  {id:'adcopy',label:'Ad Copy'},
-  {id:'regex',label:'Regex Maker'},
-  {id:'motivate',label:'Motivator'},
-  {id:'character',label:'Character Chat'},
-  {id:'support',label:'Support Reply'},
-  {id:'tweet',label:'Tweet Composer'},
-  {id:'longsum',label:'Long Summarizer'},
-  {id:'brieftrans',label:'Translator (brief)'},
-  {id:'tts',label:'Voice TTS'}
+  {id:'writer',label:'AI Writer', endpoint:'/api/openai'},
+  {id:'code',label:'Code Helper', endpoint:'/api/openai'},
+  {id:'prompt',label:'Prompt Maker', endpoint:'/api/openai'},
+  {id:'translate',label:'Translator', endpoint:'/api/openai'},
+  {id:'imageprompt',label:'Image Prompt', endpoint:'/api/image'},
+  {id:'summarize',label:'Summarizer', endpoint:'/api/openai'},
+  {id:'seo',label:'SEO Title', endpoint:'/api/openai'},
+  {id:'ideas',label:'Business Ideas', endpoint:'/api/openai'},
+  {id:'story',label:'Story Maker', endpoint:'/api/openai'},
+  {id:'study',label:'Study Helper', endpoint:'/api/openai'},
+  {id:'email',label:'Email Writer', endpoint:'/api/openai'},
+  {id:'adcopy',label:'Ad Copy', endpoint:'/api/openai'},
+  {id:'regex',label:'Regex Maker', endpoint:'/api/openai'},
+  {id:'motivate',label:'Motivator', endpoint:'/api/openai'},
+  {id:'character',label:'Character Chat', endpoint:'/api/openai'},
+  {id:'support',label:'Support Reply', endpoint:'/api/openai'},
+  {id:'tweet',label:'Tweet Composer', endpoint:'/api/openai'},
+  {id:'longsum',label:'Long Summarizer', endpoint:'/api/openai'},
+  {id:'brieftrans',label:'Translator (brief)', endpoint:'/api/openai'},
+  {id:'tts',label:'Voice TTS', endpoint:'/api/voice'}
 ];
-
-const toolsDiv = document.getElementById('tools');
-TOOLS.forEach(t=>{
-  const el = document.createElement('div'); el.className='tool'; el.innerText = t.label;
-  el.onclick = ()=>openTool(t);
-  toolsDiv.appendChild(el);
-});
 
 /* DOM refs */
 const messages = document.getElementById('messages');
@@ -173,18 +187,24 @@ const downloadBtn = document.getElementById('downloadBtn');
 const langSel = document.getElementById('lang');
 const statChats = document.getElementById('statChats');
 const statTools = document.getElementById('statTools');
+const ownerInput = document.getElementById('owner');
+const ownerLabel = document.getElementById('ownerLabel');
 
 let chatsCount = 0, toolsCount = 0;
+let conversation = [{role:'bot', content:'Welcome — I am Addy. Ask anything or try a tool.'}];
 
-/* small simulated context */
-let conversation = [
-  {role:'bot', content: 'Welcome — I am Addy. Ask anything or try a tool.'}
-];
+function $id(id){return document.getElementById(id);}
 
-function renderInitial(){
-  messages.innerHTML = '';
-  conversation.forEach(m=> appendBubble(m));
-}
+/* render tools */
+const toolsDiv = document.getElementById('tools');
+TOOLS.forEach(t=>{
+  const el = document.createElement('div'); el.className='tool'; el.innerText = t.label;
+  el.onclick = ()=> openToolModal(t);
+  toolsDiv.appendChild(el);
+});
+
+/* initial render */
+function renderInitial(){ messages.innerHTML=''; conversation.forEach(appendBubble); }
 function appendBubble(m){
   const div = document.createElement('div'); div.className = 'msg ' + (m.role==='user' ? 'user' : 'bot');
   const who = document.createElement('div'); who.className='who'; who.innerText = m.role==='user' ? 'You' : 'Addy';
@@ -201,92 +221,143 @@ function showTypingThen(fn){
   const who = document.createElement('div'); who.className='who'; who.innerText='Addy';
   const bubble = document.createElement('div'); bubble.className='bubble bot typing'; bubble.innerText='Addy is thinking...';
   tdiv.appendChild(who); tdiv.appendChild(bubble); messages.appendChild(tdiv); messages.scrollTop = messages.scrollHeight;
-  setTimeout(()=>{ tdiv.remove(); fn(); }, 700 + Math.random()*1200);
+  setTimeout(()=>{ tdiv.remove(); fn(); }, 600 + Math.random()*900);
 }
 
-/* simulated reply engine (pattern-based) */
-function simulatedReply(userText, toolId){
-  // small heuristics
-  userText = (userText || '').trim();
-  if(toolId === 'tts'){
-    return `Voice ready — playing via browser TTS.`;
+/* Basic local simulation (fallback) */
+function simulateResponse(prompt, toolId){
+  if(toolId === 'tts') return "Voice ready — playing via browser TTS.";
+  if(toolId === 'imageprompt') return `Image prompt: cinematic portrait of "${prompt}" — ultra-detailed.`;
+  if(toolId === 'translate' || toolId === 'brieftrans') return `Translated sample: [${prompt.split('').reverse().join('')}] (simulated)`;
+  if(toolId === 'summarize' || toolId === 'longsum') {
+    const parts = (prompt||'').match(/(.{1,80})(?:\s|$)/g) || [prompt];
+    return (parts.slice(0,4).map((p,i)=>`${i+1}. ${p.trim()}`)).join('\n');
   }
-  if(toolId === 'translate' || toolId==='brieftrans'){
-    return translateSim(userText);
-  }
-  if(toolId === 'imageprompt'){
-    return `Prompt: A cinematic portrait of ${userText} -- ultra-detailed, 8k, dramatic lighting.`;
-  }
-  if(toolId === 'code'){
-    return `Try this: // pseudo-fix\nfunction example(){ return 'Fix for: ${userText}'; }`;
-  }
-  if(toolId === 'summarize' || toolId==='longsum'){
-    return summarizeSim(userText);
-  }
-  // default chat-ish response
-  if(!userText) return "Kuch likh bhai, main help karunga.";
-  // friendly heuristics
-  if(userText.toLowerCase().includes('how') || userText.toLowerCase().includes('kaise')) {
-    return `Simple steps: 1) Define the problem 2) Break into parts 3) Implement & test — need an example?`;
-  }
-  if(userText.length < 40) {
-    return `Nice question — here's a concise answer: ${userText.split('').reverse().join('').slice(0,40)} (simulated)`;
-  }
-  return `Here's a short summary: ${userText.slice(0,120)}... (simulated result)`;
+  if(!prompt) return "Kuch likh bhai, main help karunga.";
+  if(prompt.length < 40) return `Short answer (sim): ${prompt.split('').reverse().join('').slice(0,60)}`;
+  return `Summary (sim): ${prompt.slice(0,120)}...`;
 }
 
-function translateSim(text){
-  if(!text) return 'Kuch text do translate karne ko.';
-  // basic fake translate: reverse words + label
-  const words = text.split(' ');
-  const rev = words.reverse().join(' ');
-  return `Hindi: ${rev} \n(English paraphrase: ${text.slice(0,80)})`;
-}
-function summarizeSim(text){
-  if(!text) return 'Kuch text do summarise karne ko.';
-  const parts = text.match(/(.{1,80})(?:\s|$)/g) || [text];
-  const bullets = parts.slice(0,4).map((p,i)=> `${i+1}. ${p.trim()}`);
-  return bullets.join('\n');
+/* call proxy safely (with fallback) */
+async function callProxy(endpoint, payload){
+  if(!USE_PROXY) throw new Error('Proxy disabled');
+  const url = (PROXY_URL||'') + endpoint;
+  try{
+    const res = await fetch(url, {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if(!res.ok) throw new Error('Proxy error');
+    return await res.json();
+  }catch(err){
+    // proxy not reachable or error -> fallback
+    console.warn('Proxy call failed', err);
+    return { fallback:true, text: simulateResponse(payload.prompt || payload.input || '', payload.tool) };
+  }
 }
 
-/* send chat */
+/* send chat (main chat area) */
 async function sendChat(){
   const txt = input.value.trim(); if(!txt) return;
   conversation.push({role:'user', content: txt}); appendBubble({role:'user',content:txt}); input.value=''; chatsCount++; statChats.innerText = chatsCount;
   showTypingThen(async ()=> {
-    const reply = simulatedReply(txt);
-    conversation.push({role:'bot', content: reply}); appendBubble({role:'bot', content: reply});
-    try{ speakText(reply); }catch(e){}
+    // try proxy chat endpoint
+    let out;
+    try{
+      const payload = { prompt: txt, tool: 'chat' };
+      const r = await callProxy('/api/openai', payload);
+      if(r && r.fallback && r.text) out = r.text;
+      else if(r && r.output) out = r.output;
+      else out = r.choices ? (r.choices[0]?.text || r.choices[0]?.message?.content) : (r.text||'No response');
+    }catch(e){
+      out = simulateResponse(txt);
+    }
+    conversation.push({role:'bot', content: out}); appendBubble({role:'bot', content: out});
+    try{ speakText(out); }catch(e){}
   });
 }
 
-/* open tool */
-function openTool(tool){
-  const q = prompt(`Enter input for ${tool.label}:`); if(q === null) return;
+/* modal / tool UI */
+const modal = $id('modal'), modalTitle = $id('modalTitle'), modalInput = $id('modalInput'), modalOutput = $id('modalOutput'), modalAction = $id('modalAction'), modalClose = $id('modalClose');
+
+function openToolModal(tool){
+  modal.style.display='flex';
+  modalTitle.innerText = tool.label;
+  modalInput.value = '';
+  modalOutput.style.display='none'; modalOutput.innerText='';
+  modalAction.onclick = ()=> runTool(tool);
+}
+modalClose.onclick = ()=> modal.style.display='none';
+
+async function runTool(tool){
+  const inputText = modalInput.value.trim();
+  // show user bubble
+  appendBubble({role:'user', content: inputText || `[no input]`});
   toolsCount++; statTools.innerText = toolsCount;
-  appendBubble({role:'user',content:q});
-  showTypingThen(()=> {
-    const out = simulatedReply(q, tool.id);
-    appendBubble({role:'bot', content: out});
-    if(tool.id === 'tts'){ speakText(out); }
+  modalOutput.style.display='block'; modalOutput.innerText = 'Processing...';
+  // show typing
+  showTypingThen(async ()=> {
+    // try proxy route
+    try{
+      const payload = { prompt: inputText, tool: tool.id, owner: ownerInput.value };
+      const r = await callProxy(tool.endpoint, payload);
+      let out;
+      if(r && r.fallback && r.text) out = r.text;
+      else if(r && r.output) out = r.output;
+      else out = r.result || r.text || JSON.stringify(r).slice(0,800);
+      modalOutput.innerText = out;
+      // speak for tts tool
+      if(tool.id === 'tts') speakText(out);
+      // append in chat area as bot bubble too
+      appendBubble({role:'bot', content: out});
+    }catch(e){
+      const sim = simulateResponse(inputText, tool.id);
+      modalOutput.innerText = sim;
+      appendBubble({role:'bot', content: sim});
+      if(tool.id === 'tts') speakText(sim);
+    }
   });
 }
 
-/* TTS: browser fallback */
-function speakText(text){
+/* TTS: use proxy TTS (preferred) or browser speechSynthesis fallback */
+async function speakText(text){
+  // try proxy TTS first if available
+  if(USE_PROXY){
+    try{
+      const payload = { text, voice: 'addy', lang: document.getElementById('lang').value || 'en-US' };
+      const r = await callProxy('/api/voice', payload);
+      if(r && r.fallback && r.text){
+        // fallback to browser
+        browserSpeak(r.text);
+      } else if(r && r.audioUrl){
+        // play audioUrl returned by proxy
+        const a = new Audio(r.audioUrl); a.play();
+      } else if(r && r.audioBase64){
+        const audio = new Audio('data:audio/mp3;base64,' + r.audioBase64); audio.play();
+      } else {
+        // if proxy responded with text, speak via browser
+        browserSpeak(typeof r==='string' ? r : (r.text||JSON.stringify(r).slice(0,200)));
+      }
+      return;
+    }catch(err){
+      console.warn('Proxy TTS failed', err);
+    }
+  }
+  // browser fallback
+  browserSpeak(text);
+}
+function browserSpeak(text){
   try{
     if(!window.speechSynthesis) return;
     const u = new SpeechSynthesisUtterance(text);
-    const lang = document.getElementById('lang').value || 'en-US';
-    u.lang = lang;
+    u.lang = document.getElementById('lang').value || 'en-US';
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
-  }catch(e){
-    console.warn('TTS error', e);
-  }
+  }catch(e){ console.warn('TTS error', e); }
 }
 
-/* mic (web speech) */
+/* speech recognition for mic button */
 if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   const rec = new SpeechRecognition();
@@ -300,19 +371,22 @@ if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
   micBtn.onclick = ()=> { try{ rec.start(); }catch(e){ appendBubble({role:'bot',content:'Mic not available'}); } };
 } else { micBtn.style.display='none'; }
 
-/* wire events */
+/* wire up controls */
 sendBtn.onclick = sendChat;
 input.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); sendChat(); }});
 clearBtn.onclick = ()=>{ conversation = []; messages.innerHTML=''; chatsCount=0; toolsCount=0; statChats.innerText='0'; statTools.innerText='0'; appendBubble({role:'bot',content:'Cleared. Ready.'}); };
 downloadBtn.onclick = ()=> {
-  const txt = `ADDY AI Hub — Demo README\nOwner: ${document.getElementById('owner').value}\nNote: No-key simulation version. To enable real AI, add server proxy & API keys.`;
+  const txt = `ADDY AI Hub — README\nOwner: ${ownerInput.value}\nNote: Proxy-enabled client. Add backend keys on server for real APIs.`;
   const blob = new Blob([txt], {type:'text/plain'}); const url = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = 'README-ADDY.txt'; a.click(); URL.revokeObjectURL(url);
 };
+ownerInput.addEventListener('input', ()=> ownerLabel.innerText = ownerInput.value || 'Addy');
 
 /* initial render */
 renderInitial();
-appendBubble({role:'bot', content:'Welcome — I am Addy. Try chat or any tool. Browser TTS will speak results.'});
+appendBubble({role:'bot', content:'Welcome — I am Addy. Try chat or any tool. If proxy is configured, tools will call backend.'});
+document.getElementById('year').innerText = new Date().getFullYear();
+
 </script>
 </body>
 </html>
