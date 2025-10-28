@@ -1878,4 +1878,519 @@ window.addEventListener('scroll',()=>{
   });
 });
 </script>
-<!-- 🌟 END UNIVERSAL ANIMATION PACK -->
+<!-- 🌟 END UNIVERSAL ANIMATION PACK --><!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ADDY.AI — Premium Tools Hub</title>
+<meta name="description" content="ADDY.AI — premium-looking, free browser AI tools: image enhancer, background blur, OCR, voice enhance and more. 100% client-side." />
+<meta name="theme-color" content="#001b27" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx='50' cy='50' r='45' fill='%2300e6ff'/></svg>">
+
+<!-- Minimal reset + premium styling -->
+<style>
+:root{
+  --bg1:#05121a; --bg2:#071b28; --accent:#00e6ff; --card:#071e24; --muted:#9fd8ea;
+  --glass: rgba(255,255,255,0.03);
+  --glass-strong: rgba(255,255,255,0.06);
+}
+html,body{height:100%;margin:0;background:linear-gradient(120deg,var(--bg1),var(--bg2));font-family:Inter,system-ui,Segoe UI,Roboto,'Poppins',sans-serif;color:#e9fbff;-webkit-font-smoothing:antialiased;}
+.container{max-width:1100px;margin:0 auto;padding:24px;}
+/* Intro loader - premium */
+#introLoader{
+  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  background: radial-gradient(circle at 30% 30%, rgba(0,230,255,0.06), rgba(0,0,0,0.8)), linear-gradient(180deg,#000814,#000000);
+  z-index:99999;
+}
+.logo-wrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+.logo-glow{
+  font-size:40px;font-weight:800;letter-spacing:3px;color:var(--accent);
+  text-shadow:0 0 18px #00e6ff88,0 0 30px #00e6ff44,0 6px 40px rgba(0,20,30,0.6);
+  transform-origin:center;
+  animation:logoPop 1.6s cubic-bezier(.2,.9,.2,1);
+}
+@keyframes logoPop{0%{transform:scale(.6);opacity:0}50%{transform:scale(1.05);opacity:1}100%{transform:scale(1);opacity:1}}
+.loader-sub{color:var(--muted);font-size:14px;opacity:.9}
+.intro-seq{display:flex;gap:10px;margin-top:12px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--accent);opacity:.9;transform:scale(.6);animation:dotPulse 1.2s infinite;}
+.dot:nth-child(2){animation-delay:.15s}.dot:nth-child(3){animation-delay:.3s}
+@keyframes dotPulse{0%{transform:scale(.6);opacity:.4}50%{transform:scale(1);opacity:1}100%{transform:scale(.6);opacity:.4}}
+
+/* Header / brand bar */
+#logoBar{display:flex;align-items:center;gap:12px;padding:14px 0;}
+#logoBar img{width:44px;height:44px;border-radius:10px;filter:drop-shadow(0 8px 30px rgba(0,230,255,0.06))}
+#addyLogo{font-weight:800;color:var(--accent);font-size:20px;text-shadow:0 0 8px rgba(0,230,255,0.14)}
+
+/* Hero */
+.hero{display:flex;gap:20px;align-items:center;justify-content:space-between;padding:20px;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);border-radius:14px;border:1px solid var(--glass-strong);box-shadow:0 8px 40px rgba(0,0,0,0.6);margin-bottom:18px}
+.hero-left{flex:1}
+.hero-right{width:380px;min-width:260px}
+.h1{font-size:34px;margin:0}
+.lead{color:var(--muted);margin-top:8px;font-size:15px}
+
+/* tools grid */
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:18px}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015));border:1px solid var(--glass);padding:14px;border-radius:12px;min-height:140px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.card h3{margin:0;color:var(--accent)}
+.small{font-size:13px;color:var(--muted)}
+.btn{background:var(--accent);color:#012827;padding:8px 12px;border-radius:8px;border:0;font-weight:700;cursor:pointer}
+.btn.alt{background:transparent;border:1px solid var(--glass-strong;color:var(--muted))}
+/* neon hover */
+.card:hover{box-shadow:0 12px 40px rgba(0,230,255,0.06);transform:translateY(-6px);transition:all .25s ease}
+
+/* long page spacing */
+.section{margin-top:30px;padding:18px 0}
+
+/* image editor layout */
+.editor{display:flex;gap:12px;flex-wrap:wrap}
+.editor-left{flex:1;min-width:280px}
+.editor-right{width:320px;min-width:260px}
+#editorCanvas{width:100%;border-radius:8px;background:#000;display:block}
+
+/* controls */
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.input-file{display:block;padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);border:1px solid var(--glass);color:var(--muted)}
+
+/* voice box */
+.voice-box{background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);padding:12px;border-radius:10px;border:1px solid var(--glass)}
+
+/* footer */
+footer{margin-top:40px;text-align:center;color:var(--muted);font-size:13px;padding-bottom:40px}
+
+/* responsive */
+@media(max-width:800px){.hero{flex-direction:column}.hero-right{width:100%}}
+</style>
+
+</head>
+<body>
+
+<!-- INTRO LOADER -->
+<div id="introLoader" aria-hidden="false">
+  <div class="logo-wrap">
+    <div class="logo-glow">ADDY.AI</div>
+    <div class="loader-sub">Premium Tools • Fully client-side • No paid keys</div>
+    <div class="intro-seq">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container" id="mainApp" style="opacity:0;transition:opacity .6s ease 1.6s">
+  <!-- header -->
+  <div id="logoBar">
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%2300e6ff'/%3E%3C/svg%3E" alt="ADDY icon">
+    <div id="addyLogo">ADDY.AI</div>
+    <div style="flex:1"></div>
+    <div class="small">PWA • Offline friendly • Free tools</div>
+  </div>
+
+  <!-- hero -->
+  <div class="hero">
+    <div class="hero-left">
+      <div class="h1">Professional AI Tools — Free & Browser-based</div>
+      <div class="lead">Image Enhancer (8K-style), Background Blur, OCR, Voice Enhance & more — all in your browser. Perfect for demo, resale, or personal use.</div>
+
+      <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn" onclick="scrollToSection('editorSec')">Open Image Editor</button>
+        <button class="btn" onclick="scrollToSection('voiceSec')">Voice Enhance</button>
+        <a class="btn" href="#demoShowcase">Demo Showcase</a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div style="background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:12px;border-radius:12px;border:1px solid var(--glass);">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:44px;height:44px;border-radius:10px;background:#001a22;display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:800">AI</div>
+          <div>
+            <div style="font-weight:700">Ready For Buyers</div>
+            <div class="small">One-file deploy • GitHub Pages</div>
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <div class="small">Features</div>
+          <ul style="margin:6px 0 0 18px;color:var(--muted)">
+            <li>Background Blur (person-aware)</li>
+            <li>Pseudo 8K Ultra Enhance</li>
+            <li>OCR, Palette</li>
+            <li>Voice Recorder + Enhance</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOLS -->
+  <div class="section" id="tools">
+    <h2 style="margin:6px 0 0 0;color:var(--accent)">Tools</h2>
+    <div class="tools-grid">
+      <div class="card">
+        <h3>🖼 Image Editor</h3>
+        <div class="small">Upload image, apply background blur, ultra-enhance (8K-style) and download.</div>
+        <div style="margin-top:auto;">
+          <button class="btn" onclick="scrollToSection('editorSec')">Open Editor</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>🎤 Voice Enhance</h3>
+        <div class="small">Record 30s, client-side enhancement & download WAV.</div>
+        <div style="margin-top:auto">
+          <button class="btn" onclick="scrollToSection('voiceSec')">Try Voice</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>🔍 OCR (Text Reader)</h3>
+        <div class="small">Read text from images using Tesseract.js (client-side).</div>
+        <div style="margin-top:auto">
+          <button class="btn" onclick="scrollToSection('editorSec')">OCR in Editor</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>🎨 Palette Extract</h3>
+        <div class="small">Get 8 main colors from image — tap to copy HEX.</div>
+        <div style="margin-top:auto">
+          <button class="btn" onclick="scrollToSection('editorSec')">Extract</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMAGE EDITOR SECTION -->
+  <div class="section" id="editorSec">
+    <h2 style="color:var(--accent)">Image Editor — Background Blur & Ultra Enhance</h2>
+    <div class="editor">
+      <div class="editor-left card">
+        <input id="imgInput" type="file" accept="image/*" class="input-file" />
+        <canvas id="editorCanvas" width="900" height="560" style="background:#000"></canvas>
+        <div class="controls">
+          <button class="btn" id="bgBlurBtn">Background Blur</button>
+          <button class="btn" id="ultraBtn">Ultra Enhance (8K-style)</button>
+          <button class="btn" id="paletteBtn">Palette Extract</button>
+          <button class="btn" id="ocrBtn">Run OCR</button>
+          <button class="btn" id="downloadImgBtn">Download PNG</button>
+        </div>
+        <div class="small" style="margin-top:8px">Tip: For best background blur, upload portrait photos with clear subject.</div>
+      </div>
+
+      <div class="editor-right">
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:64px;height:64px;border-radius:8px;background:#001a22;display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:800">IMG</div>
+            <div>
+              <div style="font-weight:700">Editor Controls</div>
+              <div class="small">Live preview & operations</div>
+            </div>
+          </div>
+
+          <div id="paletteWrap" style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px"></div>
+
+          <div id="ocrBox" style="margin-top:12px;display:none;">
+            <label class="small">OCR Output</label>
+            <textarea id="ocrOutput" style="width:100%;min-height:120px;border-radius:8px;background:rgba(0,0,0,0.5);color:#eaf7ff;padding:8px;border:1px solid var(--glass)"></textarea>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VOICE SECTION -->
+  <div class="section" id="voiceSec">
+    <h2 style="color:var(--accent)">Voice Enhance (Lite)</h2>
+    <div class="card voice-box">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <button id="startRec" class="btn">Start</button>
+        <button id="stopRec" class="btn" disabled>Stop</button>
+        <button id="playRec" class="btn" disabled>Play</button>
+        <button id="downloadRec" class="btn" disabled>Download</button>
+        <div style="flex:1"></div>
+        <div class="small">Up to 30s • Client-side processing</div>
+      </div>
+      <div id="recStatus" class="small" style="margin-top:8px">Idle</div>
+      <canvas id="voiceWave" style="width:100%;height:80px;margin-top:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border-radius:8px"></canvas>
+      <audio id="voicePlayer" controls style="width:100%;margin-top:8px"></audio>
+    </div>
+  </div>
+
+  <!-- DEMO SHOWCASE -->
+  <div class="section" id="demoShowcase">
+    <h2 style="color:var(--accent)">Demo Showcase</h2>
+    <div class="card">
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:240px">
+          <img src="https://via.placeholder.com/600x300/001c28/00e6ff?text=Voice+Enhancer+Demo" style="width:100%;border-radius:8px" alt="demo">
+        </div>
+        <div style="flex:1;min-width:240px">
+          <h3>Sell-ready Product</h3>
+          <p class="small">Use the buyer pack (README, LICENSE) and demo video to list on IndieMaker or Flippa.</p>
+          <div style="margin-top:10px">
+            <a class="btn" href="#contact">Contact / Buy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact / footer -->
+  <div class="section" id="contact">
+    <div class="card">
+      <h3>Contact & Info</h3>
+      <p class="small">Email: <a href="mailto:addy.ai.contact@gmail.com" style="color:var(--accent)">addy.ai.contact@gmail.com</a></p>
+      <div style="margin-top:8px" id="visCounter">Visitors: —</div>
+    </div>
+  </div>
+
+  <footer>© 2025 ADDY.AI — Built with ❤️ — Demo | For sale: https://gulladj61-sketch.github.io/ADDY-budyy/</footer>
+</div>
+
+<!-- External libs -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.2.0/dist/body-pix.min.js"></script>
+
+<!-- CORE JS: image editor, bg blur (BodyPix), enhancer, palette, ocr, voice recorder -->
+<script>
+/* ---- Helper DOM ---- */
+const $ = id => document.getElementById(id);
+
+/* ---- Intro sequence hide ---- */
+window.addEventListener('load', ()=> {
+  setTimeout(()=> {
+    document.getElementById('introLoader').style.display='none';
+    document.getElementById('mainApp').style.opacity=1;
+    window.scrollTo(0,0);
+  },1500);
+});
+
+/* ---- Visitor counter mock ---- */
+(function(){ let c=localStorage.getItem('addy_visit'); if(!c)c=Math.floor(Math.random()*80)+20; else c=parseInt(c)+1; localStorage.setItem('addy_visit',c); $('visCounter').innerText = "Visitors: "+c; })();
+
+/* ---- Image Editor setup ---- */
+const imgInput = $('imgInput');
+const editorCanvas = $('editorCanvas');
+const ctx = editorCanvas.getContext('2d');
+let currentImage = new Image(); let originalDataURL = null;
+function fitCanvasToImage(img){
+  const maxW = 900, maxH = 560;
+  let w = img.width, h = img.height;
+  const ratio = Math.min(maxW/w, maxH/h, 1);
+  w = Math.floor(w*ratio); h = Math.floor(h*ratio);
+  editorCanvas.width = w; editorCanvas.height = h;
+  ctx.drawImage(img,0,0,w,h);
+}
+imgInput.addEventListener('change', async (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  const url = URL.createObjectURL(file);
+  currentImage = new Image();
+  currentImage.onload = ()=>{ fitCanvasToImage(currentImage); originalDataURL = editorCanvas.toDataURL('image/png'); };
+  currentImage.src = url;
+});
+
+/* ---- Background Blur using BodyPix ---- */
+let bodyPixNet = null;
+async function loadBodyPix(){ if(bodyPixNet) return bodyPixNet; bodyPixNet = await bodyPix.load({architecture:'MobileNetV1'}); return bodyPixNet; }
+$('bgBlurBtn').addEventListener('click', async ()=>{
+  if(!currentImage.src) return alert('Upload an image first');
+  $('bgBlurBtn').disabled=true; $('bgBlurBtn').innerText='Blurring...';
+  await loadBodyPix();
+  const temp = document.createElement('canvas'); temp.width=currentImage.naturalWidth; temp.height=currentImage.naturalHeight;
+  const tctx = temp.getContext('2d'); tctx.drawImage(currentImage,0,0);
+  const segmentation = await bodyPixNet.segmentPerson(temp, {internalResolution:'low', segmentationThreshold:0.5});
+  // create blurred background
+  const off = document.createElement('canvas'); off.width=temp.width; off.height=temp.height; const offCtx = off.getContext('2d');
+  offCtx.filter = 'blur(18px)'; offCtx.drawImage(temp,0,0);
+  const srcData = tctx.getImageData(0,0,temp.width,temp.height);
+  const blurData = offCtx.getImageData(0,0,temp.width,temp.height);
+  // composite: where segmentation == 1 => original, else blurred
+  for(let i=0;i<segmentation.data.length;i++){
+    const m = segmentation.data[i];
+    if(m===1){ // person - copy original pixel
+      const idx = i*4; blurData.data[idx]=srcData.data[idx]; blurData.data[idx+1]=srcData.data[idx+1]; blurData.data[idx+2]=srcData.data[idx+2]; blurData.data[idx+3]=255;
+    }
+  }
+  // draw scaled to canvas
+  const tmpImg = new Image();
+  tmpImg.onload = ()=>{ fitCanvasToImage(tmpImg); $('bgBlurBtn').disabled=false; $('bgBlurBtn').innerText='Background Blur'; };
+  tmpImg.src = off.toDataURL('image/png');
+});
+
+/* ---- Ultra Enhance (pseudo 8K) - client side sharpening + upscaling illusion ---- */
+function sharpenImage(imageData, width, height){
+  const src = imageData.data;
+  const copy = new Uint8ClampedArray(src); // copy
+  // simple unsharp mask kernel
+  const w = width, h = height;
+  const kernel = [0,-1,0,-1,5,-1,0,-1,0];
+  for(let y=1;y<h-1;y++){
+    for(let x=1;x<w-1;x++){
+      for(let c=0;c<3;c++){
+        let sum=0; let k=0;
+        for(let ky=-1;ky<=1;ky++){ for(let kx=-1;kx<=1;kx++){ const px=(y+ky)*w+(x+kx); sum += copy[px*4+c]*kernel[k++]; } }
+        const idx=(y*w+x)*4+c;
+        let val = sum;
+        val = Math.max(0,Math.min(255,val));
+        src[idx]=val;
+      }
+    }
+  }
+  return imageData;
+}
+$('ultraBtn').addEventListener('click', ()=>{
+  if(!currentImage.src) return alert('Upload an image first');
+  $('ultraBtn').disabled=true; $('ultraBtn').innerText='Enhancing...';
+  // upscale canvas 2x then apply sharpen and downscale to create high-frequency boost
+  const tmp = document.createElement('canvas'); tmp.width = editorCanvas.width*2; tmp.height = editorCanvas.height*2;
+  const tctx = tmp.getContext('2d');
+  tctx.imageSmoothingEnabled = true; tctx.imageSmoothingQuality = 'high';
+  // draw original scaled up
+  tctx.drawImage(editorCanvas,0,0,tmp.width,tmp.height);
+  let imgData = tctx.getImageData(0,0,tmp.width,tmp.height);
+  imgData = sharpenImage(imgData,tmp.width,tmp.height);
+  tctx.putImageData(imgData,0,0);
+  // downscale smoothly back to canvas size for perceived detail
+  ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
+  ctx.clearRect(0,0,editorCanvas.width,editorCanvas.height);
+  ctx.drawImage(tmp,0,0,editorCanvas.width,editorCanvas.height);
+  $('ultraBtn').disabled=false; $('ultraBtn').innerText='Ultra Enhance (8K-style)';
+  alert('Enhanced — pseudo 8K look applied');
+});
+
+/* ---- Palette Extract ---- */
+$('paletteBtn').addEventListener('click', ()=>{
+  if(!editorCanvas.width) return alert('Upload an image first');
+  const imgData = ctx.getImageData(0,0,editorCanvas.width,editorCanvas.height).data;
+  const colors = {};
+  for(let i=0;i<imgData.length;i+=4*20){
+    const r=imgData[i], g=imgData[i+1], b=imgData[i+2];
+    const key = ((r>>4).toString(16)+(g>>4).toString(16)+(b>>4).toString(16));
+    colors[key] = {r,g,b};
+  }
+  const wrap = $('paletteWrap'); wrap.innerHTML='';
+  Object.values(colors).slice(0,10).forEach(c=>{
+    const hex = '#'+[c.r,c.g,c.b].map(x=>x.toString(16).padStart(2,'0')).join('');
+    const d=document.createElement('div'); d.style.width='46px'; d.style.height='46px'; d.style.borderRadius='8px'; d.style.background=hex; d.title=hex; d.style.cursor='pointer';
+    d.onclick = ()=>{ navigator.clipboard.writeText(hex); alert('Copied '+hex); };
+    wrap.appendChild(d);
+  });
+});
+
+/* ---- OCR via Tesseract ---- */
+$('ocrBtn').addEventListener('click', async ()=>{
+  if(!editorCanvas.width) return alert('Upload an image first');
+  $('ocrBtn').disabled=true; $('ocrBtn').innerText='Reading...';
+  const dataUrl = editorCanvas.toDataURL('image/png');
+  const worker = Tesseract.createWorker();
+  await worker.load(); await worker.loadLanguage('eng'); await worker.initialize('eng');
+  const res = await worker.recognize(dataUrl);
+  await worker.terminate();
+  const txt = res.data.text.trim();
+  if(txt){ $('ocrOutput').value = txt; $('ocrBox').style.display='block'; } else alert('No text found');
+  $('ocrBtn').disabled=false; $('ocrBtn').innerText='Run OCR';
+});
+
+/* ---- Download image ---- */
+$('downloadImgBtn').addEventListener('click', ()=>{
+  if(!editorCanvas.width) return alert('Upload an image first');
+  const a=document.createElement('a'); a.href = editorCanvas.toDataURL('image/png'); a.download='addy_image.png'; a.click();
+});
+
+/* ---- Voice Recorder Enhanced (client-side) ---- */
+let mediaRecorder, chunks=[], voiceBlob=null;
+const player = $('voicePlayer'), waveCanvas = $('voiceWave'), waveCtx = waveCanvas.getContext('2d');
+let audioContext, analyser, sourceNode, raf;
+function resizeVoiceCanvas(){ waveCanvas.width = waveCanvas.clientWidth * devicePixelRatio; waveCanvas.height = waveCanvas.clientHeight * devicePixelRatio; }
+resizeVoiceCanvas(); window.addEventListener('resize', resizeVoiceCanvas);
+$('startRec').addEventListener('click', async ()=>{
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream);
+    chunks=[];
+    mediaRecorder.ondataavailable = e => { if(e.data.size>0) chunks.push(e.data); };
+    mediaRecorder.onstop = async ()=>{
+      voiceBlob = new Blob(chunks,{type:'audio/webm'});
+      // process with offline audio (similar to earlier): decode, filters, normalize
+      const arrayBuffer = await voiceBlob.arrayBuffer();
+      const decodeCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const decoded = await decodeCtx.decodeAudioData(arrayBuffer);
+      // offline render
+      const offline = new OfflineAudioContext(decoded.numberOfChannels, decoded.length, decoded.sampleRate);
+      const src = offline.createBufferSource(); src.buffer = decoded;
+      const hp = offline.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=180;
+      const lp = offline.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=9000;
+      const comp = offline.createDynamicsCompressor(); comp.threshold.value=-40; comp.ratio.value=6;
+      const gain = offline.createGain(); gain.gain.value=1.4;
+      src.connect(hp); hp.connect(lp); lp.connect(comp); comp.connect(gain); gain.connect(offline.destination);
+      src.start(0);
+      const rendered = await offline.startRendering();
+      // normalize peak
+      for(let ch=0;ch<rendered.numberOfChannels;ch++){
+        const data = rendered.getChannelData(ch); let peak=0; for(let i=0;i<data.length;i++) peak=Math.max(peak,Math.abs(data[i]));
+        if(peak>0){ const norm=0.95/peak; for(let i=0;i<data.length;i++) data[i]*=norm; }
+      }
+      // convert to wav
+      const wavView = audioBufferToWav(rendered);
+      const wavBlob = new Blob([wavView], {type:'audio/wav'});
+      player.src = URL.createObjectURL(wavBlob);
+      $('playRec').disabled=false; $('downloadRec').disabled=false; $('stopRec').disabled=true; $('startRec').disabled=false;
+      $('recStatus').innerText = 'Ready — processed';
+      voiceBlob = wavBlob;
+    };
+    mediaRecorder.start();
+    // live waveform
+    audioContext = new AudioContext();
+    sourceNode = audioContext.createMediaStreamSource(stream);
+    analyser = audioContext.createAnalyser(); analyser.fftSize=2048;
+    sourceNode.connect(analyser);
+    function draw(){ const bufferLength = analyser.fftSize; const data = new Uint8Array(bufferLength); analyser.getByteTimeDomainData(data); waveCtx.fillStyle='rgba(0,0,0,0)'; waveCtx.clearRect(0,0,waveCanvas.width,waveCanvas.height); waveCtx.lineWidth=2*devicePixelRatio; waveCtx.strokeStyle='#00e6ff'; waveCtx.beginPath();
+      const slice = waveCanvas.width / bufferLength; let x=0; for(let i=0;i<bufferLength;i++){ const v = data[i]/128.0; const y = v * waveCanvas.height/2; if(i===0) waveCtx.moveTo(x,y); else waveCtx.lineTo(x,y); x+=slice; } waveCtx.stroke(); raf=requestAnimationFrame(draw);
+    }
+    draw();
+    $('startRec').disabled=true; $('stopRec').disabled=false; $('recStatus').innerText='Recording...';
+    setTimeout(()=>{ if(mediaRecorder && mediaRecorder.state==='recording') mediaRecorder.stop(); }, 30000);
+  }catch(err){ alert('Mic error: '+err.message); }
+});
+$('stopRec').addEventListener('click', ()=>{ if(mediaRecorder && mediaRecorder.state==='recording') mediaRecorder.stop(); if(raf) cancelAnimationFrame(raf); $('recStatus').innerText='Processing...'; });
+$('playRec').addEventListener('click', ()=>{ if(player.src) player.play(); });
+$('downloadRec').addEventListener('click', ()=>{ if(!voiceBlob) return alert('No recording'); const a=document.createElement('a'); a.href = URL.createObjectURL(voiceBlob); a.download='addy_voice.wav'; a.click(); });
+
+/* AudioBuffer -> WAV helper */
+function audioBufferToWav(buffer){
+  const numChannels = buffer.numberOfChannels; const sampleRate = buffer.sampleRate;
+  const format = 1; const bitDepth = 16;
+  let result;
+  let offset = 0;
+  const bytesPerSample = bitDepth/8;
+  const blockAlign = numChannels * bytesPerSample;
+  const dataSize = buffer.length * blockAlign;
+  const bufferArray = new ArrayBuffer(44 + dataSize);
+  const view = new DataView(bufferArray);
+  function writeString(view, offset, string){ for(let i=0;i<string.length;i++) view.setUint8(offset+i,string.charCodeAt(i)); }
+  writeString(view, 0, 'RIFF'); view.setUint32(4, 36 + dataSize, true); writeString(view, 8, 'WAVE');
+  writeString(view, 12, 'fmt '); view.setUint32(16, 16, true); view.setUint16(20, format, true); view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true); view.setUint32(28, sampleRate * blockAlign, true); view.setUint16(32, blockAlign, true); view.setUint16(34, bitDepth, true);
+  writeString(view, 36, 'data'); view.setUint32(40, dataSize, true);
+  offset = 44;
+  const channels = []; for(let i=0;i<numChannels;i++) channels.push(buffer.getChannelData(i));
+  for(let i=0;i<buffer.length;i++){
+    for(let ch=0;ch<numChannels;ch++){
+      let sample = Math.max(-1, Math.min(1, channels[ch][i]));
+      view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+      offset += 2;
+    }
+  }
+  return view;
+}
+
+/* ---- Utilities ---- */
+function scrollToSection(id){ document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'}); }
+
+/* ---- Resize canvas after image loads if needed ---- */
+window.addEventListener('resize', ()=>{ /* canvas auto handled by fitCanvasToImage */ });
+
+/* ---- Auto save original from load to canvas helper for demo ---- */
+document.addEventListener('DOMContentLoaded', ()=>{ /* nothing for now */ });
+
+</script>
+
+</body>
+</html>
