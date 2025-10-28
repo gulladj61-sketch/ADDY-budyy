@@ -1241,4 +1241,311 @@ document.getElementById('stopRec').onclick=stopRecording;
 document.getElementById('playRec').onclick=playRecording;
 document.getElementById('downloadRec').onclick=downloadRecording;
 </script>
-<!-- END Voice Recorder -->
+<!-- END Voice Recorder --><!-- ADDY: Enhanced Voice Recorder + Noise-Reduce (client-side) -->
+<style>
+  /* Voice UI */
+  .addy-voice {
+    background:#071822;border:1px solid rgba(255,255,255,0.03);
+    padding:14px;border-radius:12px;color:#dff8ff;margin:12px 0;
+    box-shadow:0 8px 30px rgba(0,0,0,0.6);
+  }
+  .addy-voice .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .mic-btn{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;
+    border:0;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,0.5)}
+  .mic-start{background:linear-gradient(135deg,#00e6ff,#00ffa3);color:#012827}
+  .mic-stop{background:#ff6b6b;color:#1a0b0b}
+  .control-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.02);padding:8px 12px;border-radius:8px;color:#e9fbff}
+  .status{font-size:13px;color:#9fd8ea;margin-top:8px}
+  .wave-canvas{width:100%;height:80px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.01),rgba(255,255,255,0.02));margin-top:10px}
+  .glow {filter:drop-shadow(0 0 12px rgba(0,230,255,0.12));}
+  .tiny{font-size:12px;color:#9fb7d8}
+</style>
+
+<div class="addy-voice" id="addyVoiceEnhanced">
+  <div style="display:flex;justify-content:space-between;align-items:center">
+    <div>
+      <h3 style="margin:0">🎤 Voice Enhance — ADDY (Lite)</h3>
+      <div class="tiny">Record up to 30s → client-side enhance → preview & download (WAV)</div>
+    </div>
+    <div style="text-align:right">
+      <div id="micGlow" style="width:44px;height:44px;border-radius:8px;background:linear-gradient(90deg,#001a22,#003243);display:flex;align-items:center;justify-content:center" class="glow">
+        <svg id="micIcon" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3z" stroke="#7ef0ff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 11a7 7 0 0 1-14 0" stroke="#7ef0ff" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top:12px">
+    <button id="addyStart" class="mic-btn mic-start">REC</button>
+    <button id="addyStop" class="mic-btn mic-stop" disabled>STOP</button>
+    <button id="addyPlay" class="control-btn" disabled>Play</button>
+    <button id="addyDownload" class="control-btn" disabled>Download WAV</button>
+    <div style="flex:1"></div>
+    <div class="tiny">Limit: <strong>30s</strong></div>
+  </div>
+
+  <div class="status" id="addyStatus">Idle — press REC</div>
+  <canvas id="addyWave" class="wave-canvas"></canvas>
+
+  <audio id="addyPlayer" controls style="width:100%;margin-top:10px"></audio>
+</div>
+
+<script>
+/* ADDY Enhanced Voice Recorder + Simple Noise-Reduce using WebAudio + OfflineAudioContext
+   - Records via MediaRecorder (webm/ogg or default)
+   - Renders through OfflineAudioContext: highpass -> lowpass -> dynamic compression -> normalization
+   - Produces WAV Blob for download
+   - Shows live waveform while recording and static waveform after processing
+*/
+
+(() => {
+  const startBtn = document.getElementById('addyStart');
+  const stopBtn = document.getElementById('addyStop');
+  const playBtn = document.getElementById('addyPlay');
+  const dlBtn = document.getElementById('addyDownload');
+  const statusEl = document.getElementById('addyStatus');
+  const player = document.getElementById('addyPlayer');
+  const waveCanvas = document.getElementById('addyWave');
+  const canvasCtx = waveCanvas.getContext('2d');
+  const micGlow = document.getElementById('micGlow');
+
+  let mediaRecorder, chunks = [], stream = null, analyser=null, audioContext=null;
+  let rafId=null, recordedBlob=null, processedBlob=null;
+  let maxDuration = 30000; // 30s
+  let recTimer = null;
+
+  function setStatus(t){ statusEl.innerText = t; }
+
+  function drawLiveWave() {
+    if(!analyser) return;
+    const bufferLength = analyser.fftSize;
+    const dataArray = new Uint8Array(bufferLength);
+    analyser.getByteTimeDomainData(dataArray);
+    const w = waveCanvas.width = waveCanvas.clientWidth * devicePixelRatio;
+    const h = waveCanvas.height = waveCanvas.clientHeight * devicePixelRatio;
+    canvasCtx.clearRect(0,0,w,h);
+    canvasCtx.fillStyle = 'rgba(0,0,0,0)';
+    canvasCtx.fillRect(0,0,w,h);
+    canvasCtx.lineWidth = 2 * devicePixelRatio;
+    canvasCtx.strokeStyle = '#00f0ff';
+    canvasCtx.beginPath();
+    const sliceWidth = w / bufferLength;
+    let x = 0;
+    for(let i=0;i<bufferLength;i++){
+      const v = dataArray[i] / 128.0;
+      const y = (v * h / 2);
+      if(i===0) canvasCtx.moveTo(x,y);
+      else canvasCtx.lineTo(x,y);
+      x += sliceWidth;
+    }
+    canvasCtx.lineTo(w, h/2);
+    canvasCtx.stroke();
+    rafId = requestAnimationFrame(drawLiveWave);
+  }
+
+  startBtn.addEventListener('click', async () => {
+    try{
+      setStatus('Requesting mic...');
+      stream = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 48000 } });
+      audioContext = new AudioContext();
+      const source = audioContext.createMediaStreamSource(stream);
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 2048;
+      source.connect(analyser);
+      drawLiveWave();
+
+      // start MediaRecorder
+      chunks = [];
+      const options = { mimeType: 'audio/webm' };
+      mediaRecorder = new MediaRecorder(stream, options);
+      mediaRecorder.ondataavailable = e => { if(e.data && e.data.size>0) chunks.push(e.data); };
+      mediaRecorder.onstart = () => {
+        setStatus('Recording...');
+        startBtn.disabled=true; stopBtn.disabled=false; playBtn.disabled=true; dlBtn.disabled=true;
+        micGlow.style.boxShadow = '0 0 20px rgba(0,230,255,0.28), inset 0 0 12px rgba(0,230,255,0.06)';
+      };
+      mediaRecorder.onstop = async () => {
+        setStatus('Recording stopped. Processing...');
+        cancelAnimationFrame(rafId);
+        // create raw blob
+        recordedBlob = new Blob(chunks, { type: 'audio/webm' });
+        // process using OfflineAudioContext
+        processedBlob = await enhanceAndRender(recordedBlob);
+        // set player src
+        player.src = URL.createObjectURL(processedBlob);
+        playBtn.disabled=false; dlBtn.disabled=false; startBtn.disabled=false; stopBtn.disabled=true;
+        setStatus('Ready — Play or Download');
+        micGlow.style.boxShadow = '';
+      };
+
+      mediaRecorder.start();
+      // auto-stop after maxDuration
+      recTimer = setTimeout(()=> { if(mediaRecorder && mediaRecorder.state==='recording') mediaRecorder.stop(); }, maxDuration);
+    }catch(err){
+      console.error(err);
+      alert('Microphone access denied or error: ' + err.message);
+      setStatus('Error: mic access');
+    }
+  });
+
+  stopBtn.addEventListener('click', ()=>{
+    if(mediaRecorder && mediaRecorder.state==='recording') mediaRecorder.stop();
+    if(recTimer) clearTimeout(recTimer);
+  });
+
+  playBtn.addEventListener('click', ()=> {
+    if(player.src) player.play();
+  });
+
+  dlBtn.addEventListener('click', ()=> {
+    if(!processedBlob) return alert('No audio processed yet');
+    const a = document.createElement('a'); a.href = URL.createObjectURL(processedBlob); a.download = 'addy_enhanced.wav'; a.click();
+  });
+
+  /* ---------- Enhance pipeline using OfflineAudioContext ---------- */
+  async function enhanceAndRender(blob){
+    // decode to AudioBuffer using a temporary AudioContext
+    const arrayBuffer = await blob.arrayBuffer();
+    const decodeCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const decoded = await decodeCtx.decodeAudioData(arrayBuffer);
+
+    // create offline context same length
+    const sampleRate = 44100;
+    const offlineCtx = new OfflineAudioContext(decoded.numberOfChannels, decoded.length, sampleRate);
+
+    // source
+    const src = offlineCtx.createBufferSource();
+    // resample if needed
+    if(decoded.sampleRate !== sampleRate){
+      // simple resample: create new buffer and copy (approx)
+      const newBuf = offlineCtx.createBuffer(decoded.numberOfChannels, Math.floor(decoded.length * sampleRate / decoded.sampleRate), sampleRate);
+      for(let ch=0; ch<decoded.numberOfChannels; ch++){
+        const inData = decoded.getChannelData(ch);
+        const outData = newBuf.getChannelData(ch);
+        // linear resample
+        for(let i=0;i<outData.length;i++){
+          const t = i * (decoded.length-1) / (outData.length-1);
+          const i1 = Math.floor(t);
+          const i2 = Math.min(i1+1, inData.length-1);
+          const frac = t - i1;
+          outData[i] = inData[i1] * (1-frac) + inData[i2] * frac;
+        }
+      }
+      src.buffer = newBuf;
+    } else {
+      src.buffer = decoded;
+    }
+
+    // highpass to remove low hum
+    const hp = offlineCtx.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.value = 180;
+
+    // lowpass to cut extreme hiss
+    const lp = offlineCtx.createBiquadFilter();
+    lp.type = 'lowpass';
+    lp.frequency.value = 9000;
+
+    // gentle peaking EQ to add presence
+    const peq = offlineCtx.createBiquadFilter();
+    peq.type = 'peaking';
+    peq.frequency.value = 2500;
+    peq.gain.value = 3;
+    peq.Q.value = 1;
+
+    // dynamics compressor to control levels (acts slightly as noise gate)
+    const comp = offlineCtx.createDynamicsCompressor();
+    comp.threshold.value = -40;
+    comp.knee.value = 20;
+    comp.ratio.value = 6;
+    comp.attack.value = 0.003;
+    comp.release.value = 0.25;
+
+    // gain normalization
+    const gain = offlineCtx.createGain();
+    gain.gain.value = 1.5;
+
+    // connect chain: src -> hp -> lp -> peq -> comp -> gain -> destination
+    src.connect(hp);
+    hp.connect(lp);
+    lp.connect(peq);
+    peq.connect(comp);
+    comp.connect(gain);
+    gain.connect(offlineCtx.destination);
+
+    src.start(0);
+    // render
+    const rendered = await offlineCtx.startRendering();
+
+    // normalize loudness (simple peak normalize)
+    for(let ch=0; ch<rendered.numberOfChannels; ch++){
+      const data = rendered.getChannelData(ch);
+      let peak = 0;
+      for(let i=0;i<data.length;i++) peak = Math.max(peak, Math.abs(data[i]));
+      if(peak > 0){
+        const norm = 0.95 / peak;
+        for(let i=0;i<data.length;i++) data[i] *= norm;
+      }
+    }
+
+    // convert AudioBuffer to WAV Blob
+    const wav = audioBufferToWav(rendered);
+    return new Blob([wav], { type: 'audio/wav' });
+  }
+
+  /* ---------- helper: AudioBuffer -> WAV (Float32 -> 16bit PCM) ---------- */
+  function audioBufferToWav(buffer){
+    const numChannels = buffer.numberOfChannels;
+    const sampleRate = buffer.sampleRate;
+    const format = 1; // PCM
+    const bitDepth = 16;
+    const length = buffer.length * numChannels * (bitDepth/8);
+    const bufferArray = new ArrayBuffer(44 + length);
+    const view = new DataView(bufferArray);
+    /* RIFF identifier */
+    writeString(view, 0, 'RIFF');
+    view.setUint32(4, 36 + length, true);
+    writeString(view, 8, 'WAVE');
+    /* fmt chunk */
+    writeString(view, 12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, format, true);
+    view.setUint16(22, numChannels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * numChannels * (bitDepth/8), true);
+    view.setUint16(32, numChannels * (bitDepth/8), true);
+    view.setUint16(34, bitDepth, true);
+    /* data chunk */
+    writeString(view, 36, 'data');
+    view.setUint32(40, length, true);
+
+    // write interleaved PCM samples
+    let offset = 44;
+    const channelData = [];
+    for(let ch=0; ch<numChannels; ch++) channelData.push(buffer.getChannelData(ch));
+    const sampleCount = buffer.length;
+    for(let i=0;i<sampleCount;i++){
+      for(let ch=0; ch<numChannels; ch++){
+        let sample = Math.max(-1, Math.min(1, channelData[ch][i]));
+        view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+        offset += 2;
+      }
+    }
+    return view;
+  }
+  function writeString(view, offset, string){
+    for(let i=0;i<string.length;i++){
+      view.setUint8(offset + i, string.charCodeAt(i));
+    }
+  }
+
+  // resize canvas for hi-DPI
+  function resizeCanvas(){
+    waveCanvas.width = waveCanvas.clientWidth * devicePixelRatio;
+    waveCanvas.height = waveCanvas.clientHeight * devicePixelRatio;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+})();
+</script>
+<!-- END ADDY Voice Enhance -->
