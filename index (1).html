@@ -1,11 +1,496 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>ADDY-budyy | Site test</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>MineBot AI Studio — Voice + 20 Tools (ElevenLabs ready)</title>
+<meta name="description" content="MineBot AI Studio — Demo: voice chat + 20 AI tools. Supports browser TTS and optional ElevenLabs TTS (user-provided API key). Deploy on GitHub Pages."/>
+<style>
+  :root{
+    --bg:#07070a; --panel:#0f1724; --card:#0b1220; --muted:#9aa4b2;
+    --accent1:#7c3aed; --accent2:#06b6d4; --glass:rgba(255,255,255,0.03);
+    --success:#10b981;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial;background:linear-gradient(180deg,var(--bg),#07102a);color:#e6eef6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1200px;margin:18px auto;padding:14px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#031026}
+  nav a{color:var(--muted);text-decoration:none;margin-left:14px;font-weight:600;font-size:14px}
+  .hero{display:flex;gap:18px;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap}
+  .hero-left{max-width:720px}
+  h1{font-size:26px;margin:0 0 6px}
+  p.lead{color:var(--muted);margin:0 0 14px}
+  .cta{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;padding:10px 14px;border-radius:10px;color:#031026;font-weight:800;cursor:pointer;box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
+  .grid{display:grid;grid-template-columns:1fr 420px;gap:18px}
+  .panel{background:var(--panel);border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03)}
+  .tools{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .tool{background:var(--card);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02)}
+  .tool h4{margin:0 0 6px;font-size:15px}
+  .tool .small{color:var(--muted);font-size:13px;margin-bottom:8px}
+  input[type="text"], textarea, select { width:100%; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:inherit; margin-top:6px; font-size:14px}
+  .run-row{display:flex;gap:8px;margin-top:8px}
+  .chip{display:inline-block;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.02);font-size:13px;color:var(--muted);cursor:pointer}
+  .tools-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .chat-panel{display:flex;flex-direction:column;height:520px}
+  .chat-window{flex:1;overflow:auto;padding:12px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005))}
+  .msg{max-width:78%;padding:10px;border-radius:10px;margin:8px 0;line-height:1.4}
+  .msg.user{margin-left:auto;background:linear-gradient(90deg,#00c897,#00f5a0);color:#021613}
+  .msg.bot{background:var(--glass);color:inherit;border:1px solid rgba(255,255,255,0.02)}
+  .input-row{display:flex;gap:8px;align-items:center;margin-top:8px}
+  .small{font-size:13px;color:var(--muted)}
+  .right-card{position:sticky;top:18px}
+  .k{font-weight:800;color:var(--accent1);font-size:20px}
+  .chat-floating{position:fixed;right:14px;bottom:14px;z-index:12000;font-family:Inter,system-ui}
+  .chat-button{width:58px;height:58px;border-radius:999px;background:linear-gradient(135deg,#0b0b0c,#161616);border:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;box-shadow:0 10px 30px rgba(2,6,23,0.7)}
+  .chat-panel-float{width:360px;max-width:92vw;background:linear-gradient(180deg,#060606,#0b0b0b);border-radius:12px;box-shadow:0 18px 60px rgba(0,0,0,0.6);overflow:hidden;border:1px solid rgba(255,255,255,0.04)}
+  .chat-header{display:flex;gap:10px;align-items:center;padding:10px;border-bottom:1px solid rgba(255,255,255,0.02)}
+  .avatar{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#031026}
+  .chat-body{padding:12px;height:320px;overflow:auto;background:linear-gradient(180deg, rgba(255,255,255,0.0), rgba(255,255,255,0.01))}
+  .chat-footer{display:flex;gap:8px;padding:10px;border-top:1px solid rgba(255,255,255,0.02);background:linear-gradient(180deg,#050505,#0b0b0b)}
+  .chat-input{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+  .mic-btn{background:#111;border:1px solid rgba(255,255,255,0.04);color:#fff;padding:8px;border-radius:8px;cursor:pointer}
+  .voice-btn{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:8px;border-radius:8px;cursor:pointer}
+  .typing{display:inline-block;height:10px;width:28px;position:relative}
+  .typing span{display:block;width:6px;height:6px;background:#9aa4b2;border-radius:50%;position:absolute;bottom:0;animation:dot 1s infinite;opacity:.9}
+  .typing span:nth-child(1){left:0;animation-delay:0s} .typing span:nth-child(2){left:10px;animation-delay:.15s} .typing span:nth-child(3){left:20px;animation-delay:.3s}
+  @keyframes dot{0%{transform:translateY(0);opacity:.2}50%{transform:translateY(-6px);opacity:1}100%{transform:translateY(0);opacity:.2}}
+  .settings{margin-top:12px;padding:10px;border-radius:8px;border:1px dashed rgba(255,255,255,0.03)}
+  .muted-2{color:#9aa4b2;font-size:13px}
+  @media(max-width:980px){ .grid{grid-template-columns:1fr} .chat-panel{height:auto} .chat-panel-float{width:92vw} .hero-left{max-width:100%} .tools{grid-template-columns:1fr} }
+</style>
 </head>
 <body>
-  <h1>Hello 👋 Site working!</h1>
-  <p>If you see this, GitHub Pages is now live.</p>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">MB</div>
+        <div>
+          <div style="font-weight:800">MineBot AI Studio</div>
+          <div class="small">20+ Tools · Voice Chat · ElevenLabs-ready</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#tools">Tools</a>
+        <a href="#agent">Agent</a>
+        <a href="#settings">Settings</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="hero-left">
+        <h1>MineBot AI Studio — Voice & 20 Tools</h1>
+        <p class="lead">All-in-one demo: voice-enabled MineBot + 20 AI-style tools. Use browser TTS for free or paste your ElevenLabs API key in Settings for studio voices (server proxy recommended).</p>
+        <div class="cta">
+          <button class="btn" onclick="gotoTools()">Open Tools</button>
+          <button class="btn ghost" onclick="gotoAgent()">Open Agent</button>
+        </div>
+        <div style="margin-top:12px" class="meta">
+          <div class="chip">Works on mobile</div>
+          <div class="chip">Acode & GitHub Pages ready</div>
+          <div class="chip">ElevenLabs optional (enter key in Settings)</div>
+        </div>
+      </div>
+
+      <div style="width:420px" class="panel card right-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-weight:800">Quick Demo</div>
+            <div class="small">Try a sample chat or open tools</div>
+          </div>
+          <div style="text-align:right">
+            <div class="small">Visitors</div>
+            <div class="k" id="vis-big">0</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <div class="small">Active Tools</div>
+          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+            <div class="chip">Writer</div><div class="chip">Code</div><div class="chip">Voice</div><div class="chip">Translate</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <div class="small">Pricing (sample)</div>
+          <div style="font-weight:800;font-size:22px">$1,200</div>
+          <div class="small">One-time license — includes source & 7-day support</div>
+        </div>
+
+        <div id="settings" class="settings">
+          <div class="small" style="margin-bottom:8px">Voice settings (optional)</div>
+          <label class="muted-2">ElevenLabs API Key (paste here for testing — do NOT publish this key publicly)</label>
+          <input id="elevenKey" placeholder="xi-api-key-..." />
+          <label class="muted-2" style="margin-top:8px">ElevenLabs Voice ID (example: '21m00Tcm4TlvDq8ikWAM')</label>
+          <input id="elevenVoiceId" placeholder="voice-id (optional)" />
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button class="btn ghost" id="saveEleven">Save (local only)</button>
+            <button class="btn ghost" id="clearEleven">Clear</button>
+          </div>
+          <div class="small" style="margin-top:8px;color:#f59e0b">Tip: Using your ElevenLabs key in browser exposes it publicly. For production, create a small backend proxy and keep key secret.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid" id="tools-area">
+      <div class="panel card chat-panel" id="agent">
+        <h3 id="agent-title">MineBot — Voice & Chat</h3>
+        <div class="chat-window" id="chatWindow">
+          <div class="msg bot">Hello! I'm MineBot. Click mic 🎤, type, or use floating bot. I can speak via browser voices or ElevenLabs (if you paste a key in Settings).</div>
+        </div>
+        <div class="input-row" style="margin-top:8px">
+          <input id="chatInput" placeholder="Type a message or press mic" />
+          <button class="mic-btn" id="micBtn" title="Toggle mic">🎤</button>
+          <button class="voice-btn" id="voiceBtn" title="Toggle voice">🔊</button>
+          <button class="btn" id="chatSend">Send</button>
+        </div>
+        <div style="margin-top:8px" class="small">Tip: Use Chrome/Edge on Android/PC for best microphone support.</div>
+      </div>
+
+      <aside class="panel card right-card" style="padding-bottom:16px">
+        <h3 id="tools">20 AI Tools</h3>
+        <div class="small">Select a tool, enter input, and run to see a demo result. Replace demo logic with real APIs later.</div>
+
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <div class="chip" onclick="selectTool('writer')">AI Writer</div>
+          <div class="chip" onclick="selectTool('code')">Code Helper</div>
+          <div class="chip" onclick="selectTool('prompt')">Prompt Maker</div>
+          <div class="chip" onclick="selectTool('translate')">Translator</div>
+          <div class="chip" onclick="selectTool('summarize')">Summarizer</div>
+          <div class="chip" onclick="selectTool('seo')">SEO Title Maker</div>
+          <div class="chip" onclick="selectTool('ideas')">Business Ideas</div>
+          <div class="chip" onclick="selectTool('imageprompt')">Image Prompt</div>
+          <div class="chip" onclick="selectTool('story')">Story Maker</div>
+          <div class="chip" onclick="selectTool('study')">Study Helper</div>
+          <div class="chip" onclick="selectTool('email')">Email Writer</div>
+          <div class="chip" onclick="selectTool('adcopy')">Ad Copy</div>
+          <div class="chip" onclick="selectTool('regex')">Regex Maker</div>
+          <div class="chip" onclick="selectTool('motivate')">Motivation Bot</div>
+          <div class="chip" onclick="selectTool('character')">Character Chat</div>
+          <div class="chip" onclick="selectTool('numsupport')">Support Reply</div>
+          <div class="chip" onclick="selectTool('tweet')">Tweet Composer</div>
+          <div class="chip" onclick="selectTool('summarize-long')">Long Summarizer</div>
+          <div class="chip" onclick="selectTool('translate-brief')">Translator (brief)</div>
+          <div class="chip" onclick="selectTool('tts')">Voice Agent (TTS)</div>
+        </div>
+
+        <div id="toolPanel" style="margin-top:12px"></div>
+
+      </aside>
+    </div>
+
+    <section id="sell" class="panel card" style="margin-top:18px">
+      <h3>What to include when selling</h3>
+      <ul style="color:var(--muted)">
+        <li>Full source (index.html + assets)</li>
+        <li>README with setup + API integration guide</li>
+        <li>Demo video & 7-day handover support</li>
+      </ul>
+    </section>
+
+    <footer style="margin-top:18px" class="small">© <span id="year"></span> MineBot AI Studio — Demo. Use ElevenLabs key carefully (recommended: backend proxy).</footer>
+  </div>
+
+  <!-- floating MineBot -->
+  <div class="chat-floating" id="chatFloating">
+    <div id="floatPanel" style="display:none" class="chat-panel-float">
+      <div class="chat-header">
+        <div class="avatar">MB</div>
+        <div>
+          <div style="font-weight:700">MineBot</div>
+          <div class="small">Offline demo assistant</div>
+        </div>
+        <div style="margin-left:auto" class="small">v3.0</div>
+      </div>
+      <div class="chat-body" id="floatBody">
+        <div class="msg bot">Hi — I'm MineBot. I can listen and speak. Try "help".</div>
+      </div>
+      <div class="chat-footer">
+        <button class="mic-btn" id="floatMic">🎤</button>
+        <button class="voice-btn" id="floatVoice">🔊</button>
+        <input id="floatInput" placeholder="Type a message..." class="chat-input" />
+        <button class="btn" id="floatSend">Send</button>
+      </div>
+    </div>
+    <button id="floatToggle" class="chat-button" title="Open MineBot">💬</button>
+  </div>
+
+<script>
+/* ------------------ Helpers & UI boot ------------------ */
+document.getElementById('year').textContent = new Date().getFullYear();
+(function(){ const k='mb-vis'; let v=parseInt(localStorage.getItem(k)||'0',10); v++; localStorage.setItem(k,v); document.getElementById('vis-big').innerText=v; })();
+
+function $(id){return document.getElementById(id)}
+/* Simple append message */
+function appendMsg(text, who='bot', target){
+  target = target || $('chatWindow');
+  const d = document.createElement('div'); d.className = 'msg ' + (who==='user'?'user':'bot'); d.innerText = text; target.appendChild(d); target.scrollTop = target.scrollHeight;
+}
+function showTyping(target, text='MineBot is typing...'){
+  target = target || $('chatWindow');
+  const d = document.createElement('div'); d.className='msg bot typing-row'; d.innerText = text; target.appendChild(d); target.scrollTop = target.scrollHeight; return d;
+}
+
+/* ------------------ Main chat (agent panel) ------------------ */
+const chatWindow = $('chatWindow'), chatInput = $('chatInput'), chatSend = $('chatSend');
+chatSend.addEventListener('click', ()=>{ const t=chatInput.value.trim(); if(!t) return; appendMsg(t,'user'); chatInput.value=''; handleBotReply(t, chatWindow); });
+chatInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); chatSend.click(); } });
+
+/* ------------------ Floating MineBot ------------------ */
+const floatToggle = $('floatToggle'), floatPanel = $('floatPanel'), floatBody = $('floatBody'), floatInput = $('floatInput'), floatSend = $('floatSend'), floatMic = $('floatMic'), floatVoice = $('floatVoice');
+let floatOpen=false;
+floatToggle.addEventListener('click', ()=>{ floatOpen=!floatOpen; floatPanel.style.display=floatOpen?'block':'none'; floatToggle.innerText=floatOpen?'✖':'💬'; if(floatOpen) floatInput.focus(); });
+floatSend.addEventListener('click', ()=>{ const t=floatInput.value.trim(); if(!t) return; appendMsg(t,'user', floatBody); floatInput.value=''; handleBotReply(t, floatBody, true); });
+floatInput.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ e.preventDefault(); floatSend.click(); } });
+
+/* ------------------ TTS & STT functions ------------------ */
+const synth = window.speechSynthesis || null;
+function speakBrowser(text, opts={rate:1,pitch:1,voiceName:null}){
+  return new Promise((res)=>{ if(!synth){ res(); return; } try{ synth.cancel(); const u=new SpeechSynthesisUtterance(text); u.rate = opts.rate||1; u.pitch = opts.pitch||1; if(opts.voiceName && synth.getVoices){ const v = synth.getVoices().find(x=>x.name===opts.voiceName); if(v) u.voice = v; } u.onend = res; u.onerror = res; synth.speak(u);}catch(e){res();} });
+}
+
+/* ELEVENLABS integration (optional) */
+/* IMPORTANT:
+   - This tries to call ElevenLabs API from browser.
+   - Browser calls may be blocked by CORS or will expose API key to public.
+   - Recommended: create a small server proxy that holds your API key and forwards requests.
+*/
+async function elevenSpeak(text){
+  const apiKey = localStorage.getItem('elevenKey') || '';
+  const voiceId = localStorage.getItem('elevenVoice') || '';
+  if(!apiKey || !voiceId) return Promise.reject(new Error('ElevenLabs key/voice not set'));
+  // ElevenLabs v1 text-to-speech endpoint pattern:
+  // POST https://api.elevenlabs.io/v1/text-to-speech/{voice_id}
+  // Body: { "text": "...", "voice_settings": { ... } }
+  try{
+    const resp = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'xi-api-key': apiKey
+      },
+      body: JSON.stringify({ text })
+    });
+    if(!resp.ok) {
+      // return error text, fallback to browser TTS
+      const errTxt = await resp.text().catch(()=>resp.statusText);
+      return Promise.reject(new Error('ElevenLabs error: '+errTxt));
+    }
+    const blob = await resp.blob();
+    const audioUrl = URL.createObjectURL(blob);
+    const audio = new Audio(audioUrl);
+    await audio.play();
+    // revoke object URL afterwards
+    setTimeout(()=> URL.revokeObjectURL(audioUrl), 60000);
+    return;
+  }catch(e){
+    return Promise.reject(e);
+  }
+}
+
+/* STT (SpeechRecognition) */
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition || null;
+let recognizer = null, listening=false;
+if(SpeechRecognition){
+  recognizer = new SpeechRecognition();
+  recognizer.lang = 'en-US';
+  recognizer.interimResults = false;
+  recognizer.maxAlternatives = 1;
+  recognizer.continuous = false;
+  recognizer.onresult = (ev)=>{
+    const txt = ev.results[0][0].transcript || '';
+    // decide where to append depending on floatOpen
+    const target = floatOpen ? floatBody : chatWindow;
+    appendMsg(txt, 'user', target);
+    if(floatOpen) handleBotReply(txt, floatBody, true); else handleBotReply(txt, chatWindow);
+    stopListeningUI();
+  };
+  recognizer.onerror = (e)=>{ stopListeningUI(); };
+  recognizer.onend = ()=>{ listening=false; stopListeningUI(); };
+}
+
+/* Listening UI helpers */
+function startListeningUI(target){
+  if(!recognizer){ alert('Mic not supported in this browser. Use Chrome/Edge on Android/PC.'); return; }
+  listening = true;
+  try { recognizer.start(); } catch(e){}
+  // append small 'listening' note
+  appendMsg('Listening...', 'bot', target || chatWindow);
+}
+function stopListeningUI(){ listening=false; try{ recognizer.stop(); }catch(e){} /* remove "Listening..." messages if present */ const nodes = document.querySelectorAll('.msg'); nodes.forEach(n=>{ if(n.innerText==='Listening...') n.remove(); }); }
+
+/* Wire mic & voice buttons */
+$('micBtn').addEventListener('click', ()=>{ startListeningUI(chatWindow); });
+$('floatMic').addEventListener('click', ()=>{ startListeningUI(floatBody); });
+$('voiceBtn').addEventListener('click', ()=>{ window.MB_VOICE = !window.MB_VOICE; $('voiceBtn').style.opacity = window.MB_VOICE? '1':'0.4'; });
+$('floatVoice').addEventListener('click', ()=>{ window.MB_VOICE = !window.MB_VOICE; $('floatVoice').style.opacity = window.MB_VOICE? '1':'0.4'; });
+window.MB_VOICE = true;
+
+/* ------------------ Bot reply handling (common) ------------------ */
+function handleBotReply(text, outTarget, isFloat){
+  const trow = showTyping(outTarget, 'MineBot is typing...');
+  // simulate delay based on length
+  const delay = Math.min(1600, 400 + Math.min(2200, text.length * 40));
+  setTimeout(async ()=>{
+    trow.remove();
+    const reply = generateResponse(text);
+    appendMsg(reply, 'bot', outTarget);
+    // speak (ElevenLabs preferred, fallback to browser)
+    if(window.MB_VOICE){
+      try{
+        await elevenSpeak(reply);
+      }catch(e){
+        // fallback
+        await speakBrowser(reply);
+      }
+    }
+  }, delay);
+}
+
+/* Demo response generator */
+function generateResponse(text){
+  const t = (text||'').toLowerCase();
+  if(t.includes('help')) return 'Try the tools panel — pick a tool and press Run. You can ask me to "write", "summarize", "translate" or "generate ideas".';
+  if(t.includes('sell')||t.includes('price')||t.includes('value')) return 'To sell, include source, README, demo video, and a short onboarding guide. Offer first-line support.';
+  if(t.includes('deploy')||t.includes('publish')) return 'Push index.html to your repo root and enable GitHub Pages in Settings → Pages → Source: main /(root).';
+  if(t.includes('voice')) return 'This demo uses your browser voice by default. For studio-grade voices, add ElevenLabs key in Settings or use a proxy backend.';
+  if(t.includes('hello')||t.includes('hi')) return 'Hello! I am MineBot — tell me which tool you want to try or ask me a question.';
+  if(t.includes('code')) return 'Code helper: paste a short snippet and ask for explanation or bug fixes. Use the Code Helper tool in the Tools panel.';
+  return "Nice question. For real LLM answers, hook MineBot to an LLM backend (OpenAI/HuggingFace) or use the Tools panel for demo outputs.";
+}
+
+/* ------------------ Tools system (20 demo tools) ------------------ */
+const toolPanel = $('toolPanel');
+let activeTool = null;
+function selectTool(id){ activeTool = id; renderToolUI(id); }
+
+function renderToolUI(id){
+  toolPanel.innerHTML = '';
+  const wrap = document.createElement('div'); wrap.className='tool';
+  const h = document.createElement('h4'); h.innerText = toolNames[id] || 'Tool'; const s = document.createElement('div'); s.className='small'; s.innerText = toolDesc[id] || '';
+  wrap.appendChild(h); wrap.appendChild(s);
+  const inp = document.createElement('textarea'); inp.rows=4; inp.placeholder = toolPlace[id] || 'Enter input here...'; wrap.appendChild(inp);
+
+  if(id==='translate' || id==='translate-brief'){
+    const sel = document.createElement('select'); sel.innerHTML = '<option value="hi">Hindi</option><option value="en" selected>English</option><option value="es">Spanish</option><option value="fr">French</option>'; sel.style.marginTop='8px'; wrap.appendChild(sel);
+  }
+  if(id==='tts'){
+    const voiceSel = document.createElement('select'); voiceSel.innerHTML = '<option value="browser">Browser Voice</option><option value="eleven">ElevenLabs</option>'; voiceSel.style.marginTop='8px'; wrap.appendChild(voiceSel);
+  }
+
+  const runRow = document.createElement('div'); runRow.className='run-row';
+  const runBtn = document.createElement('button'); runBtn.className='btn'; runBtn.innerText='Run';
+  const copyBtn = document.createElement('button'); copyBtn.className='btn ghost'; copyBtn.innerText='Copy';
+  runRow.appendChild(runBtn); runRow.appendChild(copyBtn); wrap.appendChild(runRow);
+  const out = document.createElement('textarea'); out.rows=6; out.readOnly=true; out.style.marginTop='10px'; wrap.appendChild(out);
+
+  runBtn.addEventListener('click', ()=> {
+    const v = inp.value.trim(); out.value = 'Working...';
+    setTimeout(()=>{ try{ const res = runTool(id, v, wrap); out.value = res; }catch(e){ out.value = 'Error: '+e.message } }, 250);
+  });
+  copyBtn.addEventListener('click', ()=>{ navigator.clipboard.writeText(out.value||''); copyBtn.innerText='Copied'; setTimeout(()=>copyBtn.innerText='Copy',900); });
+
+  toolPanel.appendChild(wrap);
+}
+
+/* metadata */
+const toolNames = {
+  writer:'AI Writer', code:'Code Helper', prompt:'Prompt Maker', translate:'Translator', summarize:'Summarizer',
+  seo:'SEO Title Maker', ideas:'Business Ideas', imageprompt:'Image Prompt Maker', story:'Story Maker', study:'Study Helper',
+  email:'Email Writer', adcopy:'Ad Copy Generator', 'translate-brief':'Translator (brief)', 'summarize-long':'Long Summarizer',
+  regex:'Regex Builder', motivate:'Motivation Bot', character:'Character Chat', numsupport:'Support Reply', tweet:'Tweet Composer', tts:'Voice Agent (TTS)'
+};
+const toolDesc = {
+  writer:'Generate blog intro, captions, or long-form copy. Enter topic / brief.', code:'Paste code or ask a debugging question.', prompt:'Create image prompts for diffusion AIs.', translate:'Translate to selected language.', summarize:'Short summary of input.',
+  seo:'Short SEO title ideas.', ideas:'Generate business idea variants.', imageprompt:'Create image prompts.', story:'Short story generator.', study:'Explain concept simply.',
+  email:'Generate email drafts.', adcopy:'Create ad headlines & descriptions.', 'translate-brief':'Translate short phrases quickly.', 'summarize-long':'Summarize long text into bullets.',
+  regex:'Turn description into a regex pattern.', motivate:'Short motivational message.', character:'Role-play chat.', numsupport:'Write a support reply.', tweet:'Create tweet-sized content.', tts:'Speak text using browser or ElevenLabs.'
+};
+const toolPlace = {
+  writer:'Topic + tone (e.g., "Write a blog intro about time management, friendly tone")',
+  code:'Paste code or describe error (e.g., "Fix this JS error: ...")',
+  prompt:'Describe the image idea (e.g., "cyberpunk city at night, neon")',
+  translate:'Enter text to translate',
+  summarize:'Paste paragraph to summarize',
+  seo:'Enter main keyword or topic',
+  ideas:'Enter industry or interest',
+  imageprompt:'Describe scene to generate prompts',
+  story:'Give a hook or genre',
+  study:'Ask a question or topic to explain',
+  email:'Give recipient and context (e.g., "apology for delay")',
+  adcopy:'Product name + benefit',
+  'translate-brief':'Short phrase',
+  'summarize-long':'Paste long article',
+  regex:'Describe pattern needed (e.g., "match phone numbers India")',
+  motivate:'Name or short context',
+  character:'Character name and prompt (e.g., "Yoda, give advice")',
+  numsupport:'Ticket text or customer message',
+  tweet:'Topic + tone',
+  tts:'Text to speak'
+};
+
+/* implement demo tool logic */
+function runTool(id, input, container){
+  input = (input||'').trim();
+  if(id==='writer'){ if(!input) return 'Give a topic.'; return `Intro:\n${simpleSentenceCase(input)} — This quick intro helps you start.\n\nOutline:\n1) Problem\n2) Solution\n3) CTA`; }
+  if(id==='code'){ if(!input) return 'Paste code or describe error.'; if(/error/i.test(input)) return 'Suggestion: check variable names and async calls. Provide exact error for precise fix.'; return `Explanation: ${input.split(/\s+/).slice(0,8).join(' ')}...`; }
+  if(id==='prompt' || id==='imageprompt'){ if(!input) return 'Describe scene'; return `Prompt v1: "${input}, cinematic, ultra-detailed, 4k"`;}
+  if(id==='translate' || id==='translate-brief'){ if(!input) return 'Enter text'; const sel=container.querySelector('select'); const target=sel?sel.value:'en'; if(target==='hi') return `हिंदी (demo): ${input.split('').reverse().join('')}`; return `English (demo): ${input}`; }
+  if(id==='summarize' || id==='summarize-long'){ if(!input) return 'Paste text'; const s = input.split(/[.!?]\s/).slice(0,1).join(''); return `Short summary: ${s}\n\nKey points:\n- Point A\n- Point B\n- Next step`; }
+  if(id==='seo'){ if(!input) return 'Enter keyword'; return `${input} — 3 SEO Titles:\n1) ${input} Guide\n2) ${input} for Beginners\n3) Use ${input} Today`; }
+  if(id==='ideas'){ if(!input) return 'Enter industry'; return `Ideas for ${input}:\n1) Niche SaaS\n2) Marketplace\n3) Consulting kits`; }
+  if(id==='story'){ if(!input) return 'Provide a hook'; return `${simpleSentenceCase(input)} — Once upon a time... (short)`; }
+  if(id==='study'){ if(!input) return 'Ask topic'; return `Explain: ${input}\n- definition\n- example\n- quick quiz`; }
+  if(id==='email'){ if(!input) return 'Context'; return `Hi [Name],\n${input}\nRegards,`; }
+  if(id==='adcopy'){ if(!input) return 'Provide product'; return `Headline: ${input} — get results fast.`; }
+  if(id==='regex'){ if(!input) return 'Describe pattern'; if(/phone/i.test(input)) return '(India) /(?:\\+91|0)?[6789]\\d{9}/'; return '/pattern/'; }
+  if(id==='motivate'){ if(!input) return 'Name or context'; return `Hey ${input||'friend'}, keep going — small steps.`; }
+  if(id==='character'){ if(!input) return 'Character name'; return `${input} says: "Do or do not. There is no try."`; }
+  if(id==='numsupport'){ if(!input) return 'Ticket text'; return `Support reply:\nThanks, please try X. If not resolved, reply.`; }
+  if(id==='tweet'){ if(!input) return 'Topic'; return `${input} — Quick tweet: Excited to share ${input}. #AI`; }
+  if(id==='tts'){ if(!input) return 'Enter text'; // try to speak using preferences
+    const apiMode = localStorage.getItem('elevenMode') || 'browser';
+    if(apiMode==='eleven'){ // try ElevenLabs
+      const key = localStorage.getItem('elevenKey'), vid = localStorage.getItem('elevenVoice');
+      if(key && vid){ elevenSpeak(input).catch(()=>speakBrowser(input)); return 'Spoken via ElevenLabs (or fallback).'; }
+      else { speakBrowser(input); return 'Spoken via browser (ElevenLabs not configured).'; }
+    } else { speakBrowser(input); return 'Spoken via browser voice.'; }
+  }
+  return 'Tool not implemented.';
+}
+
+/* small helper */
+function simpleSentenceCase(s){ if(!s) return s; s=s.trim(); return s.charAt(0).toUpperCase()+s.slice(1); }
+
+/* default */
+selectTool('writer');
+
+/* goto helpers */
+function gotoTools(){ location.hash='#tools'; document.getElementById('tools').scrollIntoView({behavior:'smooth'}); }
+function gotoAgent(){ location.hash='#agent'; document.getElementById('agent').scrollIntoView({behavior:'smooth'}); }
+
+/* auto-open floating once */
+if(!localStorage.getItem('mb-studio-seen')){ localStorage.setItem('mb-studio-seen','1'); setTimeout(()=>{ $('floatToggle').click(); },900); }
+
+/* --------------- ElevenLabs key saving (local only) --------------- */
+$('saveEleven').addEventListener('click', ()=>{
+  const k = $('elevenKey').value.trim();
+  const v = $('elevenVoiceId').value.trim();
+  if(!k || !v){ alert('Please paste both xi-api-key and voice id for testing.'); return; }
+  localStorage.setItem('elevenKey', k); localStorage.setItem('elevenVoice', v);
+  alert('Saved locally for this browser. For production use a server proxy (do not expose your key).');
+});
+$('clearEleven').addEventListener('click', ()=>{ localStorage.removeItem('elevenKey'); localStorage.removeItem('elevenVoice'); $('elevenKey').value=''; $('elevenVoiceId').value=''; alert('Cleared.'); });
+
+/* ----------------- simple UX: floating mic toggles --------------- */
+/* handled above already */
+
+/* final: expose some functions to console for debugging */
+window.MineBot = { selectTool, runTool, speakBrowser, elevenSpeak };
+
+</script>
 </body>
 </html>
