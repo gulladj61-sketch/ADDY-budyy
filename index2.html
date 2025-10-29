@@ -145,11 +145,45 @@ footer {
     <button onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i> Send</button>
   </div>
 
-  <footer>© 2025 ADDY Buddy — Built with 💙</footer>
-</div>
+<footer>© 2025 ADDY Buddy – Built with 💙</footer>
 
 <script>
-const API_BASE = "https://addy-budyy.onrender.com"; // <--- yaha apna backend URL daalna
+const API_BASE = "https://addy-budyy.onrender.com"; // <-- yaha apna backend URL daal
+
+function appendMessage(text, sender='bot') {
+  const box = document.getElementById('output');
+  const msg = document.createElement('div');
+  msg.className = `msg ${sender}`;
+  msg.textContent = text;
+  box.appendChild(msg);
+  box.scrollTop = box.scrollHeight;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('prompt');
+  const text = input.value.trim();
+  if (!text) return;
+
+  appendMessage(text, 'user');
+  input.value = '';
+  appendMessage('⏳ Processing...', 'bot');
+
+  try {
+    const res = await fetch(`${API_BASE}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: text })
+    });
+
+    if (!res.ok) throw new Error('Server Error');
+    const data = await res.json();
+    appendMessage(data.reply || '⚠️ Unexpected response from server', 'bot');
+  } catch (err) {
+    appendMessage(`❌ ${err.message}`, 'bot');
+  }
+}
+</script>
+<script>
 
 function appendMessage(text, sender='bot') {
   const box = document.getElementById('output');
