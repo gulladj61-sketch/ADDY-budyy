@@ -369,4 +369,109 @@ window.addEventListener('beforeunload', ()=> {
 });
 </script>
 </body>
+</html><!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>World Elite Motors – Part 2 | Hyper-Luxury Collection</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap" rel="stylesheet">
+<style>
+body{
+  margin:0;
+  font-family:Poppins,system-ui;
+  background:radial-gradient(circle at top,#060b12 0%,#020407 100%);
+  color:#f6f6f6;
+  overflow-x:hidden;
+}
+header{
+  text-align:center;
+  padding:60px 20px 20px;
+}
+h1{font-size:2.2rem;color:#d4af37;text-shadow:0 0 18px #d4af37;}
+p{color:#9fb8c1;max-width:600px;margin:auto;}
+section.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:24px;
+  padding:40px;
+}
+.card{
+  position:relative;
+  border-radius:14px;
+  overflow:hidden;
+  transform-style:preserve-3d;
+  border:1px solid rgba(255,255,255,0.05);
+  background:rgba(255,255,255,0.03);
+  transition:transform .4s ease,box-shadow .3s;
+}
+.card:hover{
+  transform:translateY(-10px) rotateX(4deg);
+  box-shadow:0 20px 60px rgba(0,0,0,0.6);
+}
+.card img{
+  width:100%;height:220px;object-fit:cover;
+  filter:brightness(.8);
+  transition:filter .35s;
+}
+.card:hover img{filter:brightness(1);}
+.card .brand{
+  position:absolute;bottom:12px;left:12px;
+  background:rgba(0,0,0,0.5);
+  padding:8px 12px;border-radius:10px;
+  color:#d4af37;font-weight:700;
+}
+.backBtn{
+  position:fixed;top:20px;left:20px;
+  background:#d4af37;color:#000;font-weight:700;
+  padding:10px 14px;border:none;border-radius:10px;cursor:pointer;
+  box-shadow:0 6px 20px rgba(0,0,0,0.5);
+}
+footer{
+  text-align:center;
+  padding:40px 20px;
+  color:#888;
+}
+</style>
+</head>
+<body>
+<button class="backBtn" onclick="location.href='index.html'">← Back to Main</button>
+<header>
+  <h1>Hyper-Luxury Cars & Bikes Collection</h1>
+  <p>Experience an endless scroll of the rarest machines ever built — each frame handcrafted in light and shadow.</p>
+</header>
+
+<section class="gallery" id="gallery"></section>
+
+<footer>© 2025 World Elite Motors — Crafted by Gaurav</footer>
+
+<script>
+// Luxury expansion list (20+ more rare brands)
+const brands=[
+  "Lucid Air","Rimac Nevera","Deus Vayanne","Pininfarina Battista","Zenvo TSR-S",
+  "Hennessey Venom F5","SSC Tuatara","Brabus G900","Audi RS e-tron GT","Mercedes AMG GT Black",
+  "Nio EP9","Kawasaki Ninja H2R","MV Agusta Superveloce","Indian Challenger Elite","BMW HP4 Race",
+  "Bentley Bacalar","Ferrari Daytona SP3","Bugatti Mistral","Aston Martin Valkyrie","Lamborghini Revuelto"
+];
+const gallery=document.getElementById('gallery');
+let total=brands.length*5;
+for(let i=0;i<total;i++){
+  const b=brands[i%brands.length];
+  const img=`https://source.unsplash.com/900x600/?${encodeURIComponent(b)}&sig=${i+10}`;
+  const card=document.createElement('div');
+  card.className='card';
+  card.innerHTML=`<img src="${img}" alt="${b}"><div class="brand">${b}</div>`;
+  gallery.appendChild(card);
+}
+
+// Parallax scroll depth feel
+window.addEventListener('scroll',()=>{
+  document.querySelectorAll('.card').forEach((c,i)=>{
+    const rect=c.getBoundingClientRect().top;
+    const offset=rect*0.02;
+    c.style.transform=`translateY(${offset}px) rotateX(4deg)`;
+  });
+});
+</script>
+</body>
 </html>
