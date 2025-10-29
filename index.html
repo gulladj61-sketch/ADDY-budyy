@@ -3,477 +3,210 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>ADDY.AI — All-in-one Free AI Toolkit (Demo)</title>
-<meta name="description" content="ADDY.AI demo: prompt-based image enhancer, voice enhancer, chat assistant, text tools, TTS — all client-side, no paid keys."/>
+<title>ADDY Unified Chat — Select tool & prompt</title>
 <style>
-  :root{
-    --bg1:#04121a; --bg2:#062029; --accent:#00e6ff; --muted:#9fd8ea;
-    --card:#071722; --glass: rgba(255,255,255,0.03);
-    --radius:12px;
-  }
+  :root{--bg:#04121a;--card:#071827;--accent:#00e6ff;--muted:#9fd8ea}
   *{box-sizing:border-box;font-family:Inter,system-ui,'Poppins',sans-serif}
-  body{margin:0;min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#eaffff;-webkit-font-smoothing:antialiased;}
-  .wrap{max-width:1150px;margin:18px auto;padding:18px}
-  header{display:flex;align-items:center;gap:12px}
-  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,#00e6ff,#00bcd4);display:flex;align-items:center;justify-content:center;font-weight:800;color:#012}
-  h1{font-size:22px;margin:0;color:var(--accent);text-shadow:0 0 8px rgba(0,230,255,0.08)}
-  .sub{color:var(--muted);font-size:13px;margin-top:6px}
-  /* intro */
-  #intro{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(0,0,0,0.65),rgba(0,0,0,0.8));z-index:9999}
-  .intro-card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:28px;border-radius:18px;text-align:center;border:1px solid rgba(255,255,255,0.04)}
-  .logoGlow{font-size:36px;color:var(--accent);font-weight:800;letter-spacing:2px;text-shadow:0 0 20px #00e6ff55}
-  .dots{display:flex;gap:8px;justify-content:center;margin-top:14px}
-  .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);opacity:0.7;animation:ping 1s infinite}
-  @keyframes ping{0%{transform:scale(.7)}50%{transform:scale(1.2)}100%{transform:scale(.7)}}
-
-  /* layout */
-  .hero{display:flex;gap:18px;align-items:stretch;margin-top:12px}
-  .left{flex:1;min-width:320px}
-  .right{width:380px;min-width:260px}
-  .card{background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border-radius:var(--radius);padding:14px;border:1px solid var(--glass);box-shadow:0 12px 40px rgba(0,0,0,0.6)}
-  .tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px}
-
-  button.btn{background:var(--accent);color:#022;padding:10px 14px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
-  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
-
-  /* editor */
-  #canvasWrap{background:#000;border-radius:10px;padding:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-  canvas{max-width:100%;height:auto;border-radius:8px;display:block}
-
-  textarea,input[type=text]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#eaf9ff}
-
-  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
-  .status{font-size:13px;color:var(--muted);margin-left:6px}
-
-  .progress{height:10px;background:rgba(255,255,255,0.03);border-radius:8px;overflow:hidden;margin-top:10px}
-  .progress .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#00ffa0);transition:width .12s linear}
-
-  .muted{color:var(--muted);font-size:13px}
-
-  footer{margin-top:26px;text-align:center;color:var(--muted);font-size:13px;padding-bottom:30px}
-
-  @media(max-width:900px){ .hero{flex-direction:column} .right{width:100%} .tools{grid-template-columns:1fr} }
+  body{margin:0;background:linear-gradient(135deg,var(--bg),#05202a);color:#eaffff}
+  header{display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid rgba(255,255,255,0.03)}
+  .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#00bcd4);display:flex;align-items:center;justify-content:center;color:#012;font-weight:800}
+  h1{margin:0;font-size:18px;color:var(--accent)}
+  .sub{color:var(--muted);font-size:13px}
+  .wrap{max-width:1100px;margin:18px auto;padding:12px}
+  /* slider */
+  .slider{display:flex;gap:10px;overflow:auto;padding:12px 6px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border:1px solid rgba(255,255,255,0.02)}
+  .tool{flex:0 0 auto;padding:8px 12px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.03);cursor:pointer;color:var(--muted)}
+  .tool.active{background:linear-gradient(90deg, rgba(0,230,255,0.06), rgba(0,180,200,0.04));color:var(--accent);border-color:rgba(0,230,255,0.12)}
+  /* chat area */
+  .chatWrap{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+  .chatBox{height:56vh;overflow:auto;padding:12px;border-radius:10px;background:var(--card);border:1px solid rgba(255,255,255,0.02)}
+  .msg{margin-bottom:10px;display:flex;gap:10px;align-items:flex-start}
+  .me{justify-content:flex-end}
+  .bubble{max-width:70%;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.02)}
+  .bubble.me{background:linear-gradient(90deg,rgba(0,230,255,0.08),transparent);border-color:rgba(0,230,255,0.06);color:#012}
+  .controls{display:flex;gap:8px;margin-top:8px;align-items:center}
+  input[type="text"]{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#eaffff}
+  button{background:var(--accent);color:#012;border:0;padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:700}
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted);padding:8px;border-radius:8px}
+  .mini{font-size:12px;color:var(--muted)}
+  /* frames */
+  .frameWrap{margin-top:12px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.02)}
+  iframe{width:100%;height:0;border:0;display:block}
+  /* responsive */
+  @media(max-width:760px){ .bubble{max-width:90%} .chatBox{height:48vh} }
 </style>
 </head>
 <body>
-  <!-- INTRO -->
-  <div id="intro" role="status">
-    <div class="intro-card">
-      <div class="logoGlow">ADDY.AI</div>
-      <div class="muted" style="margin-top:8px">Premium demo • Client-side smart tools</div>
-      <div class="dots"><div class="dot"></div><div class="dot" style="animation-delay:.15s"></div><div class="dot" style="animation-delay:.3s"></div></div>
+  <header>
+    <div class="logo">AI</div>
+    <div>
+      <h1>ADDY Unified Chat</h1>
+      <div class="sub">Choose a tool above → type a prompt or upload → get result (backend-powered)</div>
     </div>
-  </div>
+    <div style="flex:1"></div>
+    <div class="mini">Demo + API-enabled backend</div>
+  </header>
 
-  <div class="wrap" id="app" style="opacity:0;transition:opacity .4s ease .8s">
-    <header>
-      <div class="logo">AI</div>
-      <div style="margin-left:8px">
-        <h1>ADDY.AI — All-in-one Free Toolkit</h1>
-        <div class="sub">Prompt-driven image enhance • Voice enhancer • Chat & text tools • TTS — Demo mode</div>
+  <div class="wrap">
+    <!-- TOOL SLIDER: 20 tools -->
+    <div class="slider" id="toolSlider" tabindex="0">
+      <!-- tools will be populated by JS -->
+    </div>
+
+    <!-- CHAT -->
+    <div class="chatWrap">
+      <div class="chatBox" id="chatBox"></div>
+
+      <div class="controls">
+        <input id="chatInput" type="text" placeholder="Type prompt, or use Upload buttons for image/audio" />
+        <button id="sendBtn">Send</button>
+        <label class="ghost" style="padding:8px 10px;cursor:pointer">
+          Img <input id="imgUpload" type="file" accept="image/*" style="display:none">
+        </label>
+        <label class="ghost" style="padding:8px 10px;cursor:pointer">
+          Audio <input id="audioUpload" type="file" accept="audio/*" style="display:none">
+        </label>
+        <button id="clearBtn" class="ghost">Clear</button>
       </div>
-      <div style="flex:1"></div>
-      <div class="muted">Demo • No paid keys</div>
-    </header>
-
-    <div class="hero" style="margin-top:12px">
-      <div class="left">
-        <div class="card">
-          <h2 style="margin:0">Prompt-driven Image Enhancer</h2>
-          <div class="muted" style="margin-top:6px">Type a prompt (example: "make sharper, increase detail, boost colors") and click Enhance. Uses client-side advanced filters + upscale→sharpen trick.</div>
-
-          <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
-            <label class="btn">Upload Image<input id="imgInput" type="file" accept="image/*" style="display:none"></label>
-            <input id="imgPrompt" type="text" placeholder="Prompt: e.g. 'Make HD, reduce blur, vivid colors'">
-            <button id="imgEnhBtn" class="btn">Enhance</button>
-            <button id="imgBlurBtn" class="ghost">BG Blur</button>
-            <button id="imgDownload" class="ghost">Download</button>
-          </div>
-
-          <div class="progress"><div id="imgBar" class="bar"></div></div>
-          <div id="canvasWrap" style="margin-top:12px" class="muted card">
-            <canvas id="workCanvas" width="900" height="520"></canvas>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-            <div id="imgStatus" class="status">Idle</div>
-            <div class="muted">Tip: For best results use clear photos (portraits/photos with subject).</div>
-          </div>
-        </div>
-
-        <div class="tools">
-          <div class="card">
-            <h3>✍️ Text Assistant (Rewrite & Summarize)</h3>
-            <div class="muted">Paste text, choose action, and get instant client-side result.</div>
-            <textarea id="textIn" placeholder="Paste text here..."></textarea>
-            <div style="display:flex;gap:8px;margin-top:8px">
-              <button id="rewriteBtn" class="btn">Rewrite (Tone)</button>
-              <button id="summBtn" class="ghost">Summarize</button>
-              <button id="ttsBtn" class="btn ghost">Speak</button>
-              <div id="textStatus" class="status">Idle</div>
-            </div>
-            <div id="textOut" style="margin-top:10px;min-height:80px;background:rgba(255,255,255,0.01);padding:10px;border-radius:8px;color:#dff"></div>
-          </div>
-
-          <div class="card" id="voiceCard">
-            <h3>🎤 Voice Recorder & Enhance</h3>
-            <div class="muted">Record up to 30s → process (denoise & normalize) → play & download</div>
-            <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
-              <button id="recStart" class="btn">Start</button>
-              <button id="recStop" class="ghost" disabled>Stop</button>
-              <button id="recPlay" class="ghost" disabled>Play</button>
-              <button id="recSave" class="ghost" disabled>Download</button>
-              <button id="recEnh" class="btn ghost">Enhance</button>
-              <div id="voiceStatus" class="status">Idle</div>
-            </div>
-            <canvas id="voiceWave" style="margin-top:10px;width:100%;height:64px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent)"></canvas>
-            <audio id="voicePlayer" controls style="width:100%;margin-top:8px;display:none"></audio>
-            <div class="progress"><div id="voiceBar" class="bar"></div></div>
-          </div>
-
-          <div class="card">
-            <h3>💬 Chat Assistant (Simulated)</h3>
-            <div class="muted">Type prompts — demo replies generated locally (keeps history in browser)</div>
-            <div style="display:flex;gap:8px;margin-top:8px">
-              <input id="chatPrompt" type="text" placeholder="Ask anything...">
-              <button id="chatSend" class="btn">Send</button>
-              <button id="chatClear" class="ghost">Clear</button>
-            </div>
-            <div id="chatBox" style="margin-top:10px;min-height:140px;max-height:260px;overflow:auto;background:rgba(255,255,255,0.01);padding:10px;border-radius:8px"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="right">
-        <div class="card">
-          <h3>Quick Controls & Info</h3>
-          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
-            <label class="ghost" style="padding:8px;border-radius:8px;display:flex;justify-content:space-between;align-items:center">
-              <span>Visitor Count</span><span id="visCount">—</span>
-            </label>
-            <label class="ghost" style="padding:8px;border-radius:8px;display:flex;justify-content:space-between;align-items:center">
-              <span>Local Mode</span><span>ON</span>
-            </label>
-            <div class="muted">Links</div>
-            <a class="ghost" href="https://github.com/gulladj61-sketch/ADDY-budyy" target="_blank" style="display:inline-block;padding:8px;border-radius:8px;text-decoration:none;color:inherit">Repo</a>
-            <div style="margin-top:6px" class="muted">History</div>
-            <div id="miniHistory" style="max-height:220px;overflow:auto;margin-top:6px;background:rgba(255,255,255,0.01);padding:8px;border-radius:8px"></div>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top:12px">
-          <h3>How to use</h3>
-          <ol style="color:var(--muted);margin-left:18px">
-            <li>Upload image → type prompt → Enhance</li>
-            <li>Record voice → Enhance → Download</li>
-            <li>Use chat to see simulated assistant replies</li>
-            <li>Everything runs in browser — no keys required</li>
-          </ol>
-        </div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px">
+        <div class="mini">Active tool: <span id="activeTool">—</span></div>
+        <div class="mini" id="statusMini">Status: idle</div>
       </div>
     </div>
 
-    <footer>© 2025 ADDY.AI — Demo • Client-side • For sale: gulladj61-sketch.github.io/ADDY-budyy</footer>
+    <!-- iframe: index2.html acts as backend handler -->
+    <div class="frameWrap" style="margin-top:12px">
+      <iframe id="backendFrame" src="index2.html" title="ADDY backend"></iframe>
+    </div>
   </div>
 
 <script>
-/* ---------- Simple helpers ---------- */
-const $ = id => document.getElementById(id);
-function setBar(el,p){ if(!el) return; el.style.width = Math.max(0,Math.min(100,p)) + '%'; }
-function setText(el,t){ if(!el) return; el.innerText = t; }
+/* --------- frontend logic: slider, chat, messaging to iframe --------- */
+const tools = [
+  'Chat','Image Enhance','Image Gen','Background Remove','OCR','Translator','Voice Enhance','Voice Transcribe',
+  'Text Summarize','Text Rewrite','TTS','Meme Maker','Code Assist','Upscale','Face Enhance','Video Enhance',
+  'PDF Summarize','Semantic Search','Batch Processor','Export Package'
+];
 
-/* hide intro */
-window.addEventListener('load', ()=>{ setTimeout(()=>{ document.getElementById('intro').style.display='none'; document.getElementById('app').style.opacity=1; },900); });
+const slider = document.getElementById('toolSlider');
+const activeLabel = document.getElementById('activeTool');
+const chatBox = document.getElementById('chatBox');
+const input = document.getElementById('chatInput');
+const sendBtn = document.getElementById('sendBtn');
+const backendFrame = document.getElementById('backendFrame');
+const statusMini = document.getElementById('statusMini');
 
-/* visitor mock */
-(function(){ let v = localStorage.getItem('addy_vis'); if(!v) v = 120 + Math.floor(Math.random()*300); else v = parseInt(v)+1; localStorage.setItem('addy_vis',v); $('visCount').innerText = v; })();
+let activeTool = tools[0];
+let iframeReady = false;
 
-/* ---------- IMAGE: load + prompt-driven enhancement ---------- */
-const imgInput = $('imgInput'), workCanvas = $('workCanvas'), imgPrompt = $('imgPrompt');
-const imgBar = $('imgBar'), imgStatus = $('imgStatus'), imgDownload = $('imgDownload'), imgEnhBtn = $('imgEnhBtn'), imgBlurBtn = $('imgBlurBtn');
-const ctx = workCanvas.getContext('2d');
-let originalImage = null, originalDataURL = null;
+/* populate slider */
+tools.forEach(t=>{
+  const el = document.createElement('div'); el.className='tool'; el.innerText=t;
+  el.onclick = ()=>selectTool(el,t);
+  slider.appendChild(el);
+});
+/* initial selection */
+selectTool(slider.firstChild, tools[0]);
 
-imgInput.addEventListener('change', e=>{
+function selectTool(el, name){
+  document.querySelectorAll('.tool').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  activeTool = name;
+  activeLabel.innerText = name;
+  // send tool-change to iframe
+  postToBackend({type:'toolChange', tool: name});
+}
+
+/* chat UI helpers */
+function appendMessage(side, text, extraHtml){
+  const row = document.createElement('div'); row.className='msg ' + (side==='me'?'me':'');
+  const b = document.createElement('div'); b.className='bubble ' + (side==='me'?'me':''); b.innerHTML = text || '';
+  row.appendChild(b);
+  if(extraHtml) row.appendChild(extraHtml);
+  chatBox.appendChild(row);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+function setStatus(t){ statusMini.innerText = 'Status: ' + t; }
+
+/* send input to iframe */
+sendBtn.addEventListener('click', ()=>{ const prompt = input.value.trim(); if(!prompt) return; appendMessage('me', escapeHtml(prompt)); postToBackend({type:'process', tool: activeTool, prompt}); input.value=''; setStatus('sending'); });
+
+/* clear chat */
+document.getElementById('clearBtn').addEventListener('click', ()=>{ chatBox.innerHTML=''; });
+
+/* image upload -> read base64 -> send */
+document.getElementById('imgUpload').addEventListener('change', async (e)=>{
   const f = e.target.files[0]; if(!f) return;
-  const url = URL.createObjectURL(f);
-  const img = new Image();
-  img.onload = ()=>{ originalImage = img; fitCanvasTo(img); originalDataURL = workCanvas.toDataURL('image/png'); setText(imgStatus,'Image loaded'); setBar(imgBar,0); addHistory('Image upload'); }
-  img.src = url;
+  appendMessage('me', 'Uploaded image: <strong>'+escapeHtml(f.name)+'</strong>');
+  const b64 = await fileToBase64(f);
+  postToBackend({type:'process', tool: activeTool, prompt: '', file: {name:f.name, data:b64, mime:f.type}});
+  setStatus('upload sent');
+  e.target.value='';
 });
 
-function fitCanvasTo(img){
-  const maxW = 1100, maxH = 700;
-  let w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
-  const ratio = Math.min(maxW/w, maxH/h, 1);
-  w = Math.round(w*ratio); h = Math.round(h*ratio);
-  workCanvas.width = w; workCanvas.height = h;
-  ctx.clearRect(0,0,w,h); ctx.drawImage(img,0,0,w,h);
-}
-
-/* basic gaussian-like blur via canvas filter (fallback) */
-async function doBackgroundBlur(){
-  if(!originalImage) return alert('Upload first');
-  setText(imgStatus,'Applying background blur (demo)...');
-  setBar(imgBar,10);
-  const tmp = document.createElement('canvas'); tmp.width = originalImage.naturalWidth || originalImage.width; tmp.height = originalImage.naturalHeight || originalImage.height;
-  const tctx = tmp.getContext('2d'); tctx.drawImage(originalImage,0,0);
-  setBar(imgBar,30);
-  const off = document.createElement('canvas'); off.width = tmp.width; off.height = tmp.height; const offCtx = off.getContext('2d');
-  offCtx.filter = 'blur(20px)'; offCtx.drawImage(tmp,0,0);
-  setBar(imgBar,70);
-  // blend center circle sharp
-  const w=tmp.width,h=tmp.height,cx=Math.floor(w/2),cy=Math.floor(h/2),r=Math.min(w,h)/3;
-  const orig = tctx.getImageData(0,0,w,h); const blur = offCtx.getImageData(0,0,w,h);
-  for(let y=0;y<h;y++) for(let x=0;x<w;x++){
-    const i=(y*w+x)*4; const dx=x-cx, dy=y-cy;
-    if(dx*dx+dy*dy<r*r){ blur.data[i]=orig.data[i]; blur.data[i+1]=orig.data[i+1]; blur.data[i+2]=orig.data[i+2]; }
-  }
-  offCtx.putImageData(blur,0,0);
-  const out = new Image(); out.onload = ()=>{ fitCanvasTo(out); setText(imgStatus,'Background blurred'); setBar(imgBar,100); setTimeout(()=>setBar(imgBar,0),600); addHistory('BG blur'); }; out.src = off.toDataURL('image/png');
-}
-
-/* prompt-driven "enhance" (visual pipeline) */
-async function promptEnhance(){
-  if(!originalImage) return alert('Upload first');
-  const prompt = (imgPrompt.value || '').toLowerCase();
-  setText(imgStatus,'Processing: ' + (prompt || 'enhance'));
-  setBar(imgBar,6); addHistory('Enhance: '+(prompt||'quick'));
-  // simulate server-like progress
-  let p=6; const t=setInterval(()=>{ p+=Math.random()*8; setBar(imgBar,p); },200);
-  await new Promise(r=>setTimeout(r,700 + Math.random()*800));
-  clearInterval(t);
-  // visual pipeline: upscale -> sharpen -> local contrast -> vibrance -> downscale
-  const upW = Math.min(workCanvas.width*2, 2200), upH = Math.min(workCanvas.height*2, 1600);
-  const up = document.createElement('canvas'); up.width=upW; up.height=upH;
-  const uctx = up.getContext('2d'); uctx.imageSmoothingEnabled=true; uctx.imageSmoothingQuality='high';
-  uctx.drawImage(workCanvas,0,0,upW,upH);
-  setBar(imgBar,35);
-  // conditional tweaks based on prompt keywords
-  const stronger = prompt.includes('hd') || prompt.includes('detail') || prompt.includes('8k') || prompt.includes('sharp');
-  try{ let imgd = uctx.getImageData(0,0,upW,upH); imgd = unsharpSimple(imgd,upW,upH, stronger?1.2:0.9); uctx.putImageData(imgd,0,0); }catch(e){console.warn(e)}
-  setBar(imgBar,55);
-  try{ await localContrastStretch(uctx, upW, upH, stronger?20:32); }catch(e){console.warn(e)}
-  setBar(imgBar,75);
-  try{ vibrance(uctx, upW, upH, prompt.includes('vivid')?1.12:1.06); }catch(e){}
-  setBar(imgBar,88);
-  ctx.clearRect(0,0,workCanvas.width,workCanvas.height);
-  ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
-  ctx.drawImage(up,0,0,workCanvas.width,workCanvas.height);
-  setBar(imgBar,100);
-  setText(imgStatus,'Enhanced (visual) — Download ready');
-  setTimeout(()=>setBar(imgBar,0),700);
-}
-
-/* helpers: simple unsharp */
-function unsharpSimple(imageData,w,h,amount=1.0){
-  const data = imageData.data, copy = new Uint8ClampedArray(data);
-  const k=[0,-1,0,-1,5,-1,0,-1,0];
-  for(let y=1;y<h-1;y++) for(let x=1;x<w-1;x++){
-    for(let c=0;c<3;c++){
-      let sum=0,ki=0;
-      for(let ky=-1;ky<=1;ky++) for(let kx=-1;kx<=1;kx++){ const p=(y+ky)*w+(x+kx); sum+=copy[p*4+c]*k[ki++]; }
-      const idx=(y*w+x)*4+c; let val = copy[idx] + (sum - copy[idx]) * (amount*0.4); data[idx]=Math.max(0,Math.min(255,val));
-    }
-    data[(y*w+x)*4+3]=255;
-  }
-  return imageData;
-}
-
-/* local contrast tile stretch */
-async function localContrastStretch(ctx, w, h, tile=32){
-  const img = ctx.getImageData(0,0,w,h), d=img.data;
-  for(let ty=0;ty<h;ty+=tile) for(let tx=0;tx<w;tx+=tile){
-    let rmin=255,gmin=255,bmin=255, rmax=0,gmax=0,bmax=0;
-    const x2=Math.min(tx+tile,w), y2=Math.min(ty+tile,h);
-    for(let y=ty;y<y2;y++) for(let x=tx;x<x2;x++){ const i=(y*w+x)*4; const r=d[i],g=d[i+1],b=d[i+2]; if(r<rmin) rmin=r; if(g<gmin) gmin=g; if(b<bmin) bmin=b; if(r>rmax) rmax=r; if(g>gmax) gmax=g; if(b>bmax) bmax=b; }
-    const rr=Math.max(1,rmax-rmin), gg=Math.max(1,gmax-gmin), bb=Math.max(1,bmax-bmin);
-    for(let y=ty;y<y2;y++) for(let x=tx;x<x2;x++){ const i=(y*w+x)*4; d[i]=((d[i]-rmin)/rr)*255; d[i+1]=((d[i+1]-gmin)/gg)*255; d[i+2]=((d[i+2]-bmin)/bb)*255; }
-  }
-  ctx.putImageData(img,0,0);
-}
-
-/* vibrance */
-function vibrance(ctx,w,h,f=1.06){
-  try{
-    const img=ctx.getImageData(0,0,w,h), d=img.data;
-    for(let i=0;i<d.length;i+=4){
-      const r=d[i],g=d[i+1],b=d[i+2];
-      d[i]=clamp((r-128)*f+128); d[i+1]=clamp((g-128)*f+128); d[i+2]=clamp((b-128)*f+128);
-    }
-    ctx.putImageData(img,0,0);
-  }catch(e){console.warn(e)}
-}
-function clamp(v){ return Math.max(0,Math.min(255,Math.round(v))); }
-
-/* download canvas */
-imgDownload.addEventListener('click', ()=>{ if(!workCanvas.width) return alert('No image'); const a=document.createElement('a'); a.href=workCanvas.toDataURL('image/png'); a.download='addy_image.png'; a.click(); });
-
-imgBlurBtn.addEventListener('click', async ()=>{ await doBackgroundBlur(); });
-imgEnhBtn.addEventListener('click', async ()=>{ await promptEnhance(); });
-
-/* ---------- VOICE: record, simulate backend process, enhance ---------- */
-const recStart = $('recStart'), recStop = $('recStop'), recPlay = $('recPlay'), recSave = $('recSave'), recEnh = $('recEnh');
-const voiceStatus = $('voiceStatus'), voiceBar = $('voiceBar'), voicePlayer = $('voicePlayer');
-const voiceCanvas = $('voiceWave'); const vctx = voiceCanvas.getContext('2d');
-let mediaRecorder=null, audioChunks=[], voiceBlob=null, raf=null, audioContext=null, analyser=null;
-
-function resizeVoice(){ voiceCanvas.width = voiceCanvas.clientWidth * devicePixelRatio; voiceCanvas.height = voiceCanvas.clientHeight * devicePixelRatio; }
-resizeVoice(); window.addEventListener('resize', resizeVoice);
-
-recStart.addEventListener('click', async ()=>{
-  try{
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorder = new MediaRecorder(stream);
-    audioChunks=[];
-    mediaRecorder.ondataavailable = e => { if(e.data.size>0) audioChunks.push(e.data); };
-    mediaRecorder.onstop = async ()=>{
-      voiceBlob = new Blob(audioChunks,{type:'audio/webm'});
-      voicePlayer.src = URL.createObjectURL(voiceBlob); voicePlayer.style.display='block';
-      recPlay.disabled=false; recSave.disabled=false; setText(voiceStatus,'Recorded — ready to enhance');
-      addHistory('Voice record');
-    };
-    mediaRecorder.start();
-    audioContext = new AudioContext();
-    const source = audioContext.createMediaStreamSource(stream);
-    analyser = audioContext.createAnalyser(); analyser.fftSize=2048;
-    source.connect(analyser);
-    function draw(){
-      const data = new Uint8Array(analyser.fftSize); analyser.getByteTimeDomainData(data);
-      vctx.clearRect(0,0,voiceCanvas.width,voiceCanvas.height); vctx.lineWidth=2*devicePixelRatio; vctx.strokeStyle='#00e6ff';
-      vctx.beginPath();
-      const slice = voiceCanvas.width / data.length;
-      let x=0;
-      for(let i=0;i<data.length;i++){
-        const v = data[i]/128.0; const y = v * voiceCanvas.height/2;
-        if(i===0) vctx.moveTo(x,y); else vctx.lineTo(x,y);
-        x+=slice;
-      }
-      vctx.stroke();
-      raf = requestAnimationFrame(draw);
-    }
-    draw();
-    setText(voiceStatus,'Recording...');
-    recStart.disabled=true; recStop.disabled=false;
-    setTimeout(()=>{ if(mediaRecorder && mediaRecorder.state==='recording') mediaRecorder.stop(); }, 30000);
-  }catch(e){ alert('Mic error: '+e.message); }
-});
-recStop.addEventListener('click', ()=>{ if(mediaRecorder && mediaRecorder.state==='recording') mediaRecorder.stop(); if(raf) cancelAnimationFrame(raf); recStop.disabled=true; recStart.disabled=false; setText(voiceStatus,'Processing (simulated)...'); simulateVoiceEnhance(); });
-
-recPlay.addEventListener('click', ()=>{ if(voicePlayer.src) voicePlayer.play(); });
-recSave.addEventListener('click', ()=>{ if(!voiceBlob) return alert('No audio'); const a=document.createElement('a'); a.href = URL.createObjectURL(voiceBlob); a.download='addy_voice.wav'; a.click(); });
-
-async function simulateVoiceEnhance(){
-  if(!voiceBlob) return;
-  setBar(voiceBar,10);
-  let p=10; const t=setInterval(()=>{ p+=Math.random()*10; setBar(voiceBar,p); },200);
-  await new Promise(r=>setTimeout(r,900 + Math.random()*800));
-  // offline processing: highpass + lowpass + compress + normalize
-  try{
-    const ab = await voiceBlob.arrayBuffer();
-    const dec = await (new (window.AudioContext || window.webkitAudioContext)()).decodeAudioData(ab);
-    const offline = new OfflineAudioContext(dec.numberOfChannels, dec.length, dec.sampleRate);
-    const src = offline.createBufferSource(); src.buffer = dec;
-    const hp = offline.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=120;
-    const lp = offline.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=12000;
-    const comp = offline.createDynamicsCompressor(); comp.threshold.value=-40; comp.ratio.value=6;
-    src.connect(hp); hp.connect(lp); lp.connect(comp); comp.connect(offline.destination);
-    src.start(0);
-    const rendered = await offline.startRendering();
-    // normalize
-    for(let c=0;c<rendered.numberOfChannels;c++){
-      const data = rendered.getChannelData(c); let peak=0; for(let i=0;i<data.length;i++) peak=Math.max(peak,Math.abs(data[i])); if(peak>0){ const f=0.95/peak; for(let i=0;i<data.length;i++) data[i]*=f; }
-    }
-    const wavView = audioBufferToWav(rendered);
-    const wavBlob = new Blob([wavView], { type:'audio/wav' });
-    voiceBlob = wavBlob; voicePlayer.src = URL.createObjectURL(voiceBlob);
-    setText(voiceStatus,'Enhanced & ready'); addHistory('Voice enhance');
-  }catch(e){ console.warn(e); setText(voiceStatus,'Enhance failed (demo)'); }
-  clearInterval(t); setBar(voiceBar,100); setTimeout(()=>setBar(voiceBar,0),700);
-}
-
-/* audioBuffer->wav helper */
-function audioBufferToWav(buffer){
-  const numChannels = buffer.numberOfChannels, sampleRate = buffer.sampleRate, bitDepth=16;
-  const bytesPerSample = bitDepth/8, blockAlign = numChannels*bytesPerSample;
-  const dataSize = buffer.length * blockAlign;
-  const arrayBuffer = new ArrayBuffer(44 + dataSize); const view = new DataView(arrayBuffer);
-  function writeString(v,offset,str){ for(let i=0;i<str.length;i++) v.setUint8(offset+i,str.charCodeAt(i)); }
-  writeString(view,0,'RIFF'); view.setUint32(4,36+dataSize,true); writeString(view,8,'WAVE'); writeString(view,12,'fmt '); view.setUint32(16,16,true); view.setUint16(20,1,true); view.setUint16(22,numChannels,true);
-  view.setUint32(24,sampleRate,true); view.setUint32(28,sampleRate * blockAlign,true); view.setUint16(32,blockAlign,true); view.setUint16(34,16,true); writeString(view,36,'data'); view.setUint32(40,dataSize,true);
-  let offset = 44; const channels = []; for(let i=0;i<numChannels;i++) channels.push(buffer.getChannelData(i));
-  for(let i=0;i<buffer.length;i++) for(let ch=0;ch<numChannels;ch++){ let sample = Math.max(-1, Math.min(1, channels[ch][i])); view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true); offset+=2; }
-  return view;
-}
-
-/* ---------- CHAT: simulated assistant ---------- */
-const chatSend = $('chatSend'), chatPrompt = $('chatPrompt'), chatBox = $('chatBox'), chatClear = $('chatClear');
-let chatHistory = JSON.parse(localStorage.getItem('addy_chat') || '[]');
-function renderChat(){ chatBox.innerHTML=''; chatHistory.forEach(m=>{ const el=document.createElement('div'); el.style.marginBottom='8px'; el.innerHTML = `<div style="font-size:13px;color:var(--muted)"><strong>You:</strong> ${escapeHtml(m.prompt)}</div><div style="margin-top:6px;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02)"><strong>ADDY:</strong> ${escapeHtml(m.reply)}</div>`; chatBox.prepend(el); }); }
-chatSend.addEventListener('click', ()=>{ const p = chatPrompt.value.trim(); if(!p) return; const reply = fakeReply(p); chatHistory.push({prompt:p,reply}); localStorage.setItem('addy_chat', JSON.stringify(chatHistory)); renderChat(); chatPrompt.value=''; addHistory('Chat: '+p); });
-chatClear.addEventListener('click', ()=>{ chatHistory=[]; localStorage.removeItem('addy_chat'); renderChat(); });
-
-function fakeReply(prompt){
-  // quick simulated intelligence: pattern replies + sample templates
-  const low = prompt.toLowerCase();
-  if(low.includes('how') && low.includes('make')) return 'Try increasing sharpness and contrast — use the Enhance with prompt "HD, sharp, vivid".';
-  const samples = [
-    "Nice prompt — try adding 'reduce noise' or 'increase detail' for clearer results.",
-    "I suggest: enhance colors slightly and apply local contrast. That usually helps portraits.",
-    "This looks great for a demo — remember, client-side enhancements are visual improvements.",
-    "For best results, upload the highest resolution available and ask for 'detail' or 'hd'."
-  ];
-  return samples[Math.floor(Math.random()*samples.length)];
-}
-renderChat();
-
-/* ---------- TEXT: rewrite & summarize & TTS ---------- */
-const textIn = $('textIn'), rewriteBtn = $('rewriteBtn'), summBtn = $('summBtn'), textOut = $('textOut'), textStatus = $('textStatus'), ttsBtn = $('ttsBtn');
-rewriteBtn.addEventListener('click', ()=>{ const t=textIn.value.trim(); if(!t) return alert('Paste text first'); setText(textStatus,'Rewriting...'); const out = rewriteText(t); textOut.innerText = out; setText(textStatus,'Done'); addHistory('Rewrite'); });
-summBtn.addEventListener('click', ()=>{ const t=textIn.value.trim(); if(!t) return alert('Paste text first'); setText(textStatus,'Summarizing...'); const out = summarizeText(t); textOut.innerText = out; setText(textStatus,'Done'); addHistory('Summarize'); });
-ttsBtn.addEventListener('click', ()=>{ const t = textOut.innerText || textIn.value; if(!t) return alert('No text'); speakText(t); });
-
-function rewriteText(s){
-  // naive rewrite: split sentences, change tone to concise
-  const sentences = s.split(/(?<=[.?!])\s+/).filter(Boolean);
-  const out = sentences.map(sen=> {
-    if(sen.length>100) return sen.slice(0,80).trim() + '...';
-    return sen;
-  }).join(' ');
-  return "Rewritten: " + out;
-}
-function summarizeText(s){
-  // naive summarizer: pick top 2 longest sentences
-  const sentences = s.split(/(?<=[.?!])\s+/).filter(Boolean);
-  sentences.sort((a,b)=>b.length - a.length);
-  return sentences.slice(0,2).join(' ');
-}
-function speakText(t){
-  if(!('speechSynthesis' in window)) return alert('TTS not supported');
-  const ut = new SpeechSynthesisUtterance(t); ut.rate=1; ut.pitch=1;
-  speechSynthesis.cancel(); speechSynthesis.speak(ut);
-}
-
-/* ---------- HISTORY mini-list ---------- */
-function addHistory(event){
-  let h = JSON.parse(localStorage.getItem('addy_hist')||'[]'); h.unshift({time:Date.now(),evt:event}); h=h.slice(0,40); localStorage.setItem('addy_hist',JSON.stringify(h)); renderHistory();
-}
-function renderHistory(){ const hist = JSON.parse(localStorage.getItem('addy_hist')||'[]'); const wrap = $('miniHistory'); wrap.innerHTML=''; hist.slice(0,15).forEach(h=>{ const d=new Date(h.time); const el=document.createElement('div'); el.style.padding='6px'; el.style.borderBottom='1px dashed rgba(255,255,255,0.02)'; el.style.fontSize='13px'; el.innerText = `${d.toLocaleString()}: ${h.evt}`; wrap.appendChild(el); }); }
-renderHistory();
-
-/* ---------- small utilities ---------- */
-function escapeHtml(t){ return t.replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]); }
-
-/* ensure canvas placeholder */
-window.addEventListener('load', ()=>{
-  ctx.fillStyle='#07121a'; ctx.fillRect(0,0,workCanvas.width,workCanvas.height);
-  ctx.fillStyle='#0a8f9f22'; ctx.fillRect(20,20,workCanvas.width-40,workCanvas.height-40);
-  ctx.fillStyle='#7fdff7'; ctx.font='18px Poppins, sans-serif'; ctx.fillText('Upload image to start (prompt-based enhance)',30,40);
+/* audio upload */
+document.getElementById('audioUpload').addEventListener('change', async (e)=>{
+  const f = e.target.files[0]; if(!f) return;
+  appendMessage('me', 'Uploaded audio: <strong>'+escapeHtml(f.name)+'</strong>');
+  const b64 = await fileToBase64(f);
+  postToBackend({type:'process', tool: activeTool, prompt: '', file: {name:f.name, data:b64, mime:f.type}});
+  setStatus('audio sent');
+  e.target.value='';
 });
 
-/* expose some functions to console for debug */
-window.promptEnhance = promptEnhance; window.doBackgroundBlur = doBackgroundBlur; window.simulateVoiceEnhance = simulateVoiceEnhance;
+/* receive messages from iframe */
+window.addEventListener('message', (ev)=>{
+  const d = ev.data;
+  if(!d || !d.type) return;
+  if(d.type === 'ready'){ iframeReady = true; setStatus('backend ready'); }
+  else if(d.type === 'log'){ console.log('backend:', d.msg); }
+  else if(d.type === 'result'){
+    // append response (may contain html)
+    const content = d.html || escapeHtml(d.text || JSON.stringify(d));
+    appendMessage('bot', content);
+    setStatus('idle');
+    // if there's a downloadable data (image/audio) returned as base64, add a download link
+    if(d.file && d.file.data){
+      const link = document.createElement('a');
+      link.href = d.file.data;
+      link.download = d.file.name || 'result';
+      link.innerText = 'Download ' + (d.file.name || 'file');
+      link.className = 'ghost';
+      link.style.marginLeft = '8px';
+      appendMessage('bot', '', link);
+    }
+  }
+});
 
-/* end of script */
+/* postToBackend with safety (wait until iframe loaded) */
+function postToBackend(msg){
+  if(!iframeReady){ // queue until ready
+    setTimeout(()=>postToBackend(msg), 300);
+    return;
+  }
+  backendFrame.contentWindow.postMessage(msg, '*');
+}
+
+/* helper: file->base64 */
+function fileToBase64(file){
+  return new Promise((res, rej)=>{
+    const r = new FileReader();
+    r.onload = ()=>res(r.result);
+    r.onerror = e=>rej(e);
+    r.readAsDataURL(file);
+  });
+}
+
+/* escape html */
+function escapeHtml(t){ return (''+t).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ping backend after iframe loads */
+backendFrame.addEventListener('load', ()=>{ postToBackend({type:'ping'}); setTimeout(()=>postToBackend({type:'hello'}),200); });
+
+/* optional: keyboard send on Enter */
+input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); sendBtn.click(); } });
+
+/* Done frontend */
 </script>
 </body>
 </html>
