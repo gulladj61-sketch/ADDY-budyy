@@ -1,4 +1,5 @@
-// ===== ADDY-BUDDY UNIVERSAL BACKEND =====
+/const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));/ ===== ADDY-BUDDY UNIVERSAL BACKEND =====
 // Basic Node + Express setup (Free friendly)
 import express from "express";
 import cors from "cors";
