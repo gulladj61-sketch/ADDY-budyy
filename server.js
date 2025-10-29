@@ -173,4 +173,17 @@ app.post('/api/process', upload.single('file'), async (req, res) => {
 app.get('/api/health', (req, res) => res.json({ ok: true, ts: Date.now() }));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));import express from "express";
+import cors from "cors";
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+app.post("/chat", async (req, res) => {
+  const { message } = req.body;
+  // Dummy AI reply (test ke liye)
+  res.json({ reply: `🤖 Buddy says: "${message}" processed successfully!` });
+});
+
+app.listen(10000, () => console.log("✅ Server running on port 10000"));
