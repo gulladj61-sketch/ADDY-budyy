@@ -1,212 +1,104 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>ADDY Unified Chat — Select tool & prompt</title>
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>ADDY — Frontend</title>
 <style>
-  :root{--bg:#04121a;--card:#071827;--accent:#00e6ff;--muted:#9fd8ea}
-  *{box-sizing:border-box;font-family:Inter,system-ui,'Poppins',sans-serif}
-  body{margin:0;background:linear-gradient(135deg,var(--bg),#05202a);color:#eaffff}
-  header{display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid rgba(255,255,255,0.03)}
-  .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#00bcd4);display:flex;align-items:center;justify-content:center;color:#012;font-weight:800}
-  h1{margin:0;font-size:18px;color:var(--accent)}
-  .sub{color:var(--muted);font-size:13px}
-  .wrap{max-width:1100px;margin:18px auto;padding:12px}
-  /* slider */
-  .slider{display:flex;gap:10px;overflow:auto;padding:12px 6px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border:1px solid rgba(255,255,255,0.02)}
-  .tool{flex:0 0 auto;padding:8px 12px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.03);cursor:pointer;color:var(--muted)}
-  .tool.active{background:linear-gradient(90deg, rgba(0,230,255,0.06), rgba(0,180,200,0.04));color:var(--accent);border-color:rgba(0,230,255,0.12)}
-  /* chat area */
-  .chatWrap{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-  .chatBox{height:56vh;overflow:auto;padding:12px;border-radius:10px;background:var(--card);border:1px solid rgba(255,255,255,0.02)}
-  .msg{margin-bottom:10px;display:flex;gap:10px;align-items:flex-start}
-  .me{justify-content:flex-end}
-  .bubble{max-width:70%;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.02)}
-  .bubble.me{background:linear-gradient(90deg,rgba(0,230,255,0.08),transparent);border-color:rgba(0,230,255,0.06);color:#012}
-  .controls{display:flex;gap:8px;margin-top:8px;align-items:center}
-  input[type="text"]{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#eaffff}
-  button{background:var(--accent);color:#012;border:0;padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:700}
-  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted);padding:8px;border-radius:8px}
-  .mini{font-size:12px;color:var(--muted)}
-  /* frames */
-  .frameWrap{margin-top:12px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.02)}
-  iframe{width:100%;height:0;border:0;display:block}
-  /* responsive */
-  @media(max-width:760px){ .bubble{max-width:90%} .chatBox{height:48vh} }
+  body{font-family:Inter,system-ui,'Poppins',sans-serif;background:#071722;color:#eaffff;margin:0}
+  .wrap{max-width:1000px;margin:18px auto;padding:14px}
+  .top{display:flex;align-items:center;gap:12px}
+  .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(90deg,#00e6ff,#00bcd4);display:flex;align-items:center;justify-content:center;color:#012;font-weight:800}
+  .slider{display:flex;gap:8px;overflow:auto;padding:10px;margin-top:12px}
+  .tool{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.02);cursor:pointer}
+  .tool.active{background:linear-gradient(90deg,#002,#00e6ff);color:#012}
+  .chat{margin-top:12px;border-radius:10px;padding:12px;background:linear-gradient(180deg,#07121a,#061722);height:60vh;display:flex;flex-direction:column}
+  .messages{flex:1;overflow:auto}
+  .bubble{margin:8px 0;padding:10px;border-radius:8px;background:#0b2b2f}
+  .bubble.me{background:#00e6ff;color:#012}
+  .controls{display:flex;gap:8px;margin-top:10px}
+  input[type=text]{flex:1;padding:10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:#eaffff}
+  button{background:#00e6ff;color:#012;padding:10px 12px;border-radius:8px;border:0;cursor:pointer}
 </style>
 </head>
 <body>
-  <header>
-    <div class="logo">AI</div>
-    <div>
-      <h1>ADDY Unified Chat</h1>
-      <div class="sub">Choose a tool above → type a prompt or upload → get result (backend-powered)</div>
-    </div>
-    <div style="flex:1"></div>
-    <div class="mini">Demo + API-enabled backend</div>
-  </header>
-
   <div class="wrap">
-    <!-- TOOL SLIDER: 20 tools -->
-    <div class="slider" id="toolSlider" tabindex="0">
-      <!-- tools will be populated by JS -->
-    </div>
+    <div class="top"><div class="logo">AI</div><div><h2 style="margin:0">ADDY — Frontend</h2><div style="color:#9fd8ea;font-size:13px">Connects to /api/process on your proxy server</div></div></div>
 
-    <!-- CHAT -->
-    <div class="chatWrap">
-      <div class="chatBox" id="chatBox"></div>
+    <div class="slider" id="slider"></div>
 
+    <div class="chat">
+      <div class="messages" id="messages"></div>
       <div class="controls">
-        <input id="chatInput" type="text" placeholder="Type prompt, or use Upload buttons for image/audio" />
-        <button id="sendBtn">Send</button>
-        <label class="ghost" style="padding:8px 10px;cursor:pointer">
-          Img <input id="imgUpload" type="file" accept="image/*" style="display:none">
-        </label>
-        <label class="ghost" style="padding:8px 10px;cursor:pointer">
-          Audio <input id="audioUpload" type="file" accept="audio/*" style="display:none">
-        </label>
-        <button id="clearBtn" class="ghost">Clear</button>
+        <input id="prompt" type="text" placeholder="Type prompt...">
+        <button id="send">Send</button>
+        <label style="background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;cursor:pointer">Img<input id="img" type="file" accept="image/*" style="display:none"></label>
+        <label style="background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;cursor:pointer">Audio<input id="audio" type="file" accept="audio/*" style="display:none"></label>
       </div>
-      <div style="display:flex;justify-content:space-between;margin-top:6px">
-        <div class="mini">Active tool: <span id="activeTool">—</span></div>
-        <div class="mini" id="statusMini">Status: idle</div>
-      </div>
-    </div>
-
-    <!-- iframe: index2.html acts as backend handler -->
-    <div class="frameWrap" style="margin-top:12px">
-      <iframe id="backendFrame" src="index2.html" title="ADDY backend"></iframe>
     </div>
   </div>
 
 <script>
-/* --------- frontend logic: slider, chat, messaging to iframe --------- */
-const tools = [
-  'Chat','Image Enhance','Image Gen','Background Remove','OCR','Translator','Voice Enhance','Voice Transcribe',
-  'Text Summarize','Text Rewrite','TTS','Meme Maker','Code Assist','Upscale','Face Enhance','Video Enhance',
-  'PDF Summarize','Semantic Search','Batch Processor','Export Package'
-];
+/* ====== CONFIG: set your API base URL ======
+ If you are hosting server on Render, replace <YOUR_RENDER_URL> with it:
+  e.g. const API_BASE = 'https://addy-budyy.onrender.com/api/process';
+ If you are serving frontend from same server, you can use '/api/process'
+*/
+const API_BASE = '/api/process'; // <- replace if needed
 
-const slider = document.getElementById('toolSlider');
-const activeLabel = document.getElementById('activeTool');
-const chatBox = document.getElementById('chatBox');
-const input = document.getElementById('chatInput');
-const sendBtn = document.getElementById('sendBtn');
-const backendFrame = document.getElementById('backendFrame');
-const statusMini = document.getElementById('statusMini');
+const tools = ['Chat','Image Enhance','Image Gen','Background Remove','OCR','Translator','Voice Enhance','Voice Transcribe','Text Summarize','Text Rewrite','TTS','Meme Maker','Code Assist','Upscale','Face Enhance','Video Enhance','PDF Summarize','Semantic Search','Batch Processor','Export Package'];
+const slider = document.getElementById('slider');
+const messages = document.getElementById('messages');
+const promptEl = document.getElementById('prompt');
+const send = document.getElementById('send');
+const imgInput = document.getElementById('img');
+const audioInput = document.getElementById('audio');
 
-let activeTool = tools[0];
-let iframeReady = false;
-
-/* populate slider */
+let active = tools[0];
 tools.forEach(t=>{
-  const el = document.createElement('div'); el.className='tool'; el.innerText=t;
-  el.onclick = ()=>selectTool(el,t);
+  const el = document.createElement('div'); el.className='tool'; el.innerText = t;
+  el.onclick = ()=>{ document.querySelectorAll('.tool').forEach(x=>x.classList.remove('active')); el.classList.add('active'); active=t; appendSystem('Selected: '+t); };
   slider.appendChild(el);
 });
-/* initial selection */
-selectTool(slider.firstChild, tools[0]);
+document.querySelectorAll('.tool')[0].classList.add('active');
 
-function selectTool(el, name){
-  document.querySelectorAll('.tool').forEach(x=>x.classList.remove('active'));
-  el.classList.add('active');
-  activeTool = name;
-  activeLabel.innerText = name;
-  // send tool-change to iframe
-  postToBackend({type:'toolChange', tool: name});
-}
+function appendSystem(text){ const b=document.createElement('div'); b.className='bubble'; b.innerText = text; messages.appendChild(b); messages.scrollTop = messages.scrollHeight; }
+function appendUser(text){ const b=document.createElement('div'); b.className='bubble me'; b.innerText = text; messages.appendChild(b); messages.scrollTop = messages.scrollHeight; }
+function appendHTML(html){ const b=document.createElement('div'); b.className='bubble'; b.innerHTML = html; messages.appendChild(b); messages.scrollTop = messages.scrollHeight; }
 
-/* chat UI helpers */
-function appendMessage(side, text, extraHtml){
-  const row = document.createElement('div'); row.className='msg ' + (side==='me'?'me':'');
-  const b = document.createElement('div'); b.className='bubble ' + (side==='me'?'me':''); b.innerHTML = text || '';
-  row.appendChild(b);
-  if(extraHtml) row.appendChild(extraHtml);
-  chatBox.appendChild(row);
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-function setStatus(t){ statusMini.innerText = 'Status: ' + t; }
+send.addEventListener('click', async ()=>{
+  const txt = promptEl.value.trim();
+  if(!txt) return;
+  appendUser(txt);
+  promptEl.value = '';
+  appendSystem('Sending to server...');
+  const fd = new FormData();
+  fd.append('tool', active);
+  fd.append('prompt', txt);
+  if(imgInput.files[0]) fd.append('file', imgInput.files[0]);
+  if(audioInput.files[0]) fd.append('file', audioInput.files[0]);
 
-/* send input to iframe */
-sendBtn.addEventListener('click', ()=>{ const prompt = input.value.trim(); if(!prompt) return; appendMessage('me', escapeHtml(prompt)); postToBackend({type:'process', tool: activeTool, prompt}); input.value=''; setStatus('sending'); });
-
-/* clear chat */
-document.getElementById('clearBtn').addEventListener('click', ()=>{ chatBox.innerHTML=''; });
-
-/* image upload -> read base64 -> send */
-document.getElementById('imgUpload').addEventListener('change', async (e)=>{
-  const f = e.target.files[0]; if(!f) return;
-  appendMessage('me', 'Uploaded image: <strong>'+escapeHtml(f.name)+'</strong>');
-  const b64 = await fileToBase64(f);
-  postToBackend({type:'process', tool: activeTool, prompt: '', file: {name:f.name, data:b64, mime:f.type}});
-  setStatus('upload sent');
-  e.target.value='';
-});
-
-/* audio upload */
-document.getElementById('audioUpload').addEventListener('change', async (e)=>{
-  const f = e.target.files[0]; if(!f) return;
-  appendMessage('me', 'Uploaded audio: <strong>'+escapeHtml(f.name)+'</strong>');
-  const b64 = await fileToBase64(f);
-  postToBackend({type:'process', tool: activeTool, prompt: '', file: {name:f.name, data:b64, mime:f.type}});
-  setStatus('audio sent');
-  e.target.value='';
-});
-
-/* receive messages from iframe */
-window.addEventListener('message', (ev)=>{
-  const d = ev.data;
-  if(!d || !d.type) return;
-  if(d.type === 'ready'){ iframeReady = true; setStatus('backend ready'); }
-  else if(d.type === 'log'){ console.log('backend:', d.msg); }
-  else if(d.type === 'result'){
-    // append response (may contain html)
-    const content = d.html || escapeHtml(d.text || JSON.stringify(d));
-    appendMessage('bot', content);
-    setStatus('idle');
-    // if there's a downloadable data (image/audio) returned as base64, add a download link
-    if(d.file && d.file.data){
-      const link = document.createElement('a');
-      link.href = d.file.data;
-      link.download = d.file.name || 'result';
-      link.innerText = 'Download ' + (d.file.name || 'file');
-      link.className = 'ghost';
-      link.style.marginLeft = '8px';
-      appendMessage('bot', '', link);
+  try{
+    const r = await fetch(API_BASE, { method: 'POST', body: fd });
+    const j = await r.json();
+    if(j.error) appendHTML('Error: ' + j.error);
+    else {
+      if(j.text) appendHTML(j.text.replace(/\n/g,'<br>'));
+      if(j.file && j.file.data){
+        // if data URL or blob URL
+        if(typeof j.file.data === 'string' && j.file.data.startsWith('data:image')) {
+          appendHTML(`<img src="${j.file.data}" style="max-width:100%"><div><a href="${j.file.data}" download="${j.file.name || 'file'}">Download</a></div>`);
+        } else {
+          appendHTML('Result file available.');
+        }
+      }
     }
+  }catch(err){
+    appendHTML('Request failed: '+err.message);
   }
 });
 
-/* postToBackend with safety (wait until iframe loaded) */
-function postToBackend(msg){
-  if(!iframeReady){ // queue until ready
-    setTimeout(()=>postToBackend(msg), 300);
-    return;
-  }
-  backendFrame.contentWindow.postMessage(msg, '*');
-}
+imgInput.addEventListener('change', ()=>{ if(imgInput.files[0]) appendSystem('Image attached: '+imgInput.files[0].name); });
+audioInput.addEventListener('change', ()=>{ if(audioInput.files[0]) appendSystem('Audio attached: '+audioInput.files[0].name); });
 
-/* helper: file->base64 */
-function fileToBase64(file){
-  return new Promise((res, rej)=>{
-    const r = new FileReader();
-    r.onload = ()=>res(r.result);
-    r.onerror = e=>rej(e);
-    r.readAsDataURL(file);
-  });
-}
-
-/* escape html */
-function escapeHtml(t){ return (''+t).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-/* ping backend after iframe loads */
-backendFrame.addEventListener('load', ()=>{ postToBackend({type:'ping'}); setTimeout(()=>postToBackend({type:'hello'}),200); });
-
-/* optional: keyboard send on Enter */
-input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); sendBtn.click(); } });
-
-/* Done frontend */
+// enter -> send
+promptEl.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); send.click(); } });
 </script>
-</body>
-</html>
+</body></html>
