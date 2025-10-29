@@ -1,160 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>World of Luxury Machines — Premium 3D Showroom</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Elite Motors - Luxury Cars & Bikes</title>
 <style>
-:root{
-  --bg:#010103;--gold:#d4af37;--text:#e8e8e8;--muted:#8b8b8b;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:"Poppins",sans-serif;
-  overflow-x:hidden;
-}
-header{
-  position:fixed;left:0;top:0;bottom:0;
-  width:70px;background:rgba(0,0,0,0.85);
-  backdrop-filter:blur(6px);
-  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
-  border-right:1px solid rgba(255,255,255,0.1);
-  padding:16px 0;z-index:10;
-  transition:width .3s ease;
-}
-header:hover{width:200px}
-.logo{
-  font-family:"Playfair Display",serif;
-  font-size:22px;font-weight:800;
-  color:var(--gold);text-align:center;
-}
-nav{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:0 8px;margin-top:24px;width:100%}
-nav a{
-  display:flex;align-items:center;gap:10px;
-  text-decoration:none;color:var(--muted);
-  padding:8px 12px;width:100%;border-radius:8px;
-  transition:.3s;background:transparent;
-}
-nav a:hover{background:rgba(255,255,255,0.06);color:var(--gold)}
-nav span{white-space:nowrap;font-size:14px}
-main{margin-left:70px;transition:margin-left .3s ease;}
-header:hover ~ main{margin-left:200px;}
-section{
-  min-height:100vh;padding:60px 40px;
-  border-bottom:1px solid rgba(255,255,255,0.04);
-  display:flex;flex-direction:row;align-items:center;gap:40px;
-}
-section:nth-child(even){flex-direction:row-reverse}
-.content{flex:1}
-h1,h2{font-family:"Playfair Display",serif;margin-bottom:12px}
-h1{font-size:42px;color:var(--gold)}
-p{color:var(--muted);line-height:1.6}
-.scene{flex:1;min-height:420px;border-radius:20px;overflow:hidden;background:linear-gradient(180deg,#0a0a0a,#121212);border:1px solid rgba(255,255,255,0.05);box-shadow:0 0 20px rgba(0,0,0,0.6);}
-footer{text-align:center;padding:60px 0;color:var(--muted);font-size:13px}
-@media(max-width:800px){
-  header{flex-direction:row;width:100%;height:60px;padding:0 16px;bottom:auto}
-  nav{flex-direction:row;align-items:center;margin:0}
-  main{margin-left:0;margin-top:60px}
-  section{flex-direction:column}
-}
+  body {
+    margin: 0;
+    background: radial-gradient(circle at top, #000, #050505 60%, #111);
+    color: #fff;
+    font-family: "Poppins", sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* 🔱 Intro Animation */
+  .intro {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: linear-gradient(180deg, #000, #111);
+    color: gold;
+    font-size: 3rem;
+    letter-spacing: 3px;
+    font-weight: bold;
+    animation: fadeOut 3s ease 4s forwards;
+  }
+
+  @keyframes fadeOut {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    padding: 50px;
+  }
+
+  .card {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    transition: transform 0.6s ease, box-shadow 0.3s ease;
+  }
+
+  .card:hover {
+    transform: rotateY(12deg) scale(1.05);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+  }
+
+  .card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.85);
+    transition: filter 0.4s ease;
+  }
+
+  .card:hover img {
+    filter: brightness(1);
+  }
+
+  .brand {
+    position: absolute;
+    bottom: 10px;
+    left: 15px;
+    background: rgba(0,0,0,0.5);
+    padding: 8px 15px;
+    border-radius: 12px;
+    font-weight: 600;
+    color: gold;
+  }
+
+  /* ✨ Scroll Animation */
+  .card {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 1s ease;
+  }
+
+  .card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
 </style>
 </head>
 <body>
-<header>
-  <div class="logo">LX</div>
-  <nav>
-    <a href="#rolls"><span>Rolls-Royce</span></a>
-    <a href="#bugatti"><span>Bugatti</span></a>
-    <a href="#ferrari"><span>Ferrari</span></a>
-    <a href="#lamborghini"><span>Lamborghini</span></a>
-    <a href="#aston"><span>Aston Martin</span></a>
-  </nav>
-  <div style="color:var(--muted);font-size:10px;">© 2025</div>
-</header>
 
-<main>
-<section id="hero">
-  <div class="content">
-    <h1>World of Luxury Machines</h1>
-    <h2>Experience Elegance in Motion</h2>
-    <p>Scroll down and explore the finest automotive creations ever crafted — every scroll reveals a new legend of power, performance, and perfection.</p>
-  </div>
-  <div class="scene" id="heroScene"></div>
-</section>
+<div class="intro">
+  <h1>🏎️ World Elite Motors 🏍️</h1>
+  <p>Experience the Power of Perfection</p>
+</div>
 
-<section id="rolls">
-  <div class="content">
-    <h2>Rolls-Royce — Spirit of Opulence</h2>
-    <p>The definition of timeless luxury — effortless power wrapped in the silence of precision craftsmanship.</p>
-  </div>
-  <div class="scene" id="scene-rolls"></div>
-</section>
-
-<section id="bugatti">
-  <div class="content">
-    <h2>Bugatti — Sculpted Velocity</h2>
-    <p>Where engineering meets artistry — the pursuit of unmatched speed and beauty.</p>
-  </div>
-  <div class="scene" id="scene-bugatti"></div>
-</section>
-
-<section id="ferrari">
-  <div class="content">
-    <h2>Ferrari — Red Passion</h2>
-    <p>The prancing horse that defines performance, born from the racetrack and refined for the street.</p>
-  </div>
-  <div class="scene" id="scene-ferrari"></div>
-</section>
-
-<section id="lamborghini">
-  <div class="content">
-    <h2>Lamborghini — Bold Perfection</h2>
-    <p>An icon of strength and rebellion, carved in aggressive geometry and gold-lit edges.</p>
-  </div>
-  <div class="scene" id="scene-lambo"></div>
-</section>
-
-<section id="aston">
-  <div class="content">
-    <h2>Aston Martin — British Elegance</h2>
-    <p>The soul of a grand tourer — where performance meets timeless design.</p>
-  </div>
-  <div class="scene" id="scene-aston"></div>
-</section>
-
-<footer>© 2025 ADDY — Luxury Machines • Designed for dreamers of motion.</footer>
-</main>
+<div class="gallery" id="gallery"></div>
 
 <script>
-const ids=['heroScene','scene-rolls','scene-bugatti','scene-ferrari','scene-lambo','scene-aston'];
-function initScene(id,color=0x222233,light=0xffeaa7){
- const el=document.getElementById(id);if(!el)return;
- const w=el.clientWidth,h=el.clientHeight;
- const scene=new THREE.Scene();
- const camera=new THREE.PerspectiveCamera(35,w/h,0.1,1000);
- const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
- renderer.setSize(w,h);el.appendChild(renderer.domElement);
- camera.position.set(0,1.2,5);
- const hemi=new THREE.HemisphereLight(0xffffff,0x080820,0.7);scene.add(hemi);
- const dir=new THREE.DirectionalLight(light,0.8);dir.position.set(5,10,7);scene.add(dir);
- const geo=new THREE.BoxGeometry(3,0.7,1.3);
- const mat=new THREE.MeshStandardMaterial({color,metalness:.9,roughness:.12});
- const body=new THREE.Mesh(geo,mat);scene.add(body);
- function animate(){body.rotation.y+=.01;renderer.render(scene,camera);requestAnimationFrame(animate);}
- animate();
-}
-ids.forEach((id,i)=>{
- let c=[0x223344,0x0b2b3a,0x7a1111,0x222220,0x19323c][i]||0x333333;
- let l=[0xfff4e6,0x66ccff,0xff6666,0xffcc00,0xaaffee][i]||0xffffff;
- initScene(id,c,l);
-});
+  // ⚙️ Car Data (sample – तू इसे बढ़ा सकता है)
+  const cars = [
+    { brand: "Rolls Royce Phantom", img: "https://images.unsplash.com/photo-1605559424843-92a3c6d7aa7a" },
+    { brand: "Bugatti Chiron", img: "https://images.unsplash.com/photo-1606813902804-53d6a51ec09b" },
+    { brand: "Lamborghini Aventador", img: "https://images.unsplash.com/photo-1503736334956-4c8f8e92946d" },
+    { brand: "Ferrari SF90", img: "https://images.unsplash.com/photo-1606811825148-f9cde76bdf4b" },
+    { brand: "Tesla Roadster", img: "https://images.unsplash.com/photo-1614732414444-096f7b62b37c" },
+    { brand: "Ducati Panigale V4", img: "https://images.unsplash.com/photo-1606220838318-199baf4b7c4d" },
+    { brand: "Harley Davidson CVO", img: "https://images.unsplash.com/photo-1583121274602-3e282f0bfc16" },
+  ];
+
+  const gallery = document.getElementById('gallery');
+
+  // Dynamic Load Cars
+  cars.forEach(car => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `<img src="${car.img}" alt="${car.brand}"><div class='brand'>${car.brand}</div>`;
+    gallery.appendChild(div);
+  });
+
+  // Scroll animation
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  });
+
+  document.querySelectorAll('.card').forEach(card => observer.observe(card));
 </script>
+
 </body>
 </html>
