@@ -3,185 +3,206 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>ADDY-Buddy — Frontend + Simulated Backend</title>
-<meta name="description" content="ADDY-Buddy demo: premium frontend + simulated backend processing for image/audio/text. 100% client-side."/>
+<title>ADDY.AI — All-in-one Free AI Toolkit (Demo)</title>
+<meta name="description" content="ADDY.AI demo: prompt-based image enhancer, voice enhancer, chat assistant, text tools, TTS — all client-side, no paid keys."/>
 <style>
   :root{
-    --bg1:#06151a; --bg2:#071f2a; --accent:#00e6ff; --muted:#9fd8ea;
-    --card:#08141a; --glass:rgba(255,255,255,0.03);
+    --bg1:#04121a; --bg2:#062029; --accent:#00e6ff; --muted:#9fd8ea;
+    --card:#071722; --glass: rgba(255,255,255,0.03);
+    --radius:12px;
   }
-  *{box-sizing:border-box}
-  body{margin:0;min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#eaffff;font-family:Inter,system-ui,'Poppins',sans-serif; -webkit-font-smoothing:antialiased;}
-  .wrap{max-width:1100px;margin:28px auto;padding:18px;}
-  .brand{display:flex;align-items:center;gap:12px}
-  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,#00e6ff,#00bcd4);display:flex;align-items:center;justify-content:center;font-weight:800;color:#002;box-shadow:0 8px 32px rgba(0,230,255,0.06)}
-  .title{font-size:20px;font-weight:800;color:var(--accent);text-shadow:0 0 8px rgba(0,230,255,0.08)}
+  *{box-sizing:border-box;font-family:Inter,system-ui,'Poppins',sans-serif}
+  body{margin:0;min-height:100vh;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#eaffff;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1150px;margin:18px auto;padding:18px}
+  header{display:flex;align-items:center;gap:12px}
+  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(90deg,#00e6ff,#00bcd4);display:flex;align-items:center;justify-content:center;font-weight:800;color:#012}
+  h1{font-size:22px;margin:0;color:var(--accent);text-shadow:0 0 8px rgba(0,230,255,0.08)}
   .sub{color:var(--muted);font-size:13px;margin-top:6px}
+  /* intro */
+  #intro{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(0,0,0,0.65),rgba(0,0,0,0.8));z-index:9999}
+  .intro-card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:28px;border-radius:18px;text-align:center;border:1px solid rgba(255,255,255,0.04)}
+  .logoGlow{font-size:36px;color:var(--accent);font-weight:800;letter-spacing:2px;text-shadow:0 0 20px #00e6ff55}
+  .dots{display:flex;gap:8px;justify-content:center;margin-top:14px}
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);opacity:0.7;animation:ping 1s infinite}
+  @keyframes ping{0%{transform:scale(.7)}50%{transform:scale(1.2)}100%{transform:scale(.7)}}
 
-  /* hero */
-  .hero{margin-top:18px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:20px;border-radius:14px;border:1px solid var(--glass);display:flex;gap:18px;align-items:center}
-  .hero-left{flex:1}
-  .hero-right{width:340px;min-width:240px}
+  /* layout */
+  .hero{display:flex;gap:18px;align-items:stretch;margin-top:12px}
+  .left{flex:1;min-width:320px}
+  .right{width:380px;min-width:260px}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);border-radius:var(--radius);padding:14px;border:1px solid var(--glass);box-shadow:0 12px 40px rgba(0,0,0,0.6)}
+  .tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin-top:14px}
 
-  .btn{background:var(--accent);color:#002;padding:10px 14px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
-  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#bfeffb}
+  button.btn{background:var(--accent);color:#022;padding:10px 14px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
+  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+
+  /* editor */
+  #canvasWrap{background:#000;border-radius:10px;padding:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  canvas{max-width:100%;height:auto;border-radius:8px;display:block}
+
+  textarea,input[type=text]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#eaf9ff}
+
+  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+  .status{font-size:13px;color:var(--muted);margin-left:6px}
+
+  .progress{height:10px;background:rgba(255,255,255,0.03);border-radius:8px;overflow:hidden;margin-top:10px}
+  .progress .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#00ffa0);transition:width .12s linear}
+
   .muted{color:var(--muted);font-size:13px}
 
-  /* grid */
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-top:18px}
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.02);box-shadow:0 10px 40px rgba(0,0,0,0.5)}
-  h3{color:var(--accent);margin-bottom:6px}
+  footer{margin-top:26px;text-align:center;color:var(--muted);font-size:13px;padding-bottom:30px}
 
-  /* canvas */
-  #canvasWrap{background:#000;border-radius:8px;padding:8px;display:flex;align-items:center;justify-content:center}
-  canvas{max-width:100%;height:auto;border-radius:6px;display:block}
-
-  /* controls */
-  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-  input[type=file]{display:none}
-
-  /* status & progress */
-  .status{font-size:13px;color:#bfeffb;margin-left:8px}
-  .progress{height:10px;background:rgba(255,255,255,0.04);border-radius:8px;overflow:hidden;margin-top:10px}
-  .progress .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#00ffa0);transition:width .2s linear}
-
-  /* voice */
-  #voiceWave{width:100%;height:64px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border-radius:8px}
-
-  /* text generator */
-  textarea{width:100%;min-height:110px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:#eaf9ff;padding:8px;border-radius:8px}
-
-  footer{margin-top:22px;text-align:center;color:var(--muted);font-size:13px;padding-bottom:40px}
-
-  @media(max-width:760px){ .hero{flex-direction:column} .hero-right{width:100%} }
+  @media(max-width:900px){ .hero{flex-direction:column} .right{width:100%} .tools{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="brand">
+  <!-- INTRO -->
+  <div id="intro" role="status">
+    <div class="intro-card">
+      <div class="logoGlow">ADDY.AI</div>
+      <div class="muted" style="margin-top:8px">Premium demo • Client-side smart tools</div>
+      <div class="dots"><div class="dot"></div><div class="dot" style="animation-delay:.15s"></div><div class="dot" style="animation-delay:.3s"></div></div>
+    </div>
+  </div>
+
+  <div class="wrap" id="app" style="opacity:0;transition:opacity .4s ease .8s">
+    <header>
       <div class="logo">AI</div>
-      <div>
-        <div class="title">ADDY-Buddy</div>
-        <div class="sub">Premium front + simulated backend — demo mode</div>
+      <div style="margin-left:8px">
+        <h1>ADDY.AI — All-in-one Free Toolkit</h1>
+        <div class="sub">Prompt-driven image enhance • Voice enhancer • Chat & text tools • TTS — Demo mode</div>
       </div>
       <div style="flex:1"></div>
-      <div class="muted">Live: client-side only</div>
-    </div>
+      <div class="muted">Demo • No paid keys</div>
+    </header>
 
-    <!-- HERO -->
-    <div class="hero">
-      <div class="hero-left">
-        <h2 style="margin:0;color:#fff">All-in-one AI Tools — Demo Edition</h2>
-        <p class="muted">Image enhance, background blur, voice processing & a simulated backend flow so buyers/users get full experience.</p>
-        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn" onclick="scrollTo('imageCard')">Open Image Editor</button>
-          <button class="btn ghost" onclick="scrollTo('voiceCard')">Voice Tool</button>
-          <button class="btn ghost" onclick="scrollTo('textCard')">Text Tool</button>
-        </div>
-      </div>
-      <div class="hero-right card">
-        <div style="display:flex;gap:8px;align-items:center">
-          <div style="width:56px;height:56px;border-radius:10px;background:linear-gradient(90deg,#001b24,#00394a);display:flex;align-items:center;justify-content:center">★</div>
-          <div>
-            <div style="font-weight:800">Demo Backend</div>
-            <div class="muted" style="font-size:13px">Simulated processing for UX — no paid keys</div>
+    <div class="hero" style="margin-top:12px">
+      <div class="left">
+        <div class="card">
+          <h2 style="margin:0">Prompt-driven Image Enhancer</h2>
+          <div class="muted" style="margin-top:6px">Type a prompt (example: "make sharper, increase detail, boost colors") and click Enhance. Uses client-side advanced filters + upscale→sharpen trick.</div>
+
+          <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+            <label class="btn">Upload Image<input id="imgInput" type="file" accept="image/*" style="display:none"></label>
+            <input id="imgPrompt" type="text" placeholder="Prompt: e.g. 'Make HD, reduce blur, vivid colors'">
+            <button id="imgEnhBtn" class="btn">Enhance</button>
+            <button id="imgBlurBtn" class="ghost">BG Blur</button>
+            <button id="imgDownload" class="ghost">Download</button>
+          </div>
+
+          <div class="progress"><div id="imgBar" class="bar"></div></div>
+          <div id="canvasWrap" style="margin-top:12px" class="muted card">
+            <canvas id="workCanvas" width="900" height="520"></canvas>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <div id="imgStatus" class="status">Idle</div>
+            <div class="muted">Tip: For best results use clear photos (portraits/photos with subject).</div>
           </div>
         </div>
-        <div style="margin-top:12px">
-          <div class="muted">Tip: Upload an image or record audio and click “Process” to see progress + download result.</div>
+
+        <div class="tools">
+          <div class="card">
+            <h3>✍️ Text Assistant (Rewrite & Summarize)</h3>
+            <div class="muted">Paste text, choose action, and get instant client-side result.</div>
+            <textarea id="textIn" placeholder="Paste text here..."></textarea>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button id="rewriteBtn" class="btn">Rewrite (Tone)</button>
+              <button id="summBtn" class="ghost">Summarize</button>
+              <button id="ttsBtn" class="btn ghost">Speak</button>
+              <div id="textStatus" class="status">Idle</div>
+            </div>
+            <div id="textOut" style="margin-top:10px;min-height:80px;background:rgba(255,255,255,0.01);padding:10px;border-radius:8px;color:#dff"></div>
+          </div>
+
+          <div class="card" id="voiceCard">
+            <h3>🎤 Voice Recorder & Enhance</h3>
+            <div class="muted">Record up to 30s → process (denoise & normalize) → play & download</div>
+            <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+              <button id="recStart" class="btn">Start</button>
+              <button id="recStop" class="ghost" disabled>Stop</button>
+              <button id="recPlay" class="ghost" disabled>Play</button>
+              <button id="recSave" class="ghost" disabled>Download</button>
+              <button id="recEnh" class="btn ghost">Enhance</button>
+              <div id="voiceStatus" class="status">Idle</div>
+            </div>
+            <canvas id="voiceWave" style="margin-top:10px;width:100%;height:64px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent)"></canvas>
+            <audio id="voicePlayer" controls style="width:100%;margin-top:8px;display:none"></audio>
+            <div class="progress"><div id="voiceBar" class="bar"></div></div>
+          </div>
+
+          <div class="card">
+            <h3>💬 Chat Assistant (Simulated)</h3>
+            <div class="muted">Type prompts — demo replies generated locally (keeps history in browser)</div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <input id="chatPrompt" type="text" placeholder="Ask anything...">
+              <button id="chatSend" class="btn">Send</button>
+              <button id="chatClear" class="ghost">Clear</button>
+            </div>
+            <div id="chatBox" style="margin-top:10px;min-height:140px;max-height:260px;overflow:auto;background:rgba(255,255,255,0.01);padding:10px;border-radius:8px"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="card">
+          <h3>Quick Controls & Info</h3>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+            <label class="ghost" style="padding:8px;border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+              <span>Visitor Count</span><span id="visCount">—</span>
+            </label>
+            <label class="ghost" style="padding:8px;border-radius:8px;display:flex;justify-content:space-between;align-items:center">
+              <span>Local Mode</span><span>ON</span>
+            </label>
+            <div class="muted">Links</div>
+            <a class="ghost" href="https://github.com/gulladj61-sketch/ADDY-budyy" target="_blank" style="display:inline-block;padding:8px;border-radius:8px;text-decoration:none;color:inherit">Repo</a>
+            <div style="margin-top:6px" class="muted">History</div>
+            <div id="miniHistory" style="max-height:220px;overflow:auto;margin-top:6px;background:rgba(255,255,255,0.01);padding:8px;border-radius:8px"></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3>How to use</h3>
+          <ol style="color:var(--muted);margin-left:18px">
+            <li>Upload image → type prompt → Enhance</li>
+            <li>Record voice → Enhance → Download</li>
+            <li>Use chat to see simulated assistant replies</li>
+            <li>Everything runs in browser — no keys required</li>
+          </ol>
         </div>
       </div>
     </div>
 
-    <!-- TOOLS GRID -->
-    <div class="grid">
-      <!-- IMAGE EDITOR -->
-      <div id="imageCard" class="card">
-        <h3>🖼 Image Editor — Blur & Enhance</h3>
-        <p class="muted">Upload image → Background Blur (person-aware if supported) → Enhance (visual sharpen + contrast). Download result.</p>
-
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px">
-          <label class="btn">Upload Image
-            <input id="imgInput" type="file" accept="image/*">
-          </label>
-          <button id="btnBlur" class="btn ghost">Background Blur</button>
-          <button id="btnEnhance" class="btn">Enhance (Visual)</button>
-          <button id="btnDownloadImg" class="btn ghost">Download</button>
-          <div id="imgStatus" class="status">Idle</div>
-        </div>
-
-        <div class="progress" style="margin-top:10px"><div id="imgProgress" class="bar"></div></div>
-
-        <div id="canvasWrap" style="margin-top:12px">
-          <canvas id="workCanvas" width="900" height="520"></canvas>
-        </div>
-
-        <div class="muted" style="margin-top:8px">Note: Enhance uses client-side filters and upscale→sharpen trick for visible improvement.</div>
-      </div>
-
-      <!-- VOICE TOOL -->
-      <div id="voiceCard" class="card">
-        <h3>🎤 Voice Recorder & Enhance</h3>
-        <p class="muted">Record up to 30s → Simulated noise-reduction + normalize → Play & Download WAV.</p>
-
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <button id="startRec" class="btn">Start</button>
-          <button id="stopRec" class="btn ghost" disabled>Stop</button>
-          <button id="playRec" class="btn ghost" disabled>Play</button>
-          <button id="downloadRec" class="btn ghost" disabled>Download</button>
-          <div id="voiceStatus" class="status">Idle</div>
-        </div>
-
-        <canvas id="voiceWave"></canvas>
-        <audio id="voicePlayer" controls style="width:100%;margin-top:8px;display:none"></audio>
-        <div class="progress" style="margin-top:8px"><div id="voiceProgress" class="bar"></div></div>
-      </div>
-
-      <!-- TEXT TOOL (simulated backend) -->
-      <div id="textCard" class="card">
-        <h3>✍️ Text Assistant (Simulated)</h3>
-        <p class="muted">Type prompt → Generate (simulated processing). This is a demo/text-mock — not a real AI backend.</p>
-        <textarea id="textIn" placeholder="Write prompt like: 'Write a short ad for AI tool'"></textarea>
-        <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
-          <button id="genText" class="btn">Generate</button>
-          <button id="copyText" class="btn ghost">Copy</button>
-          <div id="textStatus" class="status">Idle</div>
-        </div>
-        <div class="progress" style="margin-top:8px"><div id="textProgress" class="bar"></div></div>
-        <div id="textOut" style="margin-top:10px;background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;min-height:80px"></div>
-      </div>
-    </div>
-
-    <footer>© 2025 ADDY-Buddy — Demo • Client-side processing • For sale: gulladj61-sketch.github.io/ADDY-budyy</footer>
+    <footer>© 2025 ADDY.AI — Demo • Client-side • For sale: gulladj61-sketch.github.io/ADDY-budyy</footer>
   </div>
 
 <script>
-/* -------------------------
-   Helper & UX functions
-   ------------------------- */
+/* ---------- Simple helpers ---------- */
 const $ = id => document.getElementById(id);
-function setBar(el, p){ el.style.width = Math.max(0,Math.min(100,p)) + '%'; }
-function setText(el, t){ if(el) el.innerText = t; }
+function setBar(el,p){ if(!el) return; el.style.width = Math.max(0,Math.min(100,p)) + '%'; }
+function setText(el,t){ if(!el) return; el.innerText = t; }
 
-/* -------------------------
-   IMAGE: upload, blur, enhance
-   ------------------------- */
-const imgInput = $('imgInput');
-const workCanvas = $('workCanvas');
+/* hide intro */
+window.addEventListener('load', ()=>{ setTimeout(()=>{ document.getElementById('intro').style.display='none'; document.getElementById('app').style.opacity=1; },900); });
+
+/* visitor mock */
+(function(){ let v = localStorage.getItem('addy_vis'); if(!v) v = 120 + Math.floor(Math.random()*300); else v = parseInt(v)+1; localStorage.setItem('addy_vis',v); $('visCount').innerText = v; })();
+
+/* ---------- IMAGE: load + prompt-driven enhancement ---------- */
+const imgInput = $('imgInput'), workCanvas = $('workCanvas'), imgPrompt = $('imgPrompt');
+const imgBar = $('imgBar'), imgStatus = $('imgStatus'), imgDownload = $('imgDownload'), imgEnhBtn = $('imgEnhBtn'), imgBlurBtn = $('imgBlurBtn');
 const ctx = workCanvas.getContext('2d');
-let originalImage = null;
-let originalDataURL = null;
+let originalImage = null, originalDataURL = null;
 
 imgInput.addEventListener('change', e=>{
   const f = e.target.files[0]; if(!f) return;
   const url = URL.createObjectURL(f);
   const img = new Image();
-  img.onload = ()=>{ originalImage = img; fitCanvas(img); originalDataURL = workCanvas.toDataURL('image/png'); setText($('imgStatus'),'Image loaded'); setBar($('imgProgress'),0); }
+  img.onload = ()=>{ originalImage = img; fitCanvasTo(img); originalDataURL = workCanvas.toDataURL('image/png'); setText(imgStatus,'Image loaded'); setBar(imgBar,0); addHistory('Image upload'); }
   img.src = url;
 });
 
-function fitCanvas(img){
-  const maxW = 1000, maxH = 600;
+function fitCanvasTo(img){
+  const maxW = 1100, maxH = 700;
   let w = img.naturalWidth || img.width, h = img.naturalHeight || img.height;
   const ratio = Math.min(maxW/w, maxH/h, 1);
   w = Math.round(w*ratio); h = Math.round(h*ratio);
@@ -189,391 +210,270 @@ function fitCanvas(img){
   ctx.clearRect(0,0,w,h); ctx.drawImage(img,0,0,w,h);
 }
 
-/* simple blur (full image) fallback */
-async function simpleBlur() {
-  if(!originalImage) return alert('Upload image first');
-  setText($('imgStatus'),'Blurring...');
-  setBar($('imgProgress'),10);
-  // work on an offscreen canvas at full original resolution
+/* basic gaussian-like blur via canvas filter (fallback) */
+async function doBackgroundBlur(){
+  if(!originalImage) return alert('Upload first');
+  setText(imgStatus,'Applying background blur (demo)...');
+  setBar(imgBar,10);
   const tmp = document.createElement('canvas'); tmp.width = originalImage.naturalWidth || originalImage.width; tmp.height = originalImage.naturalHeight || originalImage.height;
   const tctx = tmp.getContext('2d'); tctx.drawImage(originalImage,0,0);
-  setBar($('imgProgress'),30);
-  // apply CSS blur by drawing to another canvas with filter
-  const off = document.createElement('canvas'); off.width = tmp.width; off.height = tmp.height;
-  const offCtx = off.getContext('2d');
-  offCtx.filter = 'blur(20px)';
-  offCtx.drawImage(tmp,0,0);
-  setBar($('imgProgress'),60);
-  // Composite: keep center (subject) sharp by cropping center circle (simple heuristic)
-  const w = off.width, h = off.height; const centerX = Math.floor(w/2), centerY = Math.floor(h/2);
-  const radius = Math.min(w,h)/4;
-  const imgData = offCtx.getImageData(0,0,w,h);
-  const orig = tctx.getImageData(0,0,w,h);
-  // replace circular region with original to simulate subject
-  for(let y=0;y<h;y++){
-    for(let x=0;x<w;x++){
-      const dx = x-centerX, dy=y-centerY; if(dx*dx+dy*dy < radius*radius){
-        const i = (y*w + x)*4;
-        imgData.data[i]=orig.data[i]; imgData.data[i+1]=orig.data[i+1]; imgData.data[i+2]=orig.data[i+2]; imgData.data[i+3]=255;
-      }
-    }
+  setBar(imgBar,30);
+  const off = document.createElement('canvas'); off.width = tmp.width; off.height = tmp.height; const offCtx = off.getContext('2d');
+  offCtx.filter = 'blur(20px)'; offCtx.drawImage(tmp,0,0);
+  setBar(imgBar,70);
+  // blend center circle sharp
+  const w=tmp.width,h=tmp.height,cx=Math.floor(w/2),cy=Math.floor(h/2),r=Math.min(w,h)/3;
+  const orig = tctx.getImageData(0,0,w,h); const blur = offCtx.getImageData(0,0,w,h);
+  for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+    const i=(y*w+x)*4; const dx=x-cx, dy=y-cy;
+    if(dx*dx+dy*dy<r*r){ blur.data[i]=orig.data[i]; blur.data[i+1]=orig.data[i+1]; blur.data[i+2]=orig.data[i+2]; }
   }
-  offCtx.putImageData(imgData,0,0);
-  setBar($('imgProgress'),85);
-  // draw scaled to display canvas
-  const out = new Image();
-  out.onload = ()=>{ fitCanvas(out); setText($('imgStatus'),'Background blurred'); setBar($('imgProgress'),100); setTimeout(()=>setBar($('imgProgress'),0),700); };
-  out.src = off.toDataURL('image/png');
+  offCtx.putImageData(blur,0,0);
+  const out = new Image(); out.onload = ()=>{ fitCanvasTo(out); setText(imgStatus,'Background blurred'); setBar(imgBar,100); setTimeout(()=>setBar(imgBar,0),600); addHistory('BG blur'); }; out.src = off.toDataURL('image/png');
 }
 
-/* enhance: upscale->unsharp->downscale->contrast */
-function unsharpMask(imageData,w,h){
-  const data = imageData.data;
-  const copy = new Uint8ClampedArray(data);
-  const k=[-1,-1,-1,-1,9,-1,-1,-1,-1];
-  for(let y=1;y<h-1;y++){
-    for(let x=1;x<w-1;x++){
-      for(let c=0;c<3;c++){
-        let sum=0,ki=0;
-        for(let ky=-1;ky<=1;ky++) for(let kx=-1;kx<=1;kx++){
-          const px=(y+ky)*w + (x+kx);
-          sum += copy[px*4 + c] * k[ki++];
-        }
-        const idx=(y*w + x)*4 + c;
-        const val = Math.max(0,Math.min(255,sum));
-        data[idx]=val;
-      }
-      data[(y*w+x)*4+3]=255;
-    }
-  }
-  return imageData;
-}
-function tweakContrast(ctx,w,h,contrast=1.05,brightness=1.02){
-  try{
-    const img = ctx.getImageData(0,0,w,h); const d=img.data;
-    const cFactor = (259*(contrast*255+255))/(255*(259-contrast*255));
-    for(let i=0;i<d.length;i+=4){
-      for(let ch=0;ch<3;ch++){
-        let val = d[i+ch];
-        val = cFactor*(val-128)+128; val = val*brightness;
-        d[i+ch] = Math.max(0,Math.min(255, val));
-      }
-    }
-    ctx.putImageData(img,0,0);
-  }catch(e){ console.warn('contrast tweak fail',e); }
-}
-
-async function enhanceImage(){
-  if(!originalImage) return alert('Upload image first');
-  setText($('imgStatus'),'Starting enhance...');
-  setBar($('imgProgress'),10);
-  // create upscaled canvas
-  const upW = Math.min((workCanvas.width*2)|0, 2400), upH = Math.min((workCanvas.height*2)|0, 1600);
+/* prompt-driven "enhance" (visual pipeline) */
+async function promptEnhance(){
+  if(!originalImage) return alert('Upload first');
+  const prompt = (imgPrompt.value || '').toLowerCase();
+  setText(imgStatus,'Processing: ' + (prompt || 'enhance'));
+  setBar(imgBar,6); addHistory('Enhance: '+(prompt||'quick'));
+  // simulate server-like progress
+  let p=6; const t=setInterval(()=>{ p+=Math.random()*8; setBar(imgBar,p); },200);
+  await new Promise(r=>setTimeout(r,700 + Math.random()*800));
+  clearInterval(t);
+  // visual pipeline: upscale -> sharpen -> local contrast -> vibrance -> downscale
+  const upW = Math.min(workCanvas.width*2, 2200), upH = Math.min(workCanvas.height*2, 1600);
   const up = document.createElement('canvas'); up.width=upW; up.height=upH;
   const uctx = up.getContext('2d'); uctx.imageSmoothingEnabled=true; uctx.imageSmoothingQuality='high';
   uctx.drawImage(workCanvas,0,0,upW,upH);
-  setBar($('imgProgress'),40);
-  try{
-    let imgd = uctx.getImageData(0,0,upW,upH);
-    imgd = unsharpMask(imgd, upW, upH);
-    uctx.putImageData(imgd,0,0);
-  }catch(e){ console.warn('sharpen failed',e); }
-  setBar($('imgProgress'),70);
-  // downscale back
-  ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
+  setBar(imgBar,35);
+  // conditional tweaks based on prompt keywords
+  const stronger = prompt.includes('hd') || prompt.includes('detail') || prompt.includes('8k') || prompt.includes('sharp');
+  try{ let imgd = uctx.getImageData(0,0,upW,upH); imgd = unsharpSimple(imgd,upW,upH, stronger?1.2:0.9); uctx.putImageData(imgd,0,0); }catch(e){console.warn(e)}
+  setBar(imgBar,55);
+  try{ await localContrastStretch(uctx, upW, upH, stronger?20:32); }catch(e){console.warn(e)}
+  setBar(imgBar,75);
+  try{ vibrance(uctx, upW, upH, prompt.includes('vivid')?1.12:1.06); }catch(e){}
+  setBar(imgBar,88);
   ctx.clearRect(0,0,workCanvas.width,workCanvas.height);
+  ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
   ctx.drawImage(up,0,0,workCanvas.width,workCanvas.height);
-  tweakContrast(ctx,workCanvas.width,workCanvas.height,1.08,1.03);
-  setBar($('imgProgress'),95);
-  setText($('imgStatus'),'Enhancement applied (visual)');
-  setTimeout(()=>setBar($('imgProgress'),0),700);
+  setBar(imgBar,100);
+  setText(imgStatus,'Enhanced (visual) — Download ready');
+  setTimeout(()=>setBar(imgBar,0),700);
 }
 
-/* Download image */
-$('btnDownloadImg').addEventListener('click', ()=> {
-  if(!workCanvas.width) return alert('No image');
-  const a = document.createElement('a'); a.href = workCanvas.toDataURL('image/png'); a.download = 'addy_result.png'; a.click();
-});
+/* helpers: simple unsharp */
+function unsharpSimple(imageData,w,h,amount=1.0){
+  const data = imageData.data, copy = new Uint8ClampedArray(data);
+  const k=[0,-1,0,-1,5,-1,0,-1,0];
+  for(let y=1;y<h-1;y++) for(let x=1;x<w-1;x++){
+    for(let c=0;c<3;c++){
+      let sum=0,ki=0;
+      for(let ky=-1;ky<=1;ky++) for(let kx=-1;kx<=1;kx++){ const p=(y+ky)*w+(x+kx); sum+=copy[p*4+c]*k[ki++]; }
+      const idx=(y*w+x)*4+c; let val = copy[idx] + (sum - copy[idx]) * (amount*0.4); data[idx]=Math.max(0,Math.min(255,val));
+    }
+    data[(y*w+x)*4+3]=255;
+  }
+  return imageData;
+}
 
-/* Wire image buttons with simulated backend times */
-$('btnBlur').addEventListener('click', async ()=>{
-  // simulate backend process (progress + then run real blur)
-  setText($('imgStatus'),'Preparing blur (simulated server)...');
-  let pct=0; const bar=$('imgProgress'); setBar(bar,0);
-  const t = setInterval(()=>{ pct+=Math.random()*8+3; setBar(bar,pct); }, 300);
-  await new Promise(res=>setTimeout(res,1200)); // small delay for realism
-  // run real blur
-  await simpleBlur();
-  clearInterval(t); setBar(bar,100); setTimeout(()=>setBar(bar,0),700);
-});
+/* local contrast tile stretch */
+async function localContrastStretch(ctx, w, h, tile=32){
+  const img = ctx.getImageData(0,0,w,h), d=img.data;
+  for(let ty=0;ty<h;ty+=tile) for(let tx=0;tx<w;tx+=tile){
+    let rmin=255,gmin=255,bmin=255, rmax=0,gmax=0,bmax=0;
+    const x2=Math.min(tx+tile,w), y2=Math.min(ty+tile,h);
+    for(let y=ty;y<y2;y++) for(let x=tx;x<x2;x++){ const i=(y*w+x)*4; const r=d[i],g=d[i+1],b=d[i+2]; if(r<rmin) rmin=r; if(g<gmin) gmin=g; if(b<bmin) bmin=b; if(r>rmax) rmax=r; if(g>gmax) gmax=g; if(b>bmax) bmax=b; }
+    const rr=Math.max(1,rmax-rmin), gg=Math.max(1,gmax-gmin), bb=Math.max(1,bmax-bmin);
+    for(let y=ty;y<y2;y++) for(let x=tx;x<x2;x++){ const i=(y*w+x)*4; d[i]=((d[i]-rmin)/rr)*255; d[i+1]=((d[i+1]-gmin)/gg)*255; d[i+2]=((d[i+2]-bmin)/bb)*255; }
+  }
+  ctx.putImageData(img,0,0);
+}
 
-/* simulate processing then enhance */
-$('btnEnhance').addEventListener('click', async ()=>{
-  setText($('imgStatus'),'Sending to enhancement server (simulated)...');
-  let pct=0; const bar=$('imgProgress'); setBar(bar,0);
-  const t = setInterval(()=>{ pct+=Math.random()*7+4; setBar(bar,pct); }, 250);
-  await new Promise(res=>setTimeout(res,900 + Math.random()*1200));
-  await enhanceImage();
-  clearInterval(t); setBar(bar,100); setTimeout(()=>setBar(bar,0),500);
-});
-
-/* -------------------------
-   VOICE: recorder + simulated backend processing
-   ------------------------- */
-let mediaRecorder, audioChunks=[], voiceBlob=null;
-const voicePlayer = $('voicePlayer');
-const voiceWave = $('voiceWave');
-const voiceCtx = voiceWave.getContext('2d');
-let audioCtx, analyser, sourceNode, raf;
-function resizeVoiceCanvas(){ voiceWave.width = voiceWave.clientWidth * devicePixelRatio; voiceWave.height = voiceWave.clientHeight * devicePixelRatio; }
-resizeVoiceCanvas(); window.addEventListener('resize', resizeVoiceCanvas);
-
-$('startRec').addEventListener('click', async ()=>{
+/* vibrance */
+function vibrance(ctx,w,h,f=1.06){
   try{
-    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    const img=ctx.getImageData(0,0,w,h), d=img.data;
+    for(let i=0;i<d.length;i+=4){
+      const r=d[i],g=d[i+1],b=d[i+2];
+      d[i]=clamp((r-128)*f+128); d[i+1]=clamp((g-128)*f+128); d[i+2]=clamp((b-128)*f+128);
+    }
+    ctx.putImageData(img,0,0);
+  }catch(e){console.warn(e)}
+}
+function clamp(v){ return Math.max(0,Math.min(255,Math.round(v))); }
+
+/* download canvas */
+imgDownload.addEventListener('click', ()=>{ if(!workCanvas.width) return alert('No image'); const a=document.createElement('a'); a.href=workCanvas.toDataURL('image/png'); a.download='addy_image.png'; a.click(); });
+
+imgBlurBtn.addEventListener('click', async ()=>{ await doBackgroundBlur(); });
+imgEnhBtn.addEventListener('click', async ()=>{ await promptEnhance(); });
+
+/* ---------- VOICE: record, simulate backend process, enhance ---------- */
+const recStart = $('recStart'), recStop = $('recStop'), recPlay = $('recPlay'), recSave = $('recSave'), recEnh = $('recEnh');
+const voiceStatus = $('voiceStatus'), voiceBar = $('voiceBar'), voicePlayer = $('voicePlayer');
+const voiceCanvas = $('voiceWave'); const vctx = voiceCanvas.getContext('2d');
+let mediaRecorder=null, audioChunks=[], voiceBlob=null, raf=null, audioContext=null, analyser=null;
+
+function resizeVoice(){ voiceCanvas.width = voiceCanvas.clientWidth * devicePixelRatio; voiceCanvas.height = voiceCanvas.clientHeight * devicePixelRatio; }
+resizeVoice(); window.addEventListener('resize', resizeVoice);
+
+recStart.addEventListener('click', async ()=>{
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     mediaRecorder = new MediaRecorder(stream);
-    audioChunks = [];
+    audioChunks=[];
     mediaRecorder.ondataavailable = e => { if(e.data.size>0) audioChunks.push(e.data); };
     mediaRecorder.onstop = async ()=>{
       voiceBlob = new Blob(audioChunks,{type:'audio/webm'});
-      voicePlayer.src = URL.createObjectURL(voiceBlob);
-      voicePlayer.style.display='block';
-      $('playRec').disabled=false; $('downloadRec').disabled=false; setText($('voiceStatus'),'Recorded — ready to process');
+      voicePlayer.src = URL.createObjectURL(voiceBlob); voicePlayer.style.display='block';
+      recPlay.disabled=false; recSave.disabled=false; setText(voiceStatus,'Recorded — ready to enhance');
+      addHistory('Voice record');
     };
     mediaRecorder.start();
-    // waveform
-    audioCtx = new AudioContext();
-    sourceNode = audioCtx.createMediaStreamSource(stream);
-    analyser = audioCtx.createAnalyser(); analyser.fftSize = 2048;
-    sourceNode.connect(analyser);
+    audioContext = new AudioContext();
+    const source = audioContext.createMediaStreamSource(stream);
+    analyser = audioContext.createAnalyser(); analyser.fftSize=2048;
+    source.connect(analyser);
     function draw(){
-      const data = new Uint8Array(analyser.fftSize);
-      analyser.getByteTimeDomainData(data);
-      voiceCtx.clearRect(0,0,voiceWave.width,voiceWave.height);
-      voiceCtx.lineWidth = 2*devicePixelRatio; voiceCtx.strokeStyle = '#00e6ff';
-      voiceCtx.beginPath();
-      const sliceW = voiceWave.width / data.length;
+      const data = new Uint8Array(analyser.fftSize); analyser.getByteTimeDomainData(data);
+      vctx.clearRect(0,0,voiceCanvas.width,voiceCanvas.height); vctx.lineWidth=2*devicePixelRatio; vctx.strokeStyle='#00e6ff';
+      vctx.beginPath();
+      const slice = voiceCanvas.width / data.length;
       let x=0;
       for(let i=0;i<data.length;i++){
-        const v = data[i]/128.0; const y = v * voiceWave.height/2;
-        if(i===0) voiceCtx.moveTo(x,y); else voiceCtx.lineTo(x,y);
-        x+=sliceW;
+        const v = data[i]/128.0; const y = v * voiceCanvas.height/2;
+        if(i===0) vctx.moveTo(x,y); else vctx.lineTo(x,y);
+        x+=slice;
       }
-      voiceCtx.stroke();
+      vctx.stroke();
       raf = requestAnimationFrame(draw);
     }
     draw();
-    setText($('voiceStatus'),'Recording...');
-    $('startRec').disabled=true; $('stopRec').disabled=false;
+    setText(voiceStatus,'Recording...');
+    recStart.disabled=true; recStop.disabled=false;
     setTimeout(()=>{ if(mediaRecorder && mediaRecorder.state==='recording') mediaRecorder.stop(); }, 30000);
-  }catch(err){ alert('Mic error: '+err.message); }
+  }catch(e){ alert('Mic error: '+e.message); }
 });
-$('stopRec').addEventListener('click', ()=>{ if(mediaRecorder && mediaRecorder.state==='recording') mediaRecorder.stop(); if(raf) cancelAnimationFrame(raf); $('stopRec').disabled=true; $('startRec').disabled=false; setText($('voiceStatus'),'Processing (simulated)...'); simulateVoiceProcess(); });
+recStop.addEventListener('click', ()=>{ if(mediaRecorder && mediaRecorder.state==='recording') mediaRecorder.stop(); if(raf) cancelAnimationFrame(raf); recStop.disabled=true; recStart.disabled=false; setText(voiceStatus,'Processing (simulated)...'); simulateVoiceEnhance(); });
 
-$('playRec').addEventListener('click', ()=>{ if(voicePlayer.src) voicePlayer.play(); });
-$('downloadRec').addEventListener('click', ()=>{ if(!voiceBlob) return alert('No recording'); const a=document.createElement('a'); a.href = URL.createObjectURL(voiceBlob); a.download='addy_voice.webm'; a.click(); });
+recPlay.addEventListener('click', ()=>{ if(voicePlayer.src) voicePlayer.play(); });
+recSave.addEventListener('click', ()=>{ if(!voiceBlob) return alert('No audio'); const a=document.createElement('a'); a.href = URL.createObjectURL(voiceBlob); a.download='addy_voice.wav'; a.click(); });
 
-async function simulateVoiceProcess(){
-  // show progress like backend then apply simple normalization (client-side)
-  setBar($('voiceProgress'),0); let p=0;
-  const t = setInterval(()=>{ p+=Math.random()*12+6; setBar($('voiceProgress'),p); }, 250);
-  await new Promise(res=>setTimeout(res,1200+Math.random()*1200));
-  // naive "process" — just re-encode (no heavy filters) to simulate processed file
-  if(voiceBlob){
-    // convert to wav via AudioContext decode/encode trick
-    try{
-      const ab = await voiceBlob.arrayBuffer();
-      const aCtx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 44100*2, 44100);
-      const decoded = await aCtx.decodeAudioData(ab);
-      // render back to normalized buffer (very lightweight)
-      const offline = new OfflineAudioContext(decoded.numberOfChannels, decoded.length, decoded.sampleRate);
-      const src = offline.createBufferSource(); src.buffer = decoded;
-      const gain = offline.createGain(); gain.gain.value = 1.05;
-      src.connect(gain); gain.connect(offline.destination); src.start(0);
-      const rendered = await offline.startRendering();
-      // convert to wav blob
-      const wavView = audioBufferToWav(rendered);
-      const wavBlob = new Blob([wavView], {type:'audio/wav'});
-      voiceBlob = wavBlob; voicePlayer.src = URL.createObjectURL(wavBlob);
-      $('playRec').disabled=false; $('downloadRec').disabled=false;
-      setText($('voiceStatus'),'Processed & ready (simulated)');
-    }catch(e){ console.warn('voice process conv fail',e); setText($('voiceStatus'),'Processed (demo)'); }
-  }
-  clearInterval(t); setBar($('voiceProgress'),100); setTimeout(()=>setBar($('voiceProgress'),0),700);
+async function simulateVoiceEnhance(){
+  if(!voiceBlob) return;
+  setBar(voiceBar,10);
+  let p=10; const t=setInterval(()=>{ p+=Math.random()*10; setBar(voiceBar,p); },200);
+  await new Promise(r=>setTimeout(r,900 + Math.random()*800));
+  // offline processing: highpass + lowpass + compress + normalize
+  try{
+    const ab = await voiceBlob.arrayBuffer();
+    const dec = await (new (window.AudioContext || window.webkitAudioContext)()).decodeAudioData(ab);
+    const offline = new OfflineAudioContext(dec.numberOfChannels, dec.length, dec.sampleRate);
+    const src = offline.createBufferSource(); src.buffer = dec;
+    const hp = offline.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=120;
+    const lp = offline.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=12000;
+    const comp = offline.createDynamicsCompressor(); comp.threshold.value=-40; comp.ratio.value=6;
+    src.connect(hp); hp.connect(lp); lp.connect(comp); comp.connect(offline.destination);
+    src.start(0);
+    const rendered = await offline.startRendering();
+    // normalize
+    for(let c=0;c<rendered.numberOfChannels;c++){
+      const data = rendered.getChannelData(c); let peak=0; for(let i=0;i<data.length;i++) peak=Math.max(peak,Math.abs(data[i])); if(peak>0){ const f=0.95/peak; for(let i=0;i<data.length;i++) data[i]*=f; }
+    }
+    const wavView = audioBufferToWav(rendered);
+    const wavBlob = new Blob([wavView], { type:'audio/wav' });
+    voiceBlob = wavBlob; voicePlayer.src = URL.createObjectURL(voiceBlob);
+    setText(voiceStatus,'Enhanced & ready'); addHistory('Voice enhance');
+  }catch(e){ console.warn(e); setText(voiceStatus,'Enhance failed (demo)'); }
+  clearInterval(t); setBar(voiceBar,100); setTimeout(()=>setBar(voiceBar,0),700);
 }
 
-/* helper: audioBuffer -> wav */
+/* audioBuffer->wav helper */
 function audioBufferToWav(buffer){
-  const numChannels = buffer.numberOfChannels; const sampleRate = buffer.sampleRate;
-  const format = 1; const bitDepth = 16;
-  const bytesPerSample = bitDepth/8; const blockAlign = numChannels * bytesPerSample;
+  const numChannels = buffer.numberOfChannels, sampleRate = buffer.sampleRate, bitDepth=16;
+  const bytesPerSample = bitDepth/8, blockAlign = numChannels*bytesPerSample;
   const dataSize = buffer.length * blockAlign;
-  const bufferArray = new ArrayBuffer(44 + dataSize); const view = new DataView(bufferArray);
-  function writeString(v, offset, s){ for(let i=0;i<s.length;i++) v.setUint8(offset+i, s.charCodeAt(i)); }
-  writeString(view,0,'RIFF'); view.setUint32(4,36 + dataSize,true); writeString(view,8,'WAVE');
-  writeString(view,12,'fmt '); view.setUint32(16,16,true); view.setUint16(20,format,true); view.setUint16(22,numChannels,true);
-  view.setUint32(24,sampleRate,true); view.setUint32(28,sampleRate * blockAlign,true); view.setUint16(32,blockAlign,true); view.setUint16(34,bitDepth,true);
-  writeString(view,36,'data'); view.setUint32(40,dataSize,true);
-  let offset = 44;
-  const channels = []; for(let i=0;i<numChannels;i++) channels.push(buffer.getChannelData(i));
-  for(let i=0;i<buffer.length;i++){
-    for(let ch=0;ch<numChannels;ch++){
-      let sample = Math.max(-1, Math.min(1, channels[ch][i]));
-      view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
-      offset += 2;
-    }
-  }
+  const arrayBuffer = new ArrayBuffer(44 + dataSize); const view = new DataView(arrayBuffer);
+  function writeString(v,offset,str){ for(let i=0;i<str.length;i++) v.setUint8(offset+i,str.charCodeAt(i)); }
+  writeString(view,0,'RIFF'); view.setUint32(4,36+dataSize,true); writeString(view,8,'WAVE'); writeString(view,12,'fmt '); view.setUint32(16,16,true); view.setUint16(20,1,true); view.setUint16(22,numChannels,true);
+  view.setUint32(24,sampleRate,true); view.setUint32(28,sampleRate * blockAlign,true); view.setUint16(32,blockAlign,true); view.setUint16(34,16,true); writeString(view,36,'data'); view.setUint32(40,dataSize,true);
+  let offset = 44; const channels = []; for(let i=0;i<numChannels;i++) channels.push(buffer.getChannelData(i));
+  for(let i=0;i<buffer.length;i++) for(let ch=0;ch<numChannels;ch++){ let sample = Math.max(-1, Math.min(1, channels[ch][i])); view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true); offset+=2; }
   return view;
 }
 
-/* -------------------------
-   TEXT: simulated generator
-   ------------------------- */
-const samples = [
-  "ADDY is a smart toolkit that helps creators build faster.",
-  "Enhance your images instantly with easy one-click tools.",
-  "Create content, edit audio, and sell a ready product — all from your browser.",
-  "This demo shows processing behaviour and provides downloadable outputs."
-];
-$('genText').addEventListener('click', async ()=>{
-  const prompt = $('textIn').value.trim();
-  if(!prompt) return alert('Enter a prompt first');
-  setText($('textStatus'),'Sending to server (simulated)...');
-  setBar($('textProgress'),10);
-  // simulated progress
-  let p=10; const t=setInterval(()=>{ p+=Math.random()*12+4; setBar($('textProgress'),p); },200);
-  await new Promise(res=>setTimeout(res,800 + Math.random()*1200));
-  clearInterval(t);
-  // simple local "generate" by combining prompt and sample text
-  const out = `Prompt: ${prompt}\n\n${samples[Math.floor(Math.random()*samples.length)]}\n\n(Generated in demo mode — not a real AI response)`;
-  $('textOut').innerText = out;
-  setBar($('textProgress'),100);
-  setText($('textStatus'),'Ready (simulated)');
-  setTimeout(()=>setBar($('textProgress'),0),700);
-});
-$('copyText').addEventListener('click', ()=>{ const t = $('textOut').innerText; navigator.clipboard.writeText(t); alert('Copied'); });
+/* ---------- CHAT: simulated assistant ---------- */
+const chatSend = $('chatSend'), chatPrompt = $('chatPrompt'), chatBox = $('chatBox'), chatClear = $('chatClear');
+let chatHistory = JSON.parse(localStorage.getItem('addy_chat') || '[]');
+function renderChat(){ chatBox.innerHTML=''; chatHistory.forEach(m=>{ const el=document.createElement('div'); el.style.marginBottom='8px'; el.innerHTML = `<div style="font-size:13px;color:var(--muted)"><strong>You:</strong> ${escapeHtml(m.prompt)}</div><div style="margin-top:6px;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02)"><strong>ADDY:</strong> ${escapeHtml(m.reply)}</div>`; chatBox.prepend(el); }); }
+chatSend.addEventListener('click', ()=>{ const p = chatPrompt.value.trim(); if(!p) return; const reply = fakeReply(p); chatHistory.push({prompt:p,reply}); localStorage.setItem('addy_chat', JSON.stringify(chatHistory)); renderChat(); chatPrompt.value=''; addHistory('Chat: '+p); });
+chatClear.addEventListener('click', ()=>{ chatHistory=[]; localStorage.removeItem('addy_chat'); renderChat(); });
 
-/* -------------------------
-   small UI helpers
-   ------------------------- */
-function scrollTo(id){ const el = document.getElementById(id); if(!el) return; el.scrollIntoView({behavior:'smooth', block:'start'}); }
+function fakeReply(prompt){
+  // quick simulated intelligence: pattern replies + sample templates
+  const low = prompt.toLowerCase();
+  if(low.includes('how') && low.includes('make')) return 'Try increasing sharpness and contrast — use the Enhance with prompt "HD, sharp, vivid".';
+  const samples = [
+    "Nice prompt — try adding 'reduce noise' or 'increase detail' for clearer results.",
+    "I suggest: enhance colors slightly and apply local contrast. That usually helps portraits.",
+    "This looks great for a demo — remember, client-side enhancements are visual improvements.",
+    "For best results, upload the highest resolution available and ask for 'detail' or 'hd'."
+  ];
+  return samples[Math.floor(Math.random()*samples.length)];
+}
+renderChat();
 
-/* ensure canvas shows placeholder if no image */
+/* ---------- TEXT: rewrite & summarize & TTS ---------- */
+const textIn = $('textIn'), rewriteBtn = $('rewriteBtn'), summBtn = $('summBtn'), textOut = $('textOut'), textStatus = $('textStatus'), ttsBtn = $('ttsBtn');
+rewriteBtn.addEventListener('click', ()=>{ const t=textIn.value.trim(); if(!t) return alert('Paste text first'); setText(textStatus,'Rewriting...'); const out = rewriteText(t); textOut.innerText = out; setText(textStatus,'Done'); addHistory('Rewrite'); });
+summBtn.addEventListener('click', ()=>{ const t=textIn.value.trim(); if(!t) return alert('Paste text first'); setText(textStatus,'Summarizing...'); const out = summarizeText(t); textOut.innerText = out; setText(textStatus,'Done'); addHistory('Summarize'); });
+ttsBtn.addEventListener('click', ()=>{ const t = textOut.innerText || textIn.value; if(!t) return alert('No text'); speakText(t); });
+
+function rewriteText(s){
+  // naive rewrite: split sentences, change tone to concise
+  const sentences = s.split(/(?<=[.?!])\s+/).filter(Boolean);
+  const out = sentences.map(sen=> {
+    if(sen.length>100) return sen.slice(0,80).trim() + '...';
+    return sen;
+  }).join(' ');
+  return "Rewritten: " + out;
+}
+function summarizeText(s){
+  // naive summarizer: pick top 2 longest sentences
+  const sentences = s.split(/(?<=[.?!])\s+/).filter(Boolean);
+  sentences.sort((a,b)=>b.length - a.length);
+  return sentences.slice(0,2).join(' ');
+}
+function speakText(t){
+  if(!('speechSynthesis' in window)) return alert('TTS not supported');
+  const ut = new SpeechSynthesisUtterance(t); ut.rate=1; ut.pitch=1;
+  speechSynthesis.cancel(); speechSynthesis.speak(ut);
+}
+
+/* ---------- HISTORY mini-list ---------- */
+function addHistory(event){
+  let h = JSON.parse(localStorage.getItem('addy_hist')||'[]'); h.unshift({time:Date.now(),evt:event}); h=h.slice(0,40); localStorage.setItem('addy_hist',JSON.stringify(h)); renderHistory();
+}
+function renderHistory(){ const hist = JSON.parse(localStorage.getItem('addy_hist')||'[]'); const wrap = $('miniHistory'); wrap.innerHTML=''; hist.slice(0,15).forEach(h=>{ const d=new Date(h.time); const el=document.createElement('div'); el.style.padding='6px'; el.style.borderBottom='1px dashed rgba(255,255,255,0.02)'; el.style.fontSize='13px'; el.innerText = `${d.toLocaleString()}: ${h.evt}`; wrap.appendChild(el); }); }
+renderHistory();
+
+/* ---------- small utilities ---------- */
+function escapeHtml(t){ return t.replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]); }
+
+/* ensure canvas placeholder */
 window.addEventListener('load', ()=>{
-  ctx.fillStyle = '#0b1113'; ctx.fillRect(0,0,workCanvas.width,workCanvas.height);
-  ctx.fillStyle = '#0a7f8f22'; ctx.fillRect(20,20,workCanvas.width-40,workCanvas.height-40);
-  ctx.fillStyle = '#7fdff7'; ctx.font = '18px Poppins, sans-serif'; ctx.fillText('Upload image to start', 30, 40);
+  ctx.fillStyle='#07121a'; ctx.fillRect(0,0,workCanvas.width,workCanvas.height);
+  ctx.fillStyle='#0a8f9f22'; ctx.fillRect(20,20,workCanvas.width-40,workCanvas.height-40);
+  ctx.fillStyle='#7fdff7'; ctx.font='18px Poppins, sans-serif'; ctx.fillText('Upload image to start (prompt-based enhance)',30,40);
 });
+
+/* expose some functions to console for debug */
+window.promptEnhance = promptEnhance; window.doBackgroundBlur = doBackgroundBlur; window.simulateVoiceEnhance = simulateVoiceEnhance;
+
+/* end of script */
 </script>
 </body>
-</html><!-- 🔥 ADVANCED IMAGE + VOICE ENHANCEMENT (Paste above </body>) -->
-<script>
-/* ✅ Gemini-style Image Enhancement (local AI simulation) */
-async function imageSuperEnhance() {
-  if (!originalImage) return alert("Upload image first");
-  setText($("imgStatus"), "Gemini AI Visual Enhancing...");
-  setBar($("imgProgress"), 10);
-
-  // upscale + sharpen
-  const up = document.createElement("canvas");
-  up.width = workCanvas.width * 2;
-  up.height = workCanvas.height * 2;
-  const uctx = up.getContext("2d");
-  uctx.imageSmoothingEnabled = true;
-  uctx.imageSmoothingQuality = "high";
-  uctx.drawImage(workCanvas, 0, 0, up.width, up.height);
-
-  // pixel enhance
-  const img = uctx.getImageData(0, 0, up.width, up.height);
-  const d = img.data;
-  for (let i = 0; i < d.length; i += 4) {
-    d[i] = Math.min(255, d[i] * 1.08 + 6);
-    d[i + 1] = Math.min(255, d[i + 1] * 1.05 + 4);
-    d[i + 2] = Math.min(255, d[i + 2] * 1.04 + 3);
-  }
-  uctx.putImageData(img, 0, 0);
-
-  // downscale to original for crispness
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = "high";
-  ctx.clearRect(0, 0, workCanvas.width, workCanvas.height);
-  ctx.drawImage(up, 0, 0, workCanvas.width, workCanvas.height);
-
-  setBar($("imgProgress"), 100);
-  setText($("imgStatus"), "Enhanced Successfully ✓");
-  setTimeout(() => setBar($("imgProgress"), 0), 800);
-}
-
-/* Replace Enhance button click */
-if ($("btnEnhance")) {
-  $("btnEnhance").onclick = async () => {
-    setText($("imgStatus"), "Gemini-style Enhancement...");
-    let p = 0;
-    const t = setInterval(() => {
-      p += Math.random() * 15;
-      setBar($("imgProgress"), p);
-    }, 200);
-    await new Promise((res) => setTimeout(res, 1500));
-    clearInterval(t);
-    await imageSuperEnhance();
-  };
-}
-
-/* ✅ Voice Enhancement (denoise + normalize) */
-async function voiceEnhance() {
-  if (!voiceBlob) return alert("Record voice first");
-  setText($("voiceStatus"), "Enhancing voice...");
-  setBar($("voiceProgress"), 20);
-
-  const ab = await voiceBlob.arrayBuffer();
-  const ctx2 = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 44100 * 2, 44100);
-  const decoded = await ctx2.decodeAudioData(ab);
-
-  // filters
-  const src = ctx2.createBufferSource();
-  src.buffer = decoded;
-  const hp = ctx2.createBiquadFilter();
-  hp.type = "highpass";
-  hp.frequency.value = 150;
-  const lp = ctx2.createBiquadFilter();
-  lp.type = "lowpass";
-  lp.frequency.value = 12000;
-  const gain = ctx2.createGain();
-  gain.gain.value = 1.1;
-  src.connect(hp);
-  hp.connect(lp);
-  lp.connect(gain);
-  gain.connect(ctx2.destination);
-  src.start(0);
-  const rendered = await ctx2.startRendering();
-
-  // normalize
-  for (let c = 0; c < rendered.numberOfChannels; c++) {
-    const data = rendered.getChannelData(c);
-    let peak = Math.max(...data.map(Math.abs));
-    if (peak > 0) for (let i = 0; i < data.length; i++) data[i] /= peak;
-  }
-
-  const wav = audioBufferToWav(rendered);
-  voiceBlob = new Blob([wav], { type: "audio/wav" });
-  voicePlayer.src = URL.createObjectURL(voiceBlob);
-  setText($("voiceStatus"), "Voice Enhanced ✓");
-  setBar($("voiceProgress"), 100);
-  setTimeout(() => setBar($("voiceProgress"), 0), 800);
-}
-
-/* Add Enhance button for voice if not exist */
-let vBtn = document.getElementById("voiceEnhBtn");
-if (!vBtn && document.getElementById("voiceCard")) {
-  vBtn = document.createElement("button");
-  vBtn.id = "voiceEnhBtn";
-  vBtn.className = "btn";
-  vBtn.innerText = "Enhance Voice";
-  vBtn.onclick = voiceEnhance;
-  document
-    .getElementById("voiceCard")
-    .querySelector("div")
-    .appendChild(vBtn);
-}
-</script>
-<!-- 🔥 END of ADVANCED CODE -->
+</html>
