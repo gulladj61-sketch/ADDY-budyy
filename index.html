@@ -5,33 +5,90 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ADDY Buddy | Universal AI Tools</title>
   <style>
-    body {background:#011627;color:#00ffff;font-family:Arial;text-align:center;padding:20px;}
-    h1 {color:#00ffff;}
-    textarea,button{border:none;border-radius:10px;padding:10px;margin:10px;}
-    textarea{width:90%;height:100px;background:#022;color:#0ff;}
-    button{background:#0ff;color:#011;font-weight:bold;cursor:pointer;}
-    #output{border:2px solid #0ff;padding:10px;border-radius:10px;width:90%;margin:auto;background:#012;}
+    body {
+      background: #0d1117;
+      color: #00ffff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #00ffff;
+      margin-bottom: 20px;
+    }
+    textarea {
+      width: 90%;
+      height: 100px;
+      border-radius: 10px;
+      padding: 10px;
+      border: 2px solid #00ffff;
+      background: #111;
+      color: #fff;
+      resize: none;
+    }
+    button {
+      margin-top: 15px;
+      background: #00ffff;
+      color: #000;
+      border: none;
+      font-weight: bold;
+      border-radius: 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #00cccc;
+    }
+    #output {
+      margin-top: 25px;
+      border: 2px solid #00ffff;
+      padding: 10px;
+      border-radius: 10px;
+      width: 90%;
+      margin-inline: auto;
+      min-height: 100px;
+      background: #111;
+    }
   </style>
 </head>
 <body>
-  <h1>🤖 ADDY Buddy - AI Tools</h1>
-  <textarea id="prompt" placeholder="Enter your message..."></textarea><br>
-  <button onclick="chat()">💬 Chat</button>
-  <button onclick="imageGen()">🖼️ Image Gen</button>
-  <button onclick="bgRemove()">🪄 BG Remove</button>
-  <button onclick="imgEnhance()">✨ Enhance</button>
-  <div id="output">Your results will appear here...</div>
+  <h1>🤖 ADDY Buddy - AI Chat</h1>
+  <textarea id="prompt" placeholder="Type your message here..."></textarea><br>
+  <button onclick="sendMessage()">Send</button>
+
+  <div id="output">Your response will appear here...</div>
 
   <script>
-  const backend = "https://addy-budyy-5.onrender.com";
+    const backend = "https://addy-budyy-5.onrender.com"; // 👈 apna backend link yahan fix kar
 
-    async function chat() {
-      const prompt = document.getElementById("prompt").value;
+    async function sendMessage() {
+      const prompt = document.getElementById("prompt").value.trim();
+      if (!prompt) {
+        document.getElementById("output").innerText = "⚠️ Please enter a message.";
+        return;
+      }
+
       document.getElementById("output").innerText = "⏳ Sending to AI...";
-      const res = await fetch(`${backend}/api/chat`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({prompt})
-      });
-      const data = await res.json();
-      document.getElementById("output").innerText = data.reply || "
+
+      try {
+        const res = await fetch(`${backend}/api/chat`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt })
+        });
+
+        const data = await res.json();
+        if (data.error) {
+          document.getElementById("output").innerText = "❌ Error: " + data.error;
+        } else if (data.reply) {
+          document.getElementById("output").innerText = "🤖 " + data.reply;
+        } else {
+          document.getElementById("output").innerText = "⚠️ Unexpected response from server.";
+        }
+      } catch (err) {
+        document.getElementById("output").innerText = "❌ Failed: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
