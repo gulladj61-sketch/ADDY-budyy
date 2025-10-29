@@ -1,390 +1,160 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>World of Luxury Machines — 3D Showroom (Part 1)</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>World of Luxury Machines — Premium 3D Showroom</title>
 
-<!-- Fonts & libs -->
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
 
 <style>
-  :root{
-    --bg:#02030a; --panel:#07121a; --muted:#9fb8c1; --accent:#00f6e6; --gold:#caa94b;
-    --maxw:1200px;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;background:linear-gradient(180deg,#000814,#001e2f);font-family:Poppins,system-ui,Arial;color:#e6fbff;overflow-x:hidden}
-  a{color:inherit}
-  .wrap{max-width:var(--maxw);margin:0 auto;padding:28px}
-  header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0}
-  .brand{display:flex;gap:12px;align-items:center}
-  .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#00aaff);display:flex;align-items:center;justify-content:center;font-weight:900;color:#002}
-  h1{font-family:"Playfair Display",serif;margin:0;font-size:20px}
-  nav{display:flex;gap:12px}
-  nav a{padding:8px 12px;border-radius:10px;background:rgba(255,255,255,0.02);text-decoration:none;font-weight:600;color:var(--muted)}
-
-  /* hero */
-  .hero{min-height:72vh;display:flex;align-items:center;gap:28px;padding:20px 0}
-  .hero-left{flex:1}
-  .hero-right{width:420px}
-  .hero h2{font-size:44px;margin:0 0 12px;line-height:1.02;font-weight:800}
-  .sub{color:var(--muted);margin-bottom:18px}
-  .cta{display:flex;gap:12px}
-  .btn{padding:12px 18px;border-radius:10px;border:none;cursor:pointer;font-weight:800}
-  .primary{background:linear-gradient(90deg,var(--accent),#00b0ff);color:#001}
-  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
-
-  /* fullpage sections */
-  section.show{min-height:85vh;display:flex;align-items:center;padding:28px 0;border-top:1px solid rgba(255,255,255,0.02)}
-  .sec-left{flex:1;padding-right:20px}
-  .sec-right{width:480px;display:flex;align-items:center;justify-content:center}
-
-  .sec-title{font-size:28px;margin:0 0 8px;font-weight:800}
-  .sec-tag{color:var(--muted);margin-bottom:12px}
-  .sec-desc{color:var(--muted);font-size:15px;line-height:1.5}
-
-  /* canvas container */
-  .scene { width:100%; height:420px; border-radius:14px; overflow:hidden; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12)); box-shadow: 0 10px 40px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.03); }
-
-  /* responsive */
-  @media (max-width:980px){
-    .hero{flex-direction:column}
-    .hero-right{width:100%}
-    .sec-right{width:100%;margin-top:16px}
-    .scene{height:300px}
-  }
-
-  footer{padding:24px 0;color:var(--muted);text-align:center;font-size:13px}
-  .badge{background:linear-gradient(90deg,var(--gold),#ffd76b);color:#042;border-radius:8px;padding:6px 10px;font-weight:800}
+:root{
+  --bg:#010103;--gold:#d4af37;--text:#e8e8e8;--muted:#8b8b8b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Poppins",sans-serif;
+  overflow-x:hidden;
+}
+header{
+  position:fixed;left:0;top:0;bottom:0;
+  width:70px;background:rgba(0,0,0,0.85);
+  backdrop-filter:blur(6px);
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  border-right:1px solid rgba(255,255,255,0.1);
+  padding:16px 0;z-index:10;
+  transition:width .3s ease;
+}
+header:hover{width:200px}
+.logo{
+  font-family:"Playfair Display",serif;
+  font-size:22px;font-weight:800;
+  color:var(--gold);text-align:center;
+}
+nav{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:0 8px;margin-top:24px;width:100%}
+nav a{
+  display:flex;align-items:center;gap:10px;
+  text-decoration:none;color:var(--muted);
+  padding:8px 12px;width:100%;border-radius:8px;
+  transition:.3s;background:transparent;
+}
+nav a:hover{background:rgba(255,255,255,0.06);color:var(--gold)}
+nav span{white-space:nowrap;font-size:14px}
+main{margin-left:70px;transition:margin-left .3s ease;}
+header:hover ~ main{margin-left:200px;}
+section{
+  min-height:100vh;padding:60px 40px;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  display:flex;flex-direction:row;align-items:center;gap:40px;
+}
+section:nth-child(even){flex-direction:row-reverse}
+.content{flex:1}
+h1,h2{font-family:"Playfair Display",serif;margin-bottom:12px}
+h1{font-size:42px;color:var(--gold)}
+p{color:var(--muted);line-height:1.6}
+.scene{flex:1;min-height:420px;border-radius:20px;overflow:hidden;background:linear-gradient(180deg,#0a0a0a,#121212);border:1px solid rgba(255,255,255,0.05);box-shadow:0 0 20px rgba(0,0,0,0.6);}
+footer{text-align:center;padding:60px 0;color:var(--muted);font-size:13px}
+@media(max-width:800px){
+  header{flex-direction:row;width:100%;height:60px;padding:0 16px;bottom:auto}
+  nav{flex-direction:row;align-items:center;margin:0}
+  main{margin-left:0;margin-top:60px}
+  section{flex-direction:column}
+}
 </style>
 </head>
 <body>
+<header>
+  <div class="logo">LX</div>
+  <nav>
+    <a href="#rolls"><span>Rolls-Royce</span></a>
+    <a href="#bugatti"><span>Bugatti</span></a>
+    <a href="#ferrari"><span>Ferrari</span></a>
+    <a href="#lamborghini"><span>Lamborghini</span></a>
+    <a href="#aston"><span>Aston Martin</span></a>
+  </nav>
+  <div style="color:var(--muted);font-size:10px;">© 2025</div>
+</header>
 
-<div class="wrap">
-  <header>
-    <div class="brand">
-      <div class="logo">LX</div>
-      <div>
-        <h1>World of Luxury Machines</h1>
-        <div style="color:var(--muted);font-size:13px">Part 1 — 3D showroom (5 premium marques)</div>
-      </div>
-    </div>
+<main>
+<section id="hero">
+  <div class="content">
+    <h1>World of Luxury Machines</h1>
+    <h2>Experience Elegance in Motion</h2>
+    <p>Scroll down and explore the finest automotive creations ever crafted — every scroll reveals a new legend of power, performance, and perfection.</p>
+  </div>
+  <div class="scene" id="heroScene"></div>
+</section>
 
-    <nav>
-      <a href="#rolls">Rolls</a>
-      <a href="#bugatti">Bugatti</a>
-      <a href="#ferrari">Ferrari</a>
-      <a href="#lamborghini">Lamborghini</a>
-      <a href="#aston">Aston</a>
-    </nav>
-  </header>
+<section id="rolls">
+  <div class="content">
+    <h2>Rolls-Royce — Spirit of Opulence</h2>
+    <p>The definition of timeless luxury — effortless power wrapped in the silence of precision craftsmanship.</p>
+  </div>
+  <div class="scene" id="scene-rolls"></div>
+</section>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-left">
-      <h2>Enter the realm of motion & craft — premium cars & superbikes in 3D</h2>
-      <p class="sub">Scroll down — each chapter reveals a luxury machine with soft 3D lighting, reflections and smooth micro-interactions. Built with Three.js + GSAP for silky performance.</p>
-      <div class="cta">
-        <button class="btn primary" onclick="scrollToSection('#rolls')">Explore Showroom</button>
-        <button class="btn ghost" onclick="downloadDeck()">Download One-Pager</button>
-      </div>
-    </div>
-    <div class="hero-right">
-      <div class="scene" id="heroScene"></div>
-    </div>
-  </section>
+<section id="bugatti">
+  <div class="content">
+    <h2>Bugatti — Sculpted Velocity</h2>
+    <p>Where engineering meets artistry — the pursuit of unmatched speed and beauty.</p>
+  </div>
+  <div class="scene" id="scene-bugatti"></div>
+</section>
 
-  <!-- Section Rolls-Royce -->
-  <section id="rolls" class="show" data-brand="Rolls-Royce">
-    <div class="sec-left">
-      <h3 class="sec-title">Rolls-Royce — The Spirit of Opulence</h3>
-      <div class="sec-tag badge">Bespoke • Timeless</div>
-      <p class="sec-desc">A monogram of craftsmanship and silence — imagine a long-hood silhouette, mirror-polished chrome, and soft lighting revealing every contour.</p>
-    </div>
-    <div class="sec-right">
-      <div class="scene" id="scene-rolls"></div>
-    </div>
-  </section>
+<section id="ferrari">
+  <div class="content">
+    <h2>Ferrari — Red Passion</h2>
+    <p>The prancing horse that defines performance, born from the racetrack and refined for the street.</p>
+  </div>
+  <div class="scene" id="scene-ferrari"></div>
+</section>
 
-  <!-- Section Bugatti -->
-  <section id="bugatti" class="show" data-brand="Bugatti">
-    <div class="sec-left">
-      <h3 class="sec-title">Bugatti — Sculpted Velocity</h3>
-      <div class="sec-tag">Hypercar • Pure Power</div>
-      <p class="sec-desc">Sculpted forms, aerodynamic perfection and a mid-mounted roar — the visual presence speaks of insane engineering.</p>
-    </div>
-    <div class="sec-right">
-      <div class="scene" id="scene-bugatti"></div>
-    </div>
-  </section>
+<section id="lamborghini">
+  <div class="content">
+    <h2>Lamborghini — Bold Perfection</h2>
+    <p>An icon of strength and rebellion, carved in aggressive geometry and gold-lit edges.</p>
+  </div>
+  <div class="scene" id="scene-lambo"></div>
+</section>
 
-  <!-- Section Ferrari -->
-  <section id="ferrari" class="show" data-brand="Ferrari">
-    <div class="sec-left">
-      <h3 class="sec-title">Ferrari — Racing Blood</h3>
-      <div class="sec-tag">Prancing Horse • Performance</div>
-      <p class="sec-desc">Aggressive stance, majestic red reflections and a visual pulse that hints at racetrack DNA.</p>
-    </div>
-    <div class="sec-right">
-      <div class="scene" id="scene-ferrari"></div>
-    </div>
-  </section>
+<section id="aston">
+  <div class="content">
+    <h2>Aston Martin — British Elegance</h2>
+    <p>The soul of a grand tourer — where performance meets timeless design.</p>
+  </div>
+  <div class="scene" id="scene-aston"></div>
+</section>
 
-  <!-- Section Lamborghini -->
-  <section id="lamborghini" class="show" data-brand="Lamborghini">
-    <div class="sec-left">
-      <h3 class="sec-title">Lamborghini — Bold Sculpture</h3>
-      <div class="sec-tag">Avant-Garde • Driver’s Art</div>
-      <p class="sec-desc">Sharp angles, wedge geometry and a visual shout — always dramatic, always unmistakable.</p>
-    </div>
-    <div class="sec-right">
-      <div class="scene" id="scene-lambo"></div>
-    </div>
-  </section>
-
-  <!-- Section Aston Martin -->
-  <section id="aston" class="show" data-brand="Aston-Martin">
-    <div class="sec-left">
-      <h3 class="sec-title">Aston Martin — Elegance in Motion</h3>
-      <div class="sec-tag">Grand Touring • Refined</div>
-      <p class="sec-desc">Long, flowing surface lines with chrome whispers — a silhouette for the grand tour and the gala alike.</p>
-    </div>
-    <div class="sec-right">
-      <div class="scene" id="scene-aston"></div>
-    </div>
-  </section>
-
-  <footer>
-    © 2025 — World of Luxury Machines • Demo • Frontend only. Paste this `index.html` to root of your repo to deploy.
-  </footer>
-</div>
+<footer>© 2025 ADDY — Luxury Machines • Designed for dreamers of motion.</footer>
+</main>
 
 <script>
-/* ===========================
-   Lightweight 3D "car" silhouettes using Three.js
-   - This is simplified: no heavy models, just stylized glossy shapes
-   - Each scene reuses same basic setup for performance, with different colors/lighting
-   =========================== */
-
-const scenes = []; // store {scene, camera, renderer, mesh, id}
-const canvasIds = ['heroScene','scene-rolls','scene-bugatti','scene-ferrari','scene-lambo','scene-aston'];
-
-// utility: init a small scene into a container element ID
-function initMiniScene(containerId, opts = {}) {
-  const container = document.getElementById(containerId);
-  if(!container) return null;
-
-  // create renderer
-  const width = container.clientWidth || container.offsetWidth || 400;
-  const height = container.clientHeight || 320;
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(width, height);
-  renderer.setClearColor(0x000000, 0); // transparent
-  container.appendChild(renderer.domElement);
-
-  // scene & camera
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 1000);
-  camera.position.set(0, 1.2, 5);
-
-  // lights
-  const hemi = new THREE.HemisphereLight(0xffffff, 0x080820, 0.6);
-  scene.add(hemi);
-  const dir = new THREE.DirectionalLight(0xffffff, 0.8);
-  dir.position.set(5, 10, 7);
-  scene.add(dir);
-
-  // ground reflection plane (subtle)
-  const groundGeo = new THREE.PlaneGeometry(10, 10);
-  const groundMat = new THREE.MeshStandardMaterial({ color: 0x000000, metalness: 0.4, roughness: 0.6 });
-  const ground = new THREE.Mesh(groundGeo, groundMat);
-  ground.rotation.x = -Math.PI/2;
-  ground.position.y = -1.6;
-  ground.receiveShadow = true;
-  scene.add(ground);
-
-  // stylized car body (rounded box)
-  const bodyGeo = new THREE.BoxGeometry(3.3, 0.7, 1.4);
-  // bevel-like by chamfer = using scaled sphere merges is heavy — we'll simulate with smoothness
-  const bodyMat = new THREE.MeshStandardMaterial({
-    color: opts.color || 0x223344,
-    metalness: 0.9,
-    roughness: 0.12,
-    envMapIntensity: 0.8
-  });
-  const body = new THREE.Mesh(bodyGeo, bodyMat);
-  body.position.y = 0;
-  body.rotation.y = Math.PI*0.02;
-
-  // roof / cockpit - smaller box
-  const roofGeo = new THREE.BoxGeometry(1.6, 0.45, 1.2);
-  const roof = new THREE.Mesh(roofGeo, bodyMat);
-  roof.position.set(0, 0.45, 0);
-
-  // wheels - cylinders
-  const wheelGeo = new THREE.CylinderGeometry(0.3,0.3,0.45,24);
-  const wheelMat = new THREE.MeshStandardMaterial({ color:0x111111, metalness:0.5, roughness:0.45 });
-
-  const wheels = [];
-  const wheelPositions = [[1.1,-0.45,0.8],[-1.1,-0.45,0.8],[1.1,-0.45,-0.8],[-1.1,-0.45,-0.8]];
-  wheelPositions.forEach(pos=>{
-    const w = new THREE.Mesh(wheelGeo, wheelMat);
-    w.rotation.z = Math.PI/2;
-    w.position.set(...pos);
-    wheels.push(w);
-    scene.add(w);
-  });
-
-  // small bonnet & tail geometry for shape
-  const bonnet = new THREE.Mesh(new THREE.BoxGeometry(1.6,0.22,1.2), bodyMat);
-  bonnet.position.set(-0.9,0.12,0);
-
-  const tail = new THREE.Mesh(new THREE.BoxGeometry(1.2,0.18,1.2), bodyMat);
-  tail.position.set(1.05,0.12,0);
-
-  // headlight highlights (emissive planes)
-  const hlMat = new THREE.MeshStandardMaterial({ color: opts.hilight || 0xffffff, emissive: opts.hilight || 0xffffff, emissiveIntensity: 0.2 });
-  const hlGeo = new THREE.PlaneGeometry(0.4,0.18);
-  const leftHl = new THREE.Mesh(hlGeo, hlMat);
-  leftHl.position.set(-1.6,0.05,0.6); leftHl.rotation.y = Math.PI/12;
-  const rightHl = leftHl.clone(); rightHl.position.z = -0.6; rightHl.rotation.y = -Math.PI/12;
-
-  // assemble
-  scene.add(body, roof, bonnet, tail, leftHl, rightHl);
-
-  // group for easy rotation
-  const group = new THREE.Group();
-  group.add(body, roof, bonnet, tail, leftHl, rightHl);
-  wheels.forEach(w=> group.add(w));
-  scene.add(group);
-
-  // subtle environment reflection using cube camera (cheap)
-  const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(256, { format: THREE.RGBAFormat, generateMipmaps: true, minFilter: THREE.LinearMipmapLinearFilter });
-  const cubeCamera = new THREE.CubeCamera(0.1, 1000, cubeRenderTarget);
-  cubeCamera.position.set(0,0.5,0);
-  scene.add(cubeCamera);
-  bodyMat.envMap = cubeRenderTarget.texture;
-  roof.material.envMap = cubeRenderTarget.texture;
-
-  // initial render to populate env map
-  cubeCamera.update(renderer, scene);
-
-  // store object
-  const obj = { container, renderer, scene, camera, group, cubeCamera, bodyMat, width, height };
-
-  // resize handler
-  function onResize(){
-    const w = container.clientWidth || width;
-    const h = container.clientHeight || height;
-    obj.width = w; obj.height = h;
-    renderer.setSize(w, h);
-    camera.aspect = w/h; camera.updateProjectionMatrix();
-  }
-  window.addEventListener('resize', onResize);
-
-  // animate loop
-  let last = 0;
-  function animate(t){
-    const time = t * 0.001;
-    // slow rotate group
-    obj.group.rotation.y += 0.0025;
-    // tiny bob
-    obj.group.position.y = Math.sin(time*0.8)*0.02;
-    // rotate wheels visually
-    obj.group.children.forEach(child=>{
-      // wheels have geometry index 0..3 added — simple rotate array check by name not set; we rotate any cylinder-ish by checking geometry type
-      if(child.geometry && child.geometry.type === "CylinderGeometry"){
-        child.rotation.x += 0.05;
-      }
-    });
-    // update envmap occasionally for shine
-    if(Math.floor(time)%2 === 0){ obj.cubeCamera.update(renderer, scene); }
-    renderer.render(scene, camera);
-    obj._raf = requestAnimationFrame(animate);
-  }
-  obj._raf = requestAnimationFrame(animate);
-
-  // return controller
-  return { ...obj, group, body, roof, wheels, onResize, dispose: ()=>{ cancelAnimationFrame(obj._raf); window.removeEventListener('resize', onResize); container.removeChild(renderer.domElement); } };
+const ids=['heroScene','scene-rolls','scene-bugatti','scene-ferrari','scene-lambo','scene-aston'];
+function initScene(id,color=0x222233,light=0xffeaa7){
+ const el=document.getElementById(id);if(!el)return;
+ const w=el.clientWidth,h=el.clientHeight;
+ const scene=new THREE.Scene();
+ const camera=new THREE.PerspectiveCamera(35,w/h,0.1,1000);
+ const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+ renderer.setSize(w,h);el.appendChild(renderer.domElement);
+ camera.position.set(0,1.2,5);
+ const hemi=new THREE.HemisphereLight(0xffffff,0x080820,0.7);scene.add(hemi);
+ const dir=new THREE.DirectionalLight(light,0.8);dir.position.set(5,10,7);scene.add(dir);
+ const geo=new THREE.BoxGeometry(3,0.7,1.3);
+ const mat=new THREE.MeshStandardMaterial({color,metalness:.9,roughness:.12});
+ const body=new THREE.Mesh(geo,mat);scene.add(body);
+ function animate(){body.rotation.y+=.01;renderer.render(scene,camera);requestAnimationFrame(animate);}
+ animate();
 }
-
-/* initialize scenes for all containers */
-function tryInitAll(){
-  canvasIds.forEach(id=>{
-    // skip if no element
-    if(!document.getElementById(id)) return;
-    // performance: limit full three.js on small screens
-    const small = window.innerWidth < 720;
-    if(small){
-      // place a static placeholder text/image
-      const cont = document.getElementById(id);
-      cont.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-weight:600">Preview (mobile)</div>`;
-      return;
-    }
-    // pick color / highlight by id
-    let opts = {};
-    if(id.includes('rolls')) opts.color = 0x222233, opts.hilight = 0xfff4e6;
-    if(id.includes('bugatti')) opts.color = 0x0b2b3a, opts.hilight = 0x66ccff;
-    if(id.includes('ferrari')) opts.color = 0x7a1111, opts.hilight = 0xff6666;
-    if(id.includes('lambo') || id.includes('lam')) opts.color = 0x222220, opts.hilight = 0xffcc00;
-    if(id.includes('aston')) opts.color = 0x19323c, opts.hilight = 0xaaffee;
-    if(id.includes('hero')) opts.color = 0x0a2230, opts.hilight = 0x99dfee;
-
-    const s = initMiniScene(id, opts);
-    if(s) scenes.push({ id, sceneObj: s });
-  });
-}
-tryInitAll();
-
-/* ========= Scroll-triggered micro-animations using GSAP ========= */
-function setupScrollTriggers(){
-  // for each section, animate the scene group rotation and camera tilt when section is in view
-  document.querySelectorAll('section.show').forEach(sec => {
-    const id = sec.getAttribute('id');
-    const targetScene = scenes.find(x => x.id && x.id.includes(id));
-    // map id to scene index (simple)
-    const sceneObj = scenes.find(x=> x.id && x.id.includes(id)) || scenes.find(x=> x.id.includes('hero'));
-    if(!sceneObj) return;
-    const group = sceneObj.sceneObj.group;
-    // create IntersectionObserver to run an animation when section visible
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach(entry=>{
-        if(entry.isIntersecting){
-          // animate group: tilt & rotate slightly
-          gsap.to(group.rotation, { y: group.rotation.y + 0.9, duration: 1.4, ease: "power2.out" });
-          gsap.to(group.position, { y: 0.08, duration: 1.2, yoyo:true, repeat:1, ease: "power1.inOut" });
-        }
-      });
-    }, { threshold: 0.4 });
-    io.observe(sec);
-  });
-}
-window.addEventListener('load', setupScrollTriggers);
-
-/* ========== helpers ========== */
-function downloadDeck(){
-  const content = `ADDY — World of Luxury Machines\nPart 1 — Demo\nContact: sales@addy.example\n`;
-  const b = new Blob([content], { type: 'text/plain' });
-  const url = URL.createObjectURL(b);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'ADDY-onepager.txt';
-  document.body.appendChild(a); a.click(); a.remove();
-}
-function scrollToSection(sel){
-  const el = document.querySelector(sel);
-  if(!el) return;
-  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
-/* cleanup on page unload */
-window.addEventListener('beforeunload', ()=>{
-  scenes.forEach(s=> s.sceneObj.dispose && s.sceneObj.dispose());
+ids.forEach((id,i)=>{
+ let c=[0x223344,0x0b2b3a,0x7a1111,0x222220,0x19323c][i]||0x333333;
+ let l=[0xfff4e6,0x66ccff,0xff6666,0xffcc00,0xaaffee][i]||0xffffff;
+ initScene(id,c,l);
 });
 </script>
-
 </body>
 </html>
