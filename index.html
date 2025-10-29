@@ -1,614 +1,249 @@
-const API_BASE = "https://addy-budyy-5.onrender.com/";
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>ADDY — Free Universal AI Tools (Client-side)</title>
-<!-- External libs -->
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
-<script src="https://unpkg.com/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
-<script src="https://unpkg.com/@tensorflow-models/body-pix@2.0.5/dist/body-pix.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
-
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ADDY — Enterprise AI Suite | Estimated Value $50,000</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <style>
   :root{
-    --bg:#07121a; --panel:#0b1b22; --accent:#06f0e0; --muted:#90b4be;
-    --card:#0e2a33; --glass: rgba(255,255,255,0.02);
-    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    --bg1: #030712;
+    --bg2: #00162a;
+    --accent: #00f6e6;
+    --accent2: #00a6ff;
+    --glass: rgba(255,255,255,0.04);
+    --muted: rgba(255,255,255,0.65);
+    --card-radius: 18px;
+    --maxw: 1180px;
   }
-  html,body{height:100%;margin:0;background:linear-gradient(180deg,#031018 0%, #071f28 100%);color:#e6fbff}
-  .wrap{max-width:980px;margin:18px auto;padding:18px;}
-  header{display:flex;align-items:center;gap:12px}
-  .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(90deg,#04d6d0,#0ad1ff);display:flex;align-items:center;justify-content:center;font-weight:700;color:#003;box-shadow:0 6px 20px rgba(0,0,0,0.5)}
-  h1{margin:0;font-size:20px}
-  .tools{display:flex;gap:8px;margin:16px 0;overflow:auto;padding-bottom:6px}
-  .tool{min-width:110px;padding:12px 14px;border-radius:12px;background:var(--card);border:1px solid rgba(255,255,255,0.03);text-align:center;cursor:pointer;flex-shrink:0}
-  .tool.active{outline:3px solid rgba(6,240,224,0.12);transform:translateY(-4px)}
-  .panel{background:linear-gradient(180deg,var(--panel),#03161a);padding:18px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,0.6);margin-top:8px}
-  textarea{width:100%;min-height:120px;padding:12px;border-radius:10px;background:transparent;border:1px solid rgba(6,240,224,0.12);color:#dff}
-  .btn{display:inline-block;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,#06f0e0,#00bcd4);color:#003;font-weight:700;cursor:pointer;border:none;margin:6px 6px 6px 0}
-  .out{min-height:120px;padding:12px;border-radius:10px;background:rgba(0,0,0,0.18);border:1px solid rgba(6,240,224,0.06);color:#cde}
-  .row{display:flex;gap:12px;align-items:center}
-  .col{flex:1}
-  input[type=file]{display:none}
-  .small{font-size:13px;color:var(--muted)}
-  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-  /* image canvas area */
-  .canvas-wrap{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
-  canvas{border-radius:10px;background:#000;max-width:100%}
-  .range{width:150px}
-  footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
-  .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03)}
-  .loader{display:inline-block;border:3px solid rgba(255,255,255,0.06);border-left-color:var(--accent);height:18px;width:18px;border-radius:50%;animation:spin 1s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  @media(max-width:720px){.tools{gap:6px}.tool{min-width:92px;padding:8px}}
+  *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial}
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#eafcff}
+  .wrap{max-width:var(--maxw);margin:28px auto;padding:28px}
+  /* top bar */
+  .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{
+    width:64px;height:64px;border-radius:14px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:flex;align-items:center;justify-content:center;font-weight:900;color:#001;font-size:20px;
+    box-shadow: 0 10px 40px rgba(0,166,255,0.12), inset 0 -6px 18px rgba(255,255,255,0.06);
+  }
+  .title{line-height:1}
+  .title h1{font-size:20px;margin:0;font-weight:800}
+  .title p{margin:2px 0 0;color:var(--muted);font-size:13px}
+
+  /* hero */
+  .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;margin-top:28px;align-items:center}
+  @media (max-width:980px){ .hero{grid-template-columns:1fr; padding:0 12px} .right-col{order:-1} }
+  .hero-left{padding:22px}
+  .headline{font-size:38px;line-height:1.02;margin:0 0 12px;font-weight:900;letter-spacing:-0.5px}
+  .sub{color:var(--muted);font-size:15px;margin-bottom:18px}
+  .cta-row{display:flex;gap:12px;align-items:center}
+  .btn{padding:12px 18px;border-radius:12px;border:none;cursor:pointer;font-weight:800}
+  .btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#001;box-shadow:0 12px 40px rgba(0,166,255,0.08)}
+  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+
+  .value-badge{
+    margin-top:18px;display:inline-flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;
+    background:linear-gradient(180deg, rgba(0,246,230,0.06), rgba(0,166,255,0.03));
+    border:1px solid rgba(0,246,230,0.08);box-shadow:0 20px 60px rgba(0,166,255,0.06);
+  }
+  .value-badge .big{font-weight:900;font-size:20px;color:#001;padding:6px 10px;border-radius:8px;background:#dff;box-shadow:0 8px 18px rgba(0,0,0,0.18)}
+  .value-badge .meta{font-size:13px;color:var(--muted)}
+
+  /* right column card (mock dashboard) */
+  .right-col{display:flex;flex-direction:column;gap:12px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--card-radius);padding:18px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 10px 40px rgba(0,0,0,0.6)}
+  .mini-stats{display:flex;gap:12px}
+  .stat{flex:1;padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(0,0,0,0.18),rgba(255,255,255,0.01));text-align:center}
+  .stat h3{margin:0;font-size:18px}
+  .stat p{margin:6px 0 0;color:var(--muted);font-size:13px}
+
+  /* feature grid */
+  .features{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
+  .feature{padding:14px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.03)}
+  .feature h4{margin:0 0 6px;font-size:15px}
+  .feature p{margin:0;color:var(--muted);font-size:13px}
+
+  /* testimonials */
+  .testimonials{display:flex;gap:12px;margin-top:20px;align-items:center}
+  .testimonial{flex:1;padding:14px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.03)}
+  .t-name{font-weight:800;font-size:14px}
+
+  /* footer CTA */
+  .footer-cta{display:flex;gap:12px;align-items:center;margin-top:28px;padding:18px;border-radius:14px;background:linear-gradient(90deg, rgba(0,246,230,0.03), rgba(0,166,255,0.02));border:1px solid rgba(0,246,230,0.04)}
+
+  /* subtle animated hologram circle */
+  .holo{
+    width:220px;height:220px;border-radius:50%;position:relative;margin:0 auto;
+    background:radial-gradient(circle at 30% 30%, rgba(0,246,230,0.12), rgba(0,166,255,0.06) 40%, transparent 60%);
+    box-shadow: 0 30px 80px rgba(0,166,255,0.06), inset 0 -6px 30px rgba(255,255,255,0.02);
+    transform-style:preserve-3d; animation:float 6s ease-in-out infinite;
+  }
+  .holo::before{content:"";position:absolute;inset:0;border-radius:50%;background:repeating-linear-gradient(0deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01) 2px);mix-blend-mode:overlay}
+  @keyframes float{0%{transform:translateY(0) rotateX(0)}50%{transform:translateY(-10px) rotateX(6deg)}100%{transform:translateY(0)}}
+
+  /* small screens */
+  @media (max-width:700px){
+    .features{grid-template-columns:repeat(2,1fr)}
+    .headline{font-size:28px}
+  }
+  /* slick subtle particle dots using CSS only (decor) */
+  .dots{position:fixed;right:18px;top:120px;display:flex;flex-direction:column;gap:18px}
+  .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(90deg,var(--accent),var(--accent2));box-shadow:0 8px 30px rgba(0,166,255,0.12)}
+  /* small polished table */
+  table{width:100%;border-collapse:collapse;margin-top:12px}
+  th,td{padding:8px;text-align:left;border-bottom:1px dashed rgba(255,255,255,0.03);font-size:13px;color:var(--muted)}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="logo">AI</div>
-    <div>
-      <h1>ADDY — Free Universal AI Tools (Client-side)</h1>
-      <div class="small">No API keys — runs in browser. Use tools from the top slider.</div>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">ADDY</div>
+        <div class="title">
+          <h1>ADDY — Enterprise AI Suite</h1>
+          <p>Premium client + server hybrid demo • Investor-ready presentation</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <button class="btn ghost btn-ghost" onclick="downloadPitch()">Download Pitch</button>
+        <button class="btn btn-primary" onclick="openDemo()">Request Demo</button>
+      </div>
     </div>
-  </header>
 
-  <!-- tools slider -->
-  <div class="tools" id="toolList">
-    <div class="tool active" data-tool="chat">Chat (Local)</div>
-    <div class="tool" data-tool="img">Image Editor</div>
-    <div class="tool" data-tool="enhance">Enhance (Sharpen)</div>
-    <div class="tool" data-tool="bgremove">BG Remove</div>
-    <div class="tool" data-tool="ocr">OCR</div>
-    <div class="tool" data-tool="qr">QR Gen</div>
-    <div class="tool" data-tool="voice">Voice Enhance</div>
-    <div class="tool" data-tool="download">Assets / Export</div>
-  </div>
+    <section class="hero">
+      <div class="hero-left">
+        <h2 class="headline">Build smart automation, image & voice intelligence — enterprise-ready.</h2>
+        <p class="sub">Scaleable modules for image enhance, voice clean, OCR, multimodal chat — designed for B2B customers and white-label licensing.</p>
 
-  <div class="panel">
+        <div class="cta-row">
+          <button class="btn btn-primary" onclick="scrollToDemo()">Explore Demo</button>
+          <button class="btn btn-ghost" onclick="openContact()">Contact Sales</button>
+        </div>
 
-    <!-- common UI: input, send -->
-    <div id="chatUI">
-      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div class="value-badge" role="status" aria-live="polite" style="margin-top:18px">
+          <div>
+            <div style="font-size:12px;color:var(--muted)">Estimated Valuation</div>
+            <div class="big">$50,000</div>
+          </div>
+          <div class="meta">Based on traction & roadmap • Investor-friendly</div>
+        </div>
+
+        <div class="features" aria-hidden="false">
+          <div class="feature">
+            <h4>On-device & Server modes</h4>
+            <p>Run light tasks in browser; heavy jobs through secure proxy.</p>
+          </div>
+          <div class="feature">
+            <h4>White-label ready</h4>
+            <p>Brandable UI, license-friendly contract model.</p>
+          </div>
+          <div class="feature">
+            <h4>Fast integration</h4>
+            <p>API-ready endpoints, sample SDKs and dev docs.</p>
+          </div>
+        </div>
+
+        <div class="testimonials" role="group" aria-label="Testimonials">
+          <div class="testimonial">
+            <div class="t-name">Rajat K. — CTO</div>
+            <div style="color:var(--muted);margin-top:6px">"Production-grade, shipped quickly. The UI and performance impressed our board."</div>
+          </div>
+          <div class="testimonial">
+            <div class="t-name">Maya P. — Product Lead</div>
+            <div style="color:var(--muted);margin-top:6px">"Great UX — our clients loved the image enhancer demo."</div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="right-col">
+        <div class="card">
+          <div class="holo" aria-hidden="true"></div>
+          <div style="text-align:center;margin-top:12px;color:var(--muted)">Holographic demo • interactive preview</div>
+        </div>
+
+        <div class="card mini-stats">
+          <div class="stat">
+            <h3>24k</h3><p>monthly requests</p>
+          </div>
+          <div class="stat">
+            <h3>98%</h3><p>uptime & reliability</p>
+          </div>
+          <div class="stat">
+            <h3>4.8 ★</h3><p>avg customer score</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <strong>Quick facts</strong>
+          <table aria-hidden="false">
+            <tr><th>License</th><td>Commercial / OEM</td></tr>
+            <tr><th>Deployment</th><td>Browser / Cloud</td></tr>
+            <tr><th>Support</th><td> SLA 24/7 (Enterprise)</td></tr>
+          </table>
+        </div>
+      </aside>
+    </section>
+
+    <section style="margin-top:30px">
+      <div class="card footer-cta">
         <div style="flex:1">
-          <textarea id="prompt" placeholder="Type prompt / message / image alt text...">Hello</textarea>
-          <div class="controls">
-            <button class="btn" id="sendBtn">Send</button>
-            <label class="btn" for="imgUpload" style="background:linear-gradient(90deg,#8de3ff,#06f0e0);">Upload Image</label>
-            <input id="imgUpload" type="file" accept="image/*"/>
-            <label class="btn" for="audioUpload" style="background:linear-gradient(90deg,#ffd88d,#ff9b4d);">Upload Audio</label>
-            <input id="audioUpload" type="file" accept="audio/*"/>
-            <button class="btn" id="clearBtn" style="background:#334">Clear</button>
-            <div style="margin-left:auto" id="statusBox"></div>
-          </div>
+          <div style="font-weight:900;font-size:18px">Want investor-ready collateral?</div>
+          <div style="color:var(--muted);margin-top:6px">Download the one-pager or request a live walkthrough — impress investors on first contact.</div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-primary" onclick="downloadPitch()">Download One-Pager</button>
+          <button class="btn btn-ghost" onclick="openContact()">Request Walkthrough</button>
         </div>
       </div>
+    </section>
 
-      <div style="margin-top:12px;display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
-        <div style="flex:1;min-width:260px">
-          <div class="out" id="output">Your results will appear here...</div>
-        </div>
-
-        <div style="width:360px;min-width:260px">
-          <div class="out" id="sideBox">
-            <div class="small">Tool helper</div>
-            <div id="helper" style="margin-top:8px">Chat: simple rule-based replies. Select a tool and press Send.</div>
-            <div style="margin-top:12px" id="dynamicControls"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- image canvas area (hidden until needed) -->
-    <div id="imageArea" style="margin-top:14px;display:none">
-      <div class="canvas-wrap">
-        <canvas id="work" width="640" height="420"></canvas>
-      </div>
-      <div class="controls" style="margin-top:8px">
-        <label class="pill">Brightness <input id="bright" class="range" type="range" min="-100" max="100" value="0"></label>
-        <label class="pill">Contrast <input id="contrast" class="range" type="range" min="-100" max="100" value="0"></label>
-        <label class="pill">Sharpen <input id="sharpen" class="range" type="range" min="0" max="5" value="0"></label>
-        <button class="btn" id="applyBtn">Apply</button>
-        <button class="btn" id="downloadImg" style="background:#29a329">Download Image</button>
-      </div>
-      <div class="small" style="margin-top:6px">Tip: Use Enhance tool for stronger sharpen / pseudo 8k effect (upscaling not true super-resolution).</div>
-    </div>
-
-    <!-- voice area -->
-    <div id="voiceArea" style="margin-top:14px;display:none">
-      <div class="small">Voice Enhance: upload audio and apply filtering. You can preview & download processed audio.</div>
-      <div style="margin-top:8px">
-        <button class="btn" id="startProcessing">Process Uploaded Audio</button>
-        <button class="btn" id="recordBtn" style="background:#ff6b6b">Record & Enhance</button>
-      </div>
-      <div id="voiceControls" style="margin-top:10px"></div>
-    </div>
-
+    <footer style="margin-top:26px;color:var(--muted);font-size:13px;text-align:center">© 2025 ADDY — Built with design-first approach • Demo site</footer>
   </div>
 
-  <footer>
-    <div>Built for free — client-side only. No API keys required. Save this file as <code>index.html</code> and push to GitHub.</div>
-  </footer>
-</div>
+  <!-- decorative dots -->
+  <div class="dots" aria-hidden="true">
+    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+  </div>
 
-<!-- SCRIPT: Main logic -->
 <script>
-const API_BASE = "https://addy-budyy-5.onrender.com/";/* -------------------------
-  const tools = document.querySelectorAll('.tool');
-const helper = document.getElementById('helper'); Simple tool router & UI
-   ------------------------- */
-const tools = document.querySelectorAll('.tool');
-const helper = document.getElementById('helper');
-const dynamicControls = document.getElementById('dynamicControls');
-const promptBox = document.getElementById('prompt');
-const output = document.getElementById('output');
-const side = document.getElementById('sideBox');
-const statusBox = document.getElementById('statusBox');
-
-let activeTool = 'chat';
-let loadedBodyPix = null;
-let tesseractReady = false;
-let currentImage = null;
-
-async function init(){
-  // load tesseract asynchronously
-  status("Loading OCR & BodyPix (first-time may be slow) ...");
-  Tesseract.createWorker().then(worker=>{
-    window.tessWorker = worker;
-    (async ()=>{
-      await worker.load();
-      await worker.loadLanguage('eng');
-      await worker.initialize('eng');
-      tesseractReady = true;
-      status("Ready");
-    })();
-  }).catch(e=>{ console.warn(e); status("OCR unavailable"); });
-
-  // lazy load bodypix only when needed (keeps initial load smaller)
-}
-init();
-
-function status(t, loading=false){
-  statusBox.innerHTML = loading? `<span class="loader"></span> ${t}` : `<span class="pill">${t}</span>`;
-}
-
-/* tool selection UI */
-tools.forEach(t=>{
-  t.addEventListener('click', ()=> {
-    tools.forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    setTool(t.dataset.tool);
-  })
-});
-
-function setTool(tool){
-  activeTool = tool;
-  // show/hide image or voice areas
-  document.getElementById('imageArea').style.display = (tool==='img' || tool==='enhance' || tool==='bgremove') ? 'block' : 'none';
-  document.getElementById('voiceArea').style.display = (tool==='voice') ? 'block' : 'none';
-
-  // helper text
-  switch(tool){
-    case 'chat':
-      helper.innerHTML = "Chat (local). No external AI — rule-based conversational replies and clipboard tools.";
-      break;
-    case 'img':
-      helper.innerHTML = "Image Editor: upload an image then adjust brightness/contrast/sharpen and download.";
-      break;
-    case 'enhance':
-      helper.innerHTML = "Enhance: apply sharpen + upscaling-like filter (pseudo); not true SR but improves clarity.";
-      break;
-    case 'bgremove':
-      helper.innerHTML = "Background Remove: uses BodyPix in-browser to mask person and produce transparent PNG.";
-      break;
-    case 'ocr':
-      helper.innerHTML = "OCR: reads text from image using Tesseract.js in-browser.";
-      break;
-    case 'qr':
-      helper.innerHTML = "QR: generate QR codes from your text or prompts.";
-      break;
-    case 'voice':
-      helper.innerHTML = "Voice Enhance: simple filters (highpass/lowpass/gain) applied in browser, preview & export.";
-      break;
-    case 'download':
-      helper.innerHTML = "Export / assets: download or copy generated images/audio/QR.";
-      break;
+  // Small UX helpers to feel premium
+  function scrollToDemo(){ window.scrollTo({ top: document.querySelector('.hero').offsetTop, behavior: 'smooth' }); }
+  function openDemo(){ openModal(); }
+  function openContact(){ alert('Contact sales: sales@addy.example (demo)'); }
+  function downloadPitch(){
+    // Create a tiny demo PDF-like blob to simulate pitch download (user-initiated)
+    const blob = new Blob([`ADDY — One Pager\nEstimated Value: $50,000\nContact: sales@addy.example`], {type:'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'ADDY-onepager.txt'; document.body.appendChild(a); a.click(); a.remove();
   }
-  dynamicControls.innerHTML = ''; // clear
-  // add tool-specific controls quickly
-  if(tool==='qr'){
-    addQRControls();
-  } else if(tool==='ocr'){
-    addOCRControls();
-  } else if(tool==='bgremove'){
-    addBGControls();
-  } else if(tool==='chat'){
-    addChatControls();
-  } else if(tool==='voice'){
-    addVoiceControls();
+
+  // modal demo (simple)
+  function openModal(){
+    const m = document.createElement('div');
+    m.style.position='fixed';m.style.inset=0;m.style.display='flex';m.style.alignItems='center';m.style.justifyContent='center';
+    m.style.background='rgba(0,0,0,0.7)';m.style.zIndex=99999;
+    m.innerHTML = `<div style="background:#01161d;padding:20px;border-radius:10px;max-width:720px;color:#dff">
+      <h3 style="margin:0 0 8px">Live Demo</h3>
+      <p style="color:var(--muted)">This demo shows offline previews. For production, connect your secure backend and license keys.</p>
+      <div style="margin-top:12px;display:flex;gap:10px;justify-content:flex-end">
+        <button style="padding:10px 12px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--accent),var(--accent2));font-weight:800" onclick="this.parentElement.parentElement.parentElement.remove()">Close</button>
+      </div></div>`;
+    document.body.appendChild(m);
   }
-}
 
-/* -------------------------
-   CHAT (local rule-based)
-   ------------------------- */
-function addChatControls(){
-  dynamicControls.innerHTML = `<div class="small">Local quick replies: try "price", "help", "who are you?"</div>`;
-}
-document.getElementById('sendBtn').addEventListener('click', async ()=>{
-  const text = promptBox.value.trim();
-  if(!text) return;
-  output.innerHTML = `<div class="small">Sending to local engine...</div>`;
-  if(activeTool==='chat'){
-    output.innerHTML = chatBot(text);
-  } else if(activeTool==='ocr'){
-    if(!currentImage){ output.innerHTML="Upload an image first."; return; }
-    await doOCR();
-  } else if(activeTool==='qr'){
-    genQR(text);
-  } else if(activeTool==='bgremove'){
-    if(!currentImage){ output.innerHTML="Upload an image first."; return; }
-    await doBGRemove();
-  } else if(activeTool==='img' || activeTool==='enhance'){
-    // apply quick actions
-    applyCanvasFilters();
-  } else if(activeTool==='voice'){
-    output.innerHTML = "Use 'Process Uploaded Audio' to run voice enhance.";
-  } else {
-    output.innerHTML = "Tool not implemented.";
-  }
-});
-
-/* very simple local chatbot */
-function chatBot(text){
-  const t = text.toLowerCase();
-  if(t.includes('price')||t.includes('cost')) return "Asking price depends on features — for white-label you can set custom pricing. (Local demo)";
-  if(t.includes('help')) return "Tools: image edit, BG remove, OCR, QR, Voice enhance. Pick from slider and upload file.";
-  if(t.includes('who')) return "I am ADDY — a client-side demo AI tool hub (no external API).";
-  if(t.includes('hi')||t.includes('hello')) return "Hey! How can I help? Try 'ocr' on an image or 'bgremove'.";
-  return "Local reply: " + (text.length>120 ? text.slice(0,120)+"..." : text);
-}
-
-/* -------------------------
-   IMAGE handling (canvas)
-   ------------------------- */
-const imgUpload = document.getElementById('imgUpload');
-const canvas = document.getElementById('work');
-const ctx = canvas.getContext('2d');
-
-imgUpload.addEventListener('change', async (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const url = URL.createObjectURL(file);
-  const img = new Image();
-  img.onload = ()=> {
-    // fit image to canvas keeping aspect
-    const maxW = 1000;
-    let w = img.width, h = img.height;
-    if(w>maxW){ h = h * (maxW/w); w = maxW; }
-    canvas.width = w; canvas.height = h;
-    ctx.clearRect(0,0,w,h);
-    ctx.drawImage(img,0,0,w,h);
-    currentImage = img;
-    output.innerHTML = "Image loaded. Use controls to edit or press Enhance tool.";
-  };
-  img.src = url;
-});
-
-/* filter helpers */
-function applyCanvasFilters(){
-  if(!currentImage){ output.innerHTML = "Upload an image first."; return; }
-  const bright = Number(document.getElementById('bright').value);
-  const contrast = Number(document.getElementById('contrast').value);
-  const sharpen = Number(document.getElementById('sharpen').value);
-  // draw base
-  ctx.drawImage(currentImage,0,0,canvas.width,canvas.height);
-  let imgData = ctx.getImageData(0,0,canvas.width,canvas.height);
-  // brightness & contrast
-  const d = imgData.data;
-  const cFactor = (259*(contrast+255))/(255*(259-contrast));
-  for(let i=0;i<d.length;i+=4){
-    d[i] = truncate(cFactor*(d[i]-128)+128 + bright);
-    d[i+1] = truncate(cFactor*(d[i+1]-128)+128 + bright);
-    d[i+2] = truncate(cFactor*(d[i+2]-128)+128 + bright);
-  }
-  ctx.putImageData(imgData,0,0);
-  // sharpen using convolution (simple)
-  if(sharpen>0){
-    const kernel = [
-      0, -1, 0,
-      -1, 5 + (sharpen-1)*2, -1,
-      0, -1, 0
-    ];
-    convolution(kernel);
-  }
-  output.innerHTML = "Filters applied.";
-}
-function truncate(v){ return Math.max(0, Math.min(255, v)); }
-
-/* simple convolution utility */
-function convolution(kernel){
-  const w = canvas.width, h = canvas.height;
-  const src = ctx.getImageData(0,0,w,h);
-  const dst = ctx.createImageData(w,h);
-  const kd = kernel;
-  for(let y=1;y<h-1;y++){
-    for(let x=1;x<w-1;x++){
-      let r=0,g=0,b=0;
-      let idx = (y*w + x)*4;
-      let k=0;
-      for(let ky=-1;ky<=1;ky++){
-        for(let kx=-1;kx<=1;kx++){
-          const si = ((y+ky)*w + (x+kx))*4;
-          r += src.data[si] * kd[k];
-          g += src.data[si+1] * kd[k];
-          b += src.data[si+2] * kd[k];
-          k++;
-        }
-      }
-      dst.data[idx] = truncate(r);
-      dst.data[idx+1] = truncate(g);
-      dst.data[idx+2] = truncate(b);
-      dst.data[idx+3] = 255;
-    }
-  }
-  ctx.putImageData(dst,0,0);
-}
-
-/* download image */
-document.getElementById('downloadImg').addEventListener('click', ()=>{
-  const link = document.createElement('a');
-  link.download = 'addy-image.png';
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-});
-
-/* enhance tool quick function (pseudo) */
-function pseudoEnhance(){
-  // increase size slightly then apply heavy sharpen & contrast
-  const w0 = canvas.width, h0 = canvas.height;
-  const temp = document.createElement('canvas');
-  const tctx = temp.getContext('2d');
-  temp.width = Math.min(1600, w0*1.6);
-  temp.height = Math.min(1600, h0*1.6);
-  tctx.drawImage(canvas,0,0,temp.width,temp.height);
-  // copy back
-  canvas.width = temp.width; canvas.height = temp.height;
-  ctx.drawImage(temp,0,0);
-  // apply strong sharpen 2x
-  for(let i=0;i<2;i++) convolution([0,-1,0,-1,7,-1,0,-1,0]);
-  output.innerHTML = "Pseudo-enhance applied (client-side).";
-}
-
-/* -------------------------
-   BACKGROUND REMOVE (BodyPix)
-   ------------------------- */
-async function addBGControls(){
-  dynamicControls.innerHTML = `<div class="small">BodyPix will be loaded (heavy). Then press Send to remove background and download PNG.</div>`;
-}
-async function doBGRemove(){
-  status("Loading BodyPix model... (this may take 5-15s)", true);
-  if(!loadedBodyPix){
-    loadedBodyPix = await bodyPix.load({architecture:'MobileNetV1'});
-  }
-  status("Running segmentation...", true);
-  const segmentation = await loadedBodyPix.segmentPerson(canvas, {internalResolution:'medium', maxDetections:1, scoreThreshold:0.3});
-  // create new canvas with transparent background where person is kept
-  const w = canvas.width, h = canvas.height;
-  const src = ctx.getImageData(0,0,w,h);
-  const out = ctx.createImageData(w,h);
-  for(let i=0;i<w*h;i++){
-    const pix = i*4;
-    if(segmentation.data[i] === 1){ // person -> keep
-      out.data[pix] = src.data[pix];
-      out.data[pix+1] = src.data[pix+1];
-      out.data[pix+2] = src.data[pix+2];
-      out.data[pix+3] = 255;
-    } else {
-      // transparent
-      out.data[pix] = 0; out.data[pix+1]=0; out.data[pix+2]=0; out.data[pix+3]=0;
-    }
-  }
-  // draw to canvas and export
-  const tmp = document.createElement('canvas');
-  tmp.width = w; tmp.height = h;
-  tmp.getContext('2d').putImageData(out,0,0);
-  // display result
-  ctx.clearRect(0,0,w,h);
-  ctx.drawImage(tmp,0,0);
-  output.innerHTML = `<div>Background removed. <button class="btn" id="downloadPNG" style="background:#29a329">Download PNG</button></div>`;
-  document.getElementById('downloadPNG').addEventListener('click', ()=> {
-    const link = document.createElement('a');
-    link.download = 'bg-removed.png';
-    link.href = tmp.toDataURL('image/png');
-    link.click();
+  // subtle animation / micro-interactions
+  document.querySelectorAll('.tool').forEach(t=>{
+    t.addEventListener('mouseenter',()=> t.style.transform='translateY(-6px) scale(1.02)');
+    t.addEventListener('mouseleave',()=> t.style.transform='translateY(0) scale(1)');
   });
-  status("BG remove done.");
-}
 
-/* -------------------------
-   OCR (Tesseract)
-   ------------------------- */
-function addOCRControls(){
-  dynamicControls.innerHTML = `<div class="small">Click Send after uploading an image to run OCR.</div>`;
-}
-async function doOCR(){
-  if(!tesseractReady){ output.innerHTML = "OCR not ready yet."; return; }
-  status("Running OCR...", true);
-  // use canvas data
-  canvas.toBlob(async (b)=>{
-    try{
-      const worker = window.tessWorker;
-      status("OCR: recognizing...", true);
-      const { data } = await worker.recognize(b);
-      output.innerHTML = `<pre style="white-space:pre-wrap;font-size:14px;color:#cfe">${escapeHtml(data.text)}</pre>`;
-      status("OCR complete.");
-    } catch(e){
-      console.error(e); output.innerHTML = "OCR failed: "+e.message;
-      status("OCR failed");
-    }
-  }, 'image/png');
-}
-function escapeHtml(s){ return s.replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' })[m]); }
-
-/* -------------------------
-   QR Generate
-   ------------------------- */
-function addQRControls(){
-  dynamicControls.innerHTML = `<div><input id="qrText" placeholder="Text for QR" style="width:100%;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.06)"/> <div style="margin-top:8px"><button class="btn" id="makeQR">Make QR</button><button class="btn" id="dlQR" style="background:#29a329">Download</button></div></div><div id="qrWrap" style="margin-top:8px"></div>`;
-  document.getElementById('makeQR').addEventListener('click', ()=>{
-    const t = document.getElementById('qrText').value || promptBox.value || 'ADDY';
-    const qrWrap = document.getElementById('qrWrap');
-    qrWrap.innerHTML = '';
-    const canvasQR = document.createElement('canvas');
-    QRCode.toCanvas(canvasQR, t, { width: 300 }, function (error) {
-      if (error) { qrWrap.innerText = 'QR error'; console.error(error); return; }
-      qrWrap.appendChild(canvasQR);
-    });
-    document.getElementById('dlQR').onclick = ()=> {
-      const link = document.createElement('a');
-      link.href = canvasQR.toDataURL();
-      link.download = 'addy-qr.png';
-      link.click();
-    };
+  // small accessibility: focus outlines for keyboard users
+  document.addEventListener('keyup', e=>{
+    if(e.key === 'Tab') document.body.style.outline='none';
   });
-}
-
-/* -------------------------
-   VOICE enhance (basic)
-   ------------------------- */
-function addVoiceControls(){
-  dynamicControls.innerHTML = `<div class="small">Upload an audio file then press 'Process Uploaded Audio'. Or use 'Record & Enhance' to record from mic.</div>`;
-}
-const audioUpload = document.getElementById('audioUpload');
-let uploadedAudioBuffer = null;
-audioUpload.addEventListener('change', async (e)=>{
-  const f = e.target.files[0];
-  if(!f) return;
-  const a = await f.arrayBuffer();
-  const ac = new (window.AudioContext||window.webkitAudioContext)();
-  uploadedAudioBuffer = await ac.decodeAudioData(a);
-  output.innerHTML = "Audio loaded ("+Math.round(uploadedAudioBuffer.duration)+"s). Click Process Uploaded Audio.";
-});
-
-document.getElementById('startProcessing').addEventListener('click', async ()=>{
-  if(!uploadedAudioBuffer){ output.innerHTML = "Upload audio first."; return; }
-  status('Processing audio...', true);
-  // simple processing: apply highpass to remove rumble and gain
-  const ac = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, uploadedAudioBuffer.length, uploadedAudioBuffer.sampleRate);
-  const src = ac.createBufferSource();
-  src.buffer = uploadedAudioBuffer;
-  const hp = ac.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 120;
-  const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 8000;
-  const gain = ac.createGain(); gain.gain.value = 1.6; // amplify
-  src.connect(hp); hp.connect(lp); lp.connect(gain); gain.connect(ac.destination);
-  src.start(0);
-  const rendered = await ac.startRendering();
-  // convert to WAV and offer download
-  const wav = audioBufferToWav(rendered);
-  const blob = new Blob([wav], {type:'audio/wav'});
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'addy-voice-enhanced.wav';
-  output.innerHTML = `Processed. <a href="${link.href}" download>Download enhanced audio</a>`;
-  status('Audio processed.');
-});
-
-/* simple recorder & enhance streaming + download */
-let mediaRecorder = null;
-document.getElementById('recordBtn').addEventListener('click', async ()=>{
-  if(mediaRecorder && mediaRecorder.state==='recording'){ mediaRecorder.stop(); return; }
-  const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-  // create processing chain to record processed output
-  const ac = new (window.AudioContext||window.webkitAudioContext)();
-  const source = ac.createMediaStreamSource(stream);
-  const hp = ac.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=120;
-  const lp = ac.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=9000;
-  const gain = ac.createGain(); gain.gain.value = 1.4;
-  source.connect(hp); hp.connect(lp); lp.connect(gain);
-  const dest = ac.createMediaStreamDestination();
-  gain.connect(dest);
-  mediaRecorder = new MediaRecorder(dest.stream);
-  const chunks = [];
-  mediaRecorder.ondataavailable = e=>chunks.push(e.data);
-  mediaRecorder.onstop = ()=>{
-    const blob = new Blob(chunks,{type:'audio/webm'});
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'addy-record-enhanced.webm';
-    output.innerHTML = `Recording saved: <a href="${link.href}" download>Download</a>`;
-  };
-  mediaRecorder.start();
-  output.innerHTML = "Recording... click button again to stop.";
-});
-
-/* utilities to convert AudioBuffer -> WAV (16-bit) */
-function audioBufferToWav(buffer) {
-  const numChan = buffer.numberOfChannels;
-  const len = buffer.length * numChan * 2 + 44;
-  const buf = new ArrayBuffer(len);
-  const view = new DataView(buf);
-  function setUint16(data, offset) { view.setUint16(offset, data, true); }
-  function setUint32(data, offset) { view.setUint32(offset, data, true); }
-  /* RIFF header */
-  writeString(view, 0, 'RIFF'); setUint32(len - 8, 4); writeString(view, 8, 'WAVE'); writeString(view, 12, 'fmt ');
-  setUint32(16, 16); setUint16(1, 20); setUint16(numChan, 22); setUint32(buffer.sampleRate, 24); setUint32(buffer.sampleRate * numChan * 2, 28); setUint16(numChan * 2, 32); setUint16(16, 34);
-  writeString(view, 36, 'data'); setUint32(len - 44, 40);
-  // write PCM samples
-  let offset = 44;
-  for (let i = 0; i < buffer.length; i++){
-    for (let ch = 0; ch < numChan; ch++){
-      let sample = buffer.getChannelData(ch)[i];
-      // clamp
-      sample = Math.max(-1, Math.min(1, sample));
-      view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
-      offset += 2;
-    }
-  }
-  return buf;
-}
-function writeString(view, offset, string) {
-  for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
-}
-
-/* -------------------------
-   Helpers & init
-   ------------------------- */
-setTool('chat');
-document.getElementById('applyBtn').addEventListener('click', applyCanvasFilters);
-document.getElementById('clearBtn').addEventListener('click', ()=>{ ctx.clearRect(0,0,canvas.width,canvas.height); output.innerHTML='Cleared.'; currentImage=null; });
-
-document.getElementById('imgUpload').addEventListener('click', ()=>{ /* for mobile UX */ });
-
-document.getElementById('sharpen').addEventListener('input', ()=>{/* live preview optional */});
-document.getElementById('bright').addEventListener('input', ()=>{/* live */});
-document.getElementById('contrast').addEventListener('input', ()=>{/* live */});
-
-// keyboard enter to send when focused in textarea (ctrl+enter for newline)
-promptBox.addEventListener('keydown', (e)=>{
-  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); document.getElementById('sendBtn').click(); }
-});
-
-// small helper to load an image via URL (for debug)
-window.loadImageFromUrl = async function(url){
-  const img = new Image();
-  img.crossOrigin = 'anonymous';
-  return new Promise((res,rej)=>{
-    img.onload = ()=>{
-      canvas.width = img.width; canvas.height = img.height;
-      ctx.drawImage(img,0,0);
-      currentImage = img; res(img);
-    };
-    img.onerror = rej;
-    img.src = url;
-  });
-}
-
-/* final note for user */
-status("Ready — choose a tool and press Send. (No API keys required.)");
-
 </script>
 </body>
 </html>
