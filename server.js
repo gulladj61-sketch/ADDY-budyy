@@ -102,3 +102,6 @@ app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 /api/image
 /api/remove-bg
 /api/enhance
+"scripts": {
+  "start": "node server.js"
+  }
