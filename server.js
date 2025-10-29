@@ -98,3 +98,7 @@ app.post("/api/stt", (req, res) => {
 
 // Start server
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+/api/chat
+/api/image
+/api/remove-bg
+/api/enhance
