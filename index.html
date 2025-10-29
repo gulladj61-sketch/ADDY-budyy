@@ -1,137 +1,944 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>World Elite Motors - Luxury Cars & Bikes</title>
-<style>
-  body {
-    margin: 0;
-    background: radial-gradient(circle at top, #000, #050505 60%, #111);
-    color: #fff;
-    font-family: "Poppins", sans-serif;
-    overflow-x: hidden;
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ADDY — Super Free AI Hub (Optimized Premium)</title>
+  <meta name="description" content="ADDY — Image Editor, Voice Reader, OCR, BG Remove, AI Writer, Draw, QR, Chat; PWA-ready single-file. No server keys." />
+  <meta name="theme-color" content="#04202a" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="ADDY — Super Free AI Hub (Optimized Premium)" />
+  <meta property="og:description" content="Client-side AI tools: Image editor, OCR, BG remove, voice tools, AI writer & more. Ready-to-sell." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="" />
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebApplication",
+    "name":"ADDY — Super Free AI Hub",
+    "url":".",
+    "description":"Client-side AI tools collection — image editor, OCR, voice, AI writer, PWA-ready.",
+    "applicationCategory":"Utilities",
+    "softwareVersion":"1.0.0"
   }
+  </script>
 
-  /* 🔱 Intro Animation */
-  .intro {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    background: linear-gradient(180deg, #000, #111);
-    color: gold;
-    font-size: 3rem;
-    letter-spacing: 3px;
-    font-weight: bold;
-    animation: fadeOut 3s ease 4s forwards;
-  }
-
-  @keyframes fadeOut {
-    to {
-      opacity: 0;
-      visibility: hidden;
+  <style>
+    :root{
+      --bg-dark:#041021; --card:#072033; --accent:#00d4ff; --accent2:#4ce6a1; --muted:#9fb7d8;
+      --text:#eaf7ff; --glass: rgba(255,255,255,0.03);
+      --maxw:1100px; --radius:12px;
     }
-  }
-
-  .gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 25px;
-    padding: 50px;
-  }
-
-  .card {
-    position: relative;
-    border-radius: 15px;
-    overflow: hidden;
-    transform-style: preserve-3d;
-    transition: transform 0.6s ease, box-shadow 0.3s ease;
-  }
-
-  .card:hover {
-    transform: rotateY(12deg) scale(1.05);
-    box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
-  }
-
-  .card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(0.85);
-    transition: filter 0.4s ease;
-  }
-
-  .card:hover img {
-    filter: brightness(1);
-  }
-
-  .brand {
-    position: absolute;
-    bottom: 10px;
-    left: 15px;
-    background: rgba(0,0,0,0.5);
-    padding: 8px 15px;
-    border-radius: 12px;
-    font-weight: 600;
-    color: gold;
-  }
-
-  /* ✨ Scroll Animation */
-  .card {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: all 1s ease;
-  }
-
-  .card.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-</style>
+    [data-theme="light"]{ --bg-dark:#f6fbff; --card:#ffffff; --accent:#006b8f; --accent2:#1a8f66; --text:#012827; --muted:#4b6b7e; --glass: rgba(0,0,0,0.04);}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#03111b 0%, #02101a 100%);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
+    body{background:var(--bg-dark)}
+    .wrap{max-width:var(--maxw);margin:12px auto;padding:12px}
+    header{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#012827}
+    h1{margin:0;font-size:20px;color:var(--accent)}
+    .sub{color:var(--muted);font-size:13px}
+    nav.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .tab{padding:8px 12px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.03);cursor:pointer;color:var(--muted);font-size:13px}
+    .tab.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#012827;font-weight:700}
+    .card{background:var(--card);border-radius:var(--radius);padding:12px;box-shadow:0 6px 30px rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.03);margin-top:12px;color:var(--text)}
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:14px;margin-top:12px}
+    @media(max-width:980px){.grid{grid-template-columns:1fr} .side{order:2}}
+    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+    input,select,button,textarea{font-family:inherit}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{background:var(--accent);border:none;color:#022429;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700}
+    .btn.alt{background:#183043;color:#fff}
+    textarea{width:100%;min-height:80px;border-radius:8px;background:transparent;color:var(--text);border:1px solid rgba(255,255,255,0.04);padding:8px}
+    canvas{display:block;max-width:100%;border-radius:8px;background:#000;margin-top:10px;border:1px solid rgba(255,255,255,0.03)}
+    .muted{color:var(--muted);font-size:13px}
+    footer{margin-top:16px;color:var(--muted);font-size:13px;text-align:center}
+    .control{margin-top:8px}
+    .kbd{background:var(--glass);padding:5px 8px;border-radius:6px;color:var(--muted);font-size:13px}
+    .small{font-size:13px;color:var(--muted)}
+    .ad-placeholder{height:90px;border-radius:8px;border:1px dashed rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;color:var(--muted);background:linear-gradient(180deg,rgba(255,255,255,0.01),transparent);}
+    .version{font-size:12px;color:var(--muted)}
+    .top-controls{display:flex;gap:8px;align-items:center}
+    .flex-right{margin-left:auto;display:flex;gap:8px;align-items:center}
+  </style>
 </head>
 <body>
+  <div class="wrap" id="app">
+    <header>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div class="logo">AD</div>
+        <div>
+          <h1>ADDY — Super Free AI Hub</h1>
+          <div class="sub">Optimized Premium • Client-side tools • PWA-ready</div>
+        </div>
+      </div>
 
-<div class="intro">
-  <h1>🏎️ World Elite Motors 🏍️</h1>
-  <p>Experience the Power of Perfection</p>
-</div>
+      <div class="top-controls">
+        <div class="version" id="verBadge">v1.0.0</div>
+        <div class="flex-right">
+          <button id="themeToggle" class="btn alt">Toggle Theme</button>
+          <button id="installBtn" class="btn">Install App</button>
+        </div>
+      </div>
+    </header>
 
-<div class="gallery" id="gallery"></div>
+    <nav class="tabs" id="tabs">
+      <div class="tab active" data-tab="editor">Image Editor</div>
+      <div class="tab" data-tab="voice">Voice</div>
+      <div class="tab" data-tab="text">Text Tools</div>
+      <div class="tab" data-tab="draw">Drawing</div>
+      <div class="tab" data-tab="ai">AI Writer</div>
+      <div class="tab" data-tab="tools">More Tools</div>
+      <div class="tab" data-tab="help">Help</div>
+    </nav>
+
+    <div id="content">
+      <!-- EDITOR -->
+      <div class="card" id="editor" style="display:block">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <h2 style="margin:0">🖼️ Image Editor</h2>
+          <div class="muted">Upload → Edit → Download • Auto-enhance, Crop, BG remove, OCR</div>
+          <div style="flex:1"></div>
+          <div class="muted">Current: <span id="imgInfo">none</span></div>
+        </div>
+        <hr/>
+        <div class="row">
+          <div style="flex:1;min-width:220px">
+            <label>Upload image</label>
+            <input id="fileEditor" type="file" accept="image/*">
+            <div class="control row" style="margin-top:8px">
+              <button id="fitCanvas" class="btn alt">Fit</button>
+              <button id="resetImg" class="btn alt">Reset</button>
+              <button id="downloadImg" class="btn">Download PNG</button>
+            </div>
+          </div>
+
+          <div style="width:320px">
+            <label>Quick Presets</label>
+            <div class="row">
+              <button class="btn" id="preset-natural">Natural</button>
+              <button class="btn alt" id="preset-vivid">Vivid</button>
+              <button class="btn" id="preset-bw">B/W</button>
+            </div>
+            <div style="margin-top:8px" class="small">Pro-tip: Use Fit → Auto-Enhance → OCR for best results.</div>
+          </div>
+        </div>
+
+        <canvas id="editorCanvas"></canvas>
+
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">
+          <div style="min-width:160px">
+            <label>Brightness</label>
+            <input id="ed-bright" type="range" min="0" max="200" value="100">
+          </div>
+          <div style="min-width:160px">
+            <label>Contrast</label>
+            <input id="ed-contrast" type="range" min="0" max="200" value="100">
+          </div>
+          <div style="min-width:140px">
+            <label>Saturate</label>
+            <input id="ed-sat" type="range" min="0" max="200" value="100">
+          </div>
+          <div style="min-width:140px">
+            <label>Blur</label>
+            <input id="ed-blur" type="range" min="0" max="12" value="0">
+          </div>
+          <div style="min-width:120px">
+            <label>Hue</label>
+            <input id="ed-hue" type="range" min="0" max="360" value="0">
+          </div>
+          <div style="min-width:120px">
+            <label>Tint</label>
+            <input id="ed-tint" type="color" value="#ffffff">
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+          <button id="applyEd" class="btn">Apply Filters</button>
+          <button id="autoEnhanceBtn" class="btn alt">Auto Enhance</button>
+          <button id="cropBtn" class="btn alt">Crop</button>
+          <button id="removeBgBtn" class="btn alt">Remove BG</button>
+          <button id="ocrBtn" class="btn">Run OCR</button>
+          <div style="flex:1"></div>
+          <div class="muted">Saved: <span id="savedFlag">no</span></div>
+        </div>
+
+        <div id="ocrBoxWrapper" style="margin-top:8px"></div>
+      </div>
+
+      <!-- VOICE -->
+      <div class="card" id="voice" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <h2 style="margin:0">🔊 Voice Reader & Recorder</h2>
+            <div class="small">Text→Speech (browser) and Record → light noise filter → download</div>
+          </div>
+          <div class="hint">Choose voice and press Read</div>
+        </div>
+        <hr/>
+        <label>Text to read</label>
+        <textarea id="voiceText" placeholder="Type or paste text..."></textarea>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+          <label style="display:flex;align-items:center;gap:8px">Voice<select id="voiceSelect"></select></label>
+          <label style="display:flex;align-items:center;gap:8px">Rate <input id="rate" type="range" min="0.5" max="2" step="0.1" value="1"></label>
+          <label style="display:flex;align-items:center;gap:8px">Pitch <input id="pitch" type="range" min="0.5" max="2" step="0.1" value="1"></label>
+          <button id="readBtn" class="btn">Read</button>
+          <button id="stopRead" class="btn alt">Stop</button>
+        </div>
+
+        <hr/>
+        <h4 style="margin:0">Recorder</h4>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+          <button id="startRec" class="btn">Start</button>
+          <button id="stopRec" class="btn alt">Stop</button>
+          <button id="playRec" class="btn">Play</button>
+          <button id="downloadRec" class="btn alt">Download</button>
+          <div style="flex:1"></div>
+          <div id="recStatus" class="muted">Idle</div>
+        </div>
+        <audio id="audioPlayer" controls style="margin-top:8px;width:100%"></audio>
+      </div>
+
+      <!-- TEXT -->
+      <div class="card" id="text" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <h2 style="margin:0">✂️ Text Tools</h2>
+            <div class="small">Summarize, Paraphrase, Save, Export</div>
+          </div>
+          <div class="hint">Autosaves to localStorage</div>
+        </div>
+        <hr/>
+        <label>Input / Paste article</label>
+        <textarea id="textInput" placeholder="Paste long text here..."></textarea>
+
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button id="summBtn" class="btn">Summarize (3 sentences)</button>
+          <button id="paraBtn" class="btn alt">Paraphrase (simple)</button>
+          <button id="copyText" class="btn">Copy Output</button>
+          <button id="saveText" class="btn alt">Save File</button>
+        </div>
+
+        <label style="margin-top:8px">Output</label>
+        <textarea id="textOutput" placeholder="Output will appear here..."></textarea>
+        <div class="hint" style="margin-top:6px">Press Summarize to get extractive summary (client-side)</div>
+      </div>
+
+      <!-- DRAW -->
+      <div class="card" id="draw" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <h2 style="margin:0">🎨 Drawing Canvas</h2>
+            <div class="small">Draw, undo, export PNG</div>
+          </div>
+          <div class="hint">Use finger (mobile) to draw</div>
+        </div>
+        <hr/>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <label>Canvas Size <select id="drawSize"><option value="800">800x600</option><option value="600">600x450</option><option value="400">400x300</option></select></label>
+          <label>Brush <input id="brushSize" type="range" min="1" max="60" value="6"></label>
+          <label>Color <input id="brushColor" type="color" value="#ffffff"></label>
+          <button id="clearCanvas" class="btn alt">Clear</button>
+          <button id="undoBtn" class="btn alt">Undo</button>
+          <button id="saveDraw" class="btn">Export PNG</button>
+        </div>
+        <canvas id="drawCanvas" style="margin-top:10px;border:1px solid rgba(255,255,255,0.04);border-radius:8px"></canvas>
+      </div>
+
+      <!-- AI WRITER -->
+      <div class="card" id="ai" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <h2 style="margin:0">🧠 AI Writer & Idea Generator</h2>
+            <div class="small">Client-side templates + rules. Fast content & slogans without server keys.</div>
+          </div>
+          <div class="hint">Pick a template and press Generate</div>
+        </div>
+        <hr/>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <select id="aiTemplate" style="min-width:180px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)">
+            <option value="blog">Blog Intro (short)</option>
+            <option value="slogan">Slogan / Tagline</option>
+            <option value="postIdeas">5 Social Post Ideas</option>
+            <option value="email">Cold Email (short)</option>
+            <option value="explain">Explain Code (simple)</option>
+          </select>
+          <input id="aiPrompt" placeholder="Topic or keywords (e.g., 'photo editor app')" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)">
+          <button id="aiGen" class="btn">Generate</button>
+          <button id="aiCopy" class="btn alt">Copy</button>
+        </div>
+        <label style="margin-top:8px">Output</label>
+        <textarea id="aiOutput" placeholder="Generated content will appear here..."></textarea>
+      </div>
+
+      <!-- MORE TOOLS -->
+      <div class="card" id="tools" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h2 style="margin:0">🔧 More Tools</h2>
+          <div class="muted">QR, Chat (local), Palette, Quotes</div>
+        </div>
+        <hr/>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="card" style="padding:10px">
+            <h3 style="margin:0">🔗 QR Generator</h3>
+            <div style="margin-top:8px">
+              <input id="qrText" placeholder="Text / URL to encode" style="width:100%;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--text)">
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <button id="makeQR" class="btn">Generate</button>
+                <button id="downloadQR" class="btn alt">Download</button>
+              </div>
+              <div id="qrcode" style="margin-top:8px;display:flex;align-items:center;justify-content:center;min-height:120px"></div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:10px">
+            <h3 style="margin:0">💬 Quick Quotes</h3>
+            <div id="quoteText" style="min-height:80px;display:flex;align-items:center;justify-content:center;padding:10px;font-weight:600;color:var(--text)">Click Get Quote</div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button id="getQuote" class="btn">Get Quote</button>
+              <button id="copyQuote" class="btn alt">Copy</button>
+            </div>
+          </div>
+
+          <div class="card" style="padding:10px">
+            <h3 style="margin:0">🤖 Local Chat</h3>
+            <div style="height:160px;overflow:auto;border-radius:8px;padding:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03)" id="chatBox"></div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <input id="chatInput" placeholder="Type a message..." style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)">
+              <button id="sendChat" class="btn">Send</button>
+            </div>
+          </div>
+
+          <div class="card" style="padding:10px">
+            <h3 style="margin:0">🎨 Palette Extract</h3>
+            <div style="margin-top:8px">
+              <div style="display:flex;gap:8px">
+                <button id="palBtn" class="btn alt">Extract Palette</button>
+                <div style="flex:1"></div>
+                <div class="ad-placeholder">Ad slot (300×90)</div>
+              </div>
+              <div id="paletteWrap" style="display:flex;flex-wrap:wrap;margin-top:8px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HELP -->
+      <div class="card" id="help" style="display:none">
+        <h2 style="margin:0">ℹ️ Help & Next Steps</h2>
+        <hr/>
+        <div class="small">
+          <ul>
+            <li>Part-1: Editor, Voice, Text, Draw (client-only)</li>
+            <li>Part-2: BG remove (BodyPix), OCR (Tesseract) — lazy-loaded</li>
+            <li>AI Writer: client templates — no paid API required</li>
+            <li>To sell: add analytics + custom domain; provide buyer pack (README included)</li>
+          </ul>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button id="downloadPackBtn" class="btn">Download Buyer Pack (ZIP)</button>
+          <button id="askDeploy" class="btn alt">Make GitHub Pack</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top:12px">
+      <div class="card">
+        <h3 style="margin:0">Quick Actions</h3>
+        <hr/>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button id="clearAllBtn" class="btn alt">Clear All</button>
+          <button id="exportSession" class="btn">Export Session</button>
+          <button id="importSession" class="btn alt">Import Session</button>
+          <input type="file" id="importFile" accept=".json" style="display:none">
+        </div>
+        <label style="margin-top:10px">Session Notes</label>
+        <textarea id="sessionNotes" placeholder="Notes..."></textarea>
+        <div style="margin-top:10px" class="small">Ad placeholders show buyers where to place ads. PWA install available via Install button.</div>
+      </div>
+
+      <aside class="side card">
+        <h3 style="margin:0">Tips & Pricing</h3>
+        <hr/>
+        <div class="small">
+          • To increase price: add analytics & proof-of-traffic, custom domain, offer installation support.<br>
+          • Suggested starting asking price after this premium update: <strong>₹15,000–₹22,000</strong> (negotiable).<br>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <button id="requestValuation" class="btn">Get Short Valuation</button>
+          <button id="contactBuyer" class="btn alt">Email Template to Buyer</button>
+        </div>
+      </aside>
+    </div>
+
+    <footer>Made with ❤️ — ADDY Premium — Single-file, PWA-ready • Reply "next" for deploy pack.</footer>
+  </div>
 
 <script>
-  // ⚙️ Car Data (sample – तू इसे बढ़ा सकता है)
-  const cars = [
-    { brand: "Rolls Royce Phantom", img: "https://images.unsplash.com/photo-1605559424843-92a3c6d7aa7a" },
-    { brand: "Bugatti Chiron", img: "https://images.unsplash.com/photo-1606813902804-53d6a51ec09b" },
-    { brand: "Lamborghini Aventador", img: "https://images.unsplash.com/photo-1503736334956-4c8f8e92946d" },
-    { brand: "Ferrari SF90", img: "https://images.unsplash.com/photo-1606811825148-f9cde76bdf4b" },
-    { brand: "Tesla Roadster", img: "https://images.unsplash.com/photo-1614732414444-096f7b62b37c" },
-    { brand: "Ducati Panigale V4", img: "https://images.unsplash.com/photo-1606220838318-199baf4b7c4d" },
-    { brand: "Harley Davidson CVO", img: "https://images.unsplash.com/photo-1583121274602-3e282f0bfc16" },
-  ];
+/* =========================
+   Utilities & Tab Navigation
+   ========================= */
+const $ = id => document.getElementById(id);
+const tabs = document.querySelectorAll('#tabs .tab');
+function showTab(name){
+  ['editor','voice','text','draw','ai','tools','help'].forEach(t=>{
+    const el = $(t); if(el) el.style.display = (t===name? 'block':'none');
+    document.querySelectorAll('#tabs .tab').forEach(tab=> tab.classList.toggle('active', tab.dataset.tab===name));
+  });
+  // small restore focus
+  setTimeout(()=> window.scrollTo(0,0),100);
+}
+tabs.forEach(tab=> tab.addEventListener('click', ()=> showTab(tab.dataset.tab)));
 
-  const gallery = document.getElementById('gallery');
-
-  // Dynamic Load Cars
-  cars.forEach(car => {
-    const div = document.createElement('div');
-    div.className = 'card';
-    div.innerHTML = `<img src="${car.img}" alt="${car.brand}"><div class='brand'>${car.brand}</div>`;
-    gallery.appendChild(div);
+/* -------------------------
+   THEME & PWA INSTALL
+   ------------------------- */
+(function themeAndPwa(){
+  const stored = localStorage.getItem('addy_theme') || 'dark';
+  if(stored==='light') document.documentElement.setAttribute('data-theme','light');
+  const themeToggle = $('themeToggle');
+  themeToggle.addEventListener('click', ()=>{
+    const cur = document.documentElement.getAttribute('data-theme');
+    if(cur==='light'){ document.documentElement.removeAttribute('data-theme'); localStorage.setItem('addy_theme','dark'); }
+    else { document.documentElement.setAttribute('data-theme','light'); localStorage.setItem('addy_theme','light'); }
   });
 
-  // Scroll animation
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('visible');
+  // PWA: generate manifest on the fly and register simple service worker via blob
+  function createManifest(){
+    const manifest = {
+      name: "ADDY — Super Free AI Hub",
+      short_name: "ADDY",
+      start_url: ".",
+      display: "standalone",
+      background_color: "#04202a",
+      theme_color: "#04202a",
+      icons: [
+        { src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192'%3E%3Crect width='100%' height='100%' fill='%2300d4ff'/%3E%3Ctext x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' font-size='80' fill='%23012827' font-family='Arial'%3EAD%3C/text%3E%3C/svg%3E", sizes:"192x192", type:"image/svg+xml" }
+      ]
+    };
+    const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    let l = document.querySelector('link[rel="manifest"]');
+    if(l){ l.href=url; } else {
+      l = document.createElement('link'); l.rel='manifest'; l.href=url; document.head.appendChild(l);
+    }
+  }
+  createManifest();
+
+  // Minimal service worker that caches the shell at install
+  if('serviceWorker' in navigator){
+    const swCode = `
+      const CACHE = 'addy-shell-v1';
+      self.addEventListener('install', e=> {
+        self.skipWaiting();
+        e.waitUntil(caches.open(CACHE).then(c=> c.addAll(['./'])));
+      });
+      self.addEventListener('fetch', e=>{
+        if(e.request.method !== 'GET') return;
+        e.respondWith(caches.match(e.request).then(r=> r || fetch(e.request)));
+      });
+    `;
+    const blob = new Blob([swCode], {type:'application/javascript'});
+    const swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl).catch(()=>{});
+  }
+
+  // Install prompt handling
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e)=>{
+    e.preventDefault();
+    deferredPrompt = e;
+    $('installBtn').style.display = 'inline-block';
+  });
+  $('installBtn').addEventListener('click', async ()=>{
+    if(deferredPrompt){
+      deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+    } else {
+      alert('Open browser menu → Add to Home screen (if supported).');
+    }
+  });
+})();
+
+/* =========================
+   Image Editor
+   ========================= */
+const fileEditor = $('fileEditor'), editorCanvas = $('editorCanvas'), ectx = editorCanvas.getContext('2d');
+let edImg = new Image(), edOriginal = null, edCurrentData = null;
+function fitEditorCanvas(maxW=900){
+  const w = Math.min(window.innerWidth-40, maxW);
+  if(!edImg.src) return;
+  const ratio = edImg.naturalHeight / edImg.naturalWidth;
+  editorCanvas.width = w;
+  editorCanvas.height = Math.round(w * ratio);
+  drawEditor();
+}
+fileEditor.addEventListener('change', (e)=>{
+  const f = e.target.files[0]; if(!f) return;
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    edImg = new Image();
+    edImg.onload = ()=> { edOriginal = ev.target.result; fitEditorCanvas(); $('imgInfo').innerText = edImg.naturalWidth + '×' + edImg.naturalHeight; };
+    edImg.src = ev.target.result;
+  };
+  reader.readAsDataURL(f);
+});
+window.addEventListener('resize', ()=> fitEditorCanvas());
+function drawEditor(){
+  if(!edImg.src) return;
+  ectx.clearRect(0,0,editorCanvas.width,editorCanvas.height);
+  const b = $('ed-bright').value, c = $('ed-contrast').value, s = $('ed-sat').value, bl = $('ed-blur').value, hue = $('ed-hue').value;
+  const filter = `brightness(${b}%) contrast(${c}%) saturate(${s}%) blur(${bl}px) hue-rotate(${hue}deg)`;
+  ectx.filter = filter;
+  ectx.drawImage(edImg, 0,0, editorCanvas.width, editorCanvas.height);
+  ectx.filter = 'none';
+  const tint = $('ed-tint').value;
+  if(tint && tint !== '#ffffff'){
+    ectx.fillStyle = hexWithAlpha(tint,0.2);
+    ectx.fillRect(0,0,editorCanvas.width,editorCanvas.height);
+  }
+  try{ edCurrentData = editorCanvas.toDataURL('image/png'); $('savedFlag').innerText='yes'; }catch(e){ console.log('ed toDataURL failed', e); }
+}
+function hexWithAlpha(hex, a=0.2){
+  const h = hex.replace('#','');
+  const r = parseInt(h.substring(0,2),16), g=parseInt(h.substring(2,4),16), b=parseInt(h.substring(4,6),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+['ed-bright','ed-contrast','ed-sat','ed-blur','ed-hue'].forEach(id=> $(id).addEventListener('input', drawEditor));
+$('ed-tint').addEventListener('input', drawEditor);
+
+$('fitCanvas').addEventListener('click', ()=> fitEditorCanvas());
+$('resetImg').addEventListener('click', ()=> { if(edOriginal){ edImg.src = edOriginal; fitEditorCanvas(); }});
+$('downloadImg').addEventListener('click', ()=> {
+  if(!edCurrentData && edOriginal) { edImg.src = edOriginal; fitEditorCanvas(); }
+  if(!edCurrentData) return alert('Upload image first');
+  const a = document.createElement('a'); a.href = edCurrentData; a.download = 'addy_edit.png'; a.click();
+});
+
+/* presets */
+$('preset-natural').addEventListener('click', ()=>{
+  $('ed-bright').value=100; $('ed-contrast').value=100; $('ed-sat').value=100; $('ed-blur').value=0; $('ed-hue').value=0; $('ed-tint').value='#ffffff'; drawEditor();
+});
+$('preset-vivid').addEventListener('click', ()=>{
+  $('ed-bright').value=110; $('ed-contrast').value=120; $('ed-sat').value=140; $('ed-blur').value=0; $('ed-hue').value=0; $('ed-tint').value='#ffffff'; drawEditor();
+});
+$('preset-bw').addEventListener('click', ()=>{ $('ed-sat').value=0; $('ed-contrast').value=110; $('ed-bright').value=95; $('ed-tint').value='#ffffff'; drawEditor();});
+
+/* auto-enhance (histogram stretch) */
+$('autoEnhanceBtn').addEventListener('click', ()=>{
+  if(!edImg.src) return alert('Upload an image first');
+  const tmp = document.createElement('canvas'); tmp.width = edImg.naturalWidth; tmp.height = edImg.naturalHeight;
+  const tctx = tmp.getContext('2d'); tctx.drawImage(edImg,0,0);
+  const imgd = tctx.getImageData(0,0,tmp.width,tmp.height);
+  let rmin=255,gmin=255,bmin=255, rmax=0,gmax=0,bmax=0;
+  for(let i=0;i<imgd.data.length;i+=4){
+    const r=imgd.data[i], g=imgd.data[i+1], b=imgd.data[i+2];
+    if(r<rmin) rmin=r; if(g<gmin) gmin=g; if(b<bmin) bmin=b;
+    if(r>rmax) rmax=r; if(g>gmax) gmax=g; if(b>bmax) bmax=b;
+  }
+  for(let i=0;i<imgd.data.length;i+=4){
+    imgd.data[i] = Math.round((imgd.data[i]-rmin)/(rmax-rmin||1)*255);
+    imgd.data[i+1] = Math.round((imgd.data[i+1]-gmin)/(gmax-gmin||1)*255);
+    imgd.data[i+2] = Math.round((imgd.data[i+2]-bmin)/(bmax-bmin||1)*255);
+  }
+  tctx.putImageData(imgd,0,0);
+  edImg.src = tmp.toDataURL();
+  edOriginal = edImg.src;
+  fitEditorCanvas();
+});
+
+/* crop - center square */
+$('cropBtn').addEventListener('click', ()=>{
+  if(!edImg.src) return alert('Upload an image first');
+  const tmp = document.createElement('canvas'); const min = Math.min(edImg.naturalWidth, edImg.naturalHeight);
+  tmp.width = min; tmp.height = min;
+  const tctx = tmp.getContext('2d');
+  tctx.drawImage(edImg, (edImg.naturalWidth-min)/2, (edImg.naturalHeight-min)/2, min, min, 0,0,min,min);
+  edImg.src = tmp.toDataURL();
+  edOriginal = edImg.src;
+  fitEditorCanvas();
+});
+
+/* -------------------------
+   Background remove (BodyPix lazy)
+   ------------------------- */
+let bodyPixNet = null;
+async function loadBodyPix(){
+  if(bodyPixNet) return bodyPixNet;
+  const s1 = document.createElement('script'); s1.src='https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js'; document.body.appendChild(s1);
+  await new Promise(r=>s1.onload=r);
+  const s2 = document.createElement('script'); s2.src='https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.2.0'; document.body.appendChild(s2);
+  await new Promise(r=>s2.onload=r);
+  bodyPixNet = await bodyPix.load();
+  return bodyPixNet;
+}
+$('removeBgBtn').addEventListener('click', async ()=>{
+  if(!edImg.src) return alert('Upload an image first');
+  try{
+    $('removeBgBtn').innerText='Loading BG model...'; $('removeBgBtn').disabled=true;
+    const net = await loadBodyPix();
+    const tmp=document.createElement('canvas');
+    tmp.width=edImg.naturalWidth; tmp.height=edImg.naturalHeight;
+    const ctx2=tmp.getContext('2d');
+    ctx2.drawImage(edImg,0,0);
+    const segmentation=await net.segmentPerson(tmp);
+    const imageData=ctx2.getImageData(0,0,tmp.width,tmp.height);
+    for(let i=0;i<segmentation.data.length;i++){
+      if(segmentation.data[i]===0) imageData.data[i*4+3]=0;
+    }
+    ctx2.putImageData(imageData,0,0);
+    edImg.src=tmp.toDataURL();
+    edOriginal=edImg.src;
+    fitEditorCanvas();
+  }catch(err){ alert('BG remove error: '+err.message); }
+  $('removeBgBtn').innerText='Remove BG'; $('removeBgBtn').disabled=false;
+});
+
+/* -------------------------
+   OCR (Tesseract lazy)
+   ------------------------- */
+let TesseractLib = null;
+async function loadTesseract(){
+  if(TesseractLib) return TesseractLib;
+  const s = document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'; document.body.appendChild(s);
+  await new Promise(r=>s.onload=r);
+  TesseractLib = window.Tesseract;
+  return TesseractLib;
+}
+$('ocrBtn').addEventListener('click', async ()=>{
+  if(!edImg.src) return alert('Upload an image first');
+  $('ocrBtn').innerText='Running OCR...'; $('ocrBtn').disabled=true;
+  try{
+    const T = await loadTesseract();
+    const worker = T.createWorker({logger:m=>console.log(m)});
+    await worker.loadLanguage('eng');
+    await worker.initialize('eng');
+    const res = await worker.recognize(edImg.src);
+    await worker.terminate();
+    const txt = res.data.text.trim();
+    if(!txt) { alert('No text found'); }
+    else {
+      let box = $('ocrBox');
+      if(!box){
+        box = document.createElement('textarea'); box.id='ocrBox'; box.placeholder='Extracted text...';
+        box.style.width='100%'; box.style.minHeight='120px'; box.style.marginTop='10px'; box.className='';
+        $('ocrBoxWrapper').appendChild(box);
+      }
+      box.value = txt;
+      box.scrollIntoView({behavior:'smooth'});
+    }
+  }catch(err){ alert('OCR error: '+err.message); }
+  $('ocrBtn').innerText='Run OCR'; $('ocrBtn').disabled=false;
+});
+
+/* -------------------------
+   Text Tools (summarize/paraphrase)
+   ------------------------- */
+function simpleSummarize(text, maxSent=3){
+  if(!text) return '';
+  const sents = text.match(/[^\.!\?]+[\.!\?]+/g) || [text];
+  const freq = {}; const stop = new Set(['the','is','and','a','an','of','to','in','that','it','for','on','with','as','are','was','be','by','this','i','you']);
+  sents.forEach(sent=>{
+    sent.toLowerCase().replace(/[^a-z0-9\s]/g,'').split(/\s+/).forEach(w=>{
+      if(!w) return; if(stop.has(w)) return; freq[w] = (freq[w]||0)+1;
     });
   });
+  const scores = sents.map(sent=>{
+    let sc=0; sent.toLowerCase().replace(/[^a-z0-9\s]/g,'').split(/\s+/).forEach(w=>{ if(freq[w]) sc += freq[w]; }); return sc;
+  });
+  const idx = scores.map((v,i)=>[v,i]).sort((a,b)=>b[0]-a[0]).slice(0,maxSent).sort((a,b)=>a[1]-b[1]);
+  return idx.map(x=>sents[x[1]].trim()).join(' ');
+}
+$('summBtn').addEventListener('click', ()=> {
+  const t = $('textInput').value; $('textOutput').value = simpleSummarize(t,3);
+});
+$('paraBtn').addEventListener('click', ()=> {
+  const t = $('textInput').value; if(!t) return alert('Paste text first');
+  const map = {'important':'crucial','use':'utilize','help':'assist','buy':'purchase','get':'obtain','said':'stated','really':'truly','very':'extremely'};
+  const out = t.replace(/\b(\w+)\b/g, (m)=> map[m.toLowerCase()] || m);
+  $('textOutput').value = out;
+});
+$('copyText').addEventListener('click', ()=> navigator.clipboard.writeText($('textOutput').value).then(()=>alert('Copied')));
+$('saveText').addEventListener('click', ()=> {
+  const v = $('textOutput').value || $('textInput').value;
+  if(!v) return alert('Nothing to save');
+  const blob = new Blob([v], {type:'text/plain'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'addy_text.txt'; a.click();
+});
+/* autosave */
+setInterval(()=> { const v=$('textInput').value||''; if(v && v.length>20) localStorage.setItem('addy_text', v); }, 5000);
+window.addEventListener('load', ()=> { const saved=localStorage.getItem('addy_text'); if(saved) $('textInput').value=saved; });
 
-  document.querySelectorAll('.card').forEach(card => observer.observe(card));
+/* -------------------------
+   Drawing Canvas
+   ------------------------- */
+const drawCanvas = $('drawCanvas'), dctx = drawCanvas.getContext('2d');
+let drawState = { size: 6, color: '#ffffff', drawing:false, paths:[], undone:[] };
+function initDrawCanvas(){
+  const sz = parseInt($('drawSize').value);
+  drawCanvas.width = sz; drawCanvas.height = Math.round(sz * 0.75);
+  dctx.fillStyle = '#021018'; dctx.fillRect(0,0,drawCanvas.width,drawCanvas.height);
+  drawState.paths = []; drawState.undone = [];
+}
+initDrawCanvas();
+function startDraw(x,y){ drawState.drawing = true; const p = {tool:'pen', color: drawState.color, size: drawState.size, points:[{x,y}]}; drawState.paths.push(p); }
+function continueDraw(x,y){ if(!drawState.drawing) return; const p = drawState.paths[drawState.paths.length-1]; p.points.push({x,y}); redrawPaths(); }
+function endDraw(){ drawState.drawing = false; }
+function redrawPaths(){
+  dctx.clearRect(0,0,drawCanvas.width,drawCanvas.height);
+  dctx.fillStyle = '#021018'; dctx.fillRect(0,0,drawCanvas.width,drawCanvas.height);
+  for(const stroke of drawState.paths){
+    dctx.strokeStyle = stroke.color; dctx.lineWidth = stroke.size; dctx.lineJoin = 'round'; dctx.lineCap='round';
+    dctx.beginPath();
+    const pts = stroke.points;
+    if(pts.length>0){ dctx.moveTo(pts[0].x, pts[0].y); for(let i=1;i<pts.length;i++){ dctx.lineTo(pts[i].x, pts[i].y); } dctx.stroke(); }
+  }
+}
+drawCanvas.addEventListener('pointerdown', (e)=> {
+  const rect = drawCanvas.getBoundingClientRect(); startDraw(e.clientX-rect.left, e.clientY-rect.top);
+});
+drawCanvas.addEventListener('pointermove', (e)=> {
+  if(!drawState.drawing) return; const rect = drawCanvas.getBoundingClientRect(); continueDraw(e.clientX-rect.left, e.clientY-rect.top);
+});
+window.addEventListener('pointerup', ()=> endDraw());
+$('brushSize').addEventListener('input', ()=> drawState.size = parseInt($('brushSize').value));
+$('brushColor').addEventListener('input', ()=> drawState.color = $('brushColor').value);
+$('drawSize').addEventListener('change', ()=> initDrawCanvas());
+$('clearCanvas').addEventListener('click', ()=> { initDrawCanvas(); });
+$('undoBtn').addEventListener('click', ()=> { if(drawState.paths.length) drawState.undone.push(drawState.paths.pop()); redrawPaths(); });
+$('saveDraw').addEventListener('click', ()=> {
+  const a = document.createElement('a'); a.href = drawCanvas.toDataURL('image/png'); a.download = 'addy_draw.png'; a.click();
+});
+
+/* -------------------------
+   QR (using simple library-free SVG generator fallback)
+   ------------------------- */
+function makeQRSimple(text, size=180){
+  // quick fallback: use data-url with a placeholder library isn't included; we will make a QR via Google Chart API fallback
+  // attempt to use canvas + chart.googleapis.com (works offline? depends). We'll try data URL via Google service.
+  const url = `https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(text)}&chs=${size}x${size}&chld=L|1`;
+  const img = document.createElement('img'); img.src = url; img.alt='QR'; img.width = size; img.height = size;
+  return img;
+}
+$('makeQR').addEventListener('click', ()=>{
+  const v = $('qrText').value.trim(); if(!v) return alert('Type text or URL to encode');
+  const wrap = $('qrcode'); wrap.innerHTML=''; wrap.appendChild(makeQRSimple(v));
+});
+$('downloadQR').addEventListener('click', ()=>{
+  const wrap = $('qrcode'); const img = wrap.querySelector('img');
+  if(img){ const a=document.createElement('a'); a.href = img.src; a.download='addy_qr.png'; a.click(); } else alert('Generate QR first');
+});
+
+/* -------------------------
+   Quotes Widget
+   ------------------------- */
+const quotes = [
+  "रुकना नहीं है — बस एक और कोशिश करो।",
+  "छोटी जीतें भी बड़ी मंज़िलों तक पहुँचाती हैं।",
+  "काम करेगा इंसान, तो किस्मत भी साथ देगी।",
+  "हर सुबह एक नया मौका है — उठो और करो।",
+  "गलतियाँ सीखने का हिस्सा हैं — हार कर मत बैठो।",
+  "कभी-कभी धीमी प्रगति भी प्रगति है — रुकना नहीं।"
+];
+$('getQuote').addEventListener('click', ()=> { const q = quotes[Math.floor(Math.random()*quotes.length)]; $('quoteText').innerText = q; });
+$('copyQuote').addEventListener('click', ()=> { const t = $('quoteText').innerText; if(t) navigator.clipboard.writeText(t).then(()=>alert('Copied quote')); });
+
+/* -------------------------
+   Local Chat (simple rule-based)
+   ------------------------- */
+function appendMessage(who, text){
+  const box = $('chatBox');
+  if(!box) return;
+  const el = document.createElement('div'); el.style.marginBottom='8px';
+  el.innerHTML = `<div style="font-size:13px;color:${who==='user'?'#cfe9ff':'#012827'};display:inline-block;max-width:85%;padding:8px;border-radius:8px;background:${who==='user'?'rgba(0,0,0,0.25)':'linear-gradient(90deg,#00d4ff,#4ce6a1)'};color:${who==='user'?'#eaf7ff':'#012827'}">${text.replace(/\n/g,'<br>')}</div>`;
+  box.appendChild(el); box.scrollTop = box.scrollHeight;
+}
+function generateReply(msg){
+  const t = (msg||'').toLowerCase();
+  if(!t.trim()) return "Bata bhai, kuch likh!";
+  if(['hi','hello','hey','namaste','yo'].some(g=>t.includes(g))) return "Hey! Main ADDY hoon — bata kya karna hai aaj?";
+  if(t.includes('sell') || t.includes('kitne') || t.includes('price') || t.includes('bech')) return "Site sell karne ke liye listing, screenshots, and domain proof jaruri hain. Starter price ₹8k–₹15k depending on traffic and niceness.";
+  if(t.includes('ocr')) return "Use OCR button in Image Editor; auto-enhance first for better results.";
+  return "Cool idea — bata aur detail, main ek plan bana ke deta hoon.";
+}
+$('sendChat').addEventListener('click', ()=> {
+  const txt = $('chatInput').value.trim(); if(!txt) return;
+  appendMessage('user', txt); $('chatInput').value='';
+  appendMessage('bot', '...thinking');
+  setTimeout(()=> {
+    const box = $('chatBox'); if(box && box.lastChild) box.removeChild(box.lastChild);
+    appendMessage('bot', generateReply(txt));
+  }, 400 + Math.random()*900);
+});
+
+/* -------------------------
+   AI Writer (client templates)
+   ------------------------- */
+$('aiGen').addEventListener('click', ()=>{
+  const tpl = $('aiTemplate').value, prompt = $('aiPrompt').value.trim();
+  const out = generateAI(tpl, prompt);
+  $('aiOutput').value = out;
+});
+$('aiCopy').addEventListener('click', ()=> navigator.clipboard.writeText($('aiOutput').value).then(()=>alert('Copied')));
+function generateAI(tpl, prompt){
+  if(!prompt) return "Type a topic or keywords first (e.g., 'photo editor app')";
+  const p = prompt;
+  if(tpl==='blog'){
+    return `Intro: ${p} — A short, punchy intro.\n\n${p} is changing how creators ...\n\nConclusion: Try ${p} today.`;
+  }
+  if(tpl==='slogan'){
+    return `${p} — Simplicity meets power.`;
+  }
+  if(tpl==='postIdeas'){
+    return `1) Quick tip about ${p}\n2) Before/After with ${p}\n3) 3 reasons to use ${p}\n4) Short tutorial using ADDY\n5) Call to action: Try now.`;
+  }
+  if(tpl==='email'){
+    return `Hi,\nI built a lightweight ${p} tool that helps users... Would you be interested in a quick demo?`;
+  }
+  if(tpl==='explain'){
+    return `Explain '${p}' in simple terms: It's basically... (short explanation).`;
+  }
+  return 'No template matched.';
+}
+
+/* -------------------------
+   Palette Extract
+   ------------------------- */
+$('palBtn').addEventListener('click', ()=>{
+  if(!edImg.src) return alert('Upload an image first');
+  const ctx = editorCanvas.getContext('2d');
+  const imgData = ctx.getImageData(0,0,editorCanvas.width,editorCanvas.height).data;
+  const colors = {}, step=40;
+  for(let i=0;i<imgData.length;i+=4*step){
+    const r=imgData[i],g=imgData[i+1],b=imgData[i+2];
+    const key = `${Math.round(r/16)}${Math.round(g/16)}${Math.round(b/16)}`;
+    colors[key] = {r,g,b};
+  }
+  const keys = Object.keys(colors).slice(0,12);
+  const wrap = $('paletteWrap'); wrap.innerHTML='';
+  keys.forEach(k=>{
+    const {r,g,b}=colors[k]; const hex='#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
+    const box = document.createElement('div'); box.style.width='60px';box.style.height='60px';box.style.borderRadius='8px';box.style.margin='4px';box.style.background=hex; box.title=hex;
+    box.onclick = ()=> { navigator.clipboard.writeText(hex); alert(`Copied ${hex}`); };
+    wrap.appendChild(box);
+  });
+  alert('Palette generated — tap a color to copy HEX');
+});
+
+/* -------------------------
+   Voice Reader & Recorder (lite)
+   ------------------------- */
+const synth = window.speechSynthesis; let voices=[];
+function populateVoices(){ voices = synth.getVoices(); const sel = $('voiceSelect'); sel.innerHTML=''; voices.forEach(v=>{ const opt = document.createElement('option'); opt.value=v.name; opt.textContent=`${v.name} (${v.lang})`; sel.appendChild(opt); }); }
+if(synth.onvoiceschanged !== undefined) synth.onvoiceschanged = populateVoices;
+populateVoices();
+$('readBtn').addEventListener('click', ()=>{
+  const text = $('voiceText').value || '';
+  if(!text) return alert('Type some text first');
+  if(synth.speaking){ synth.cancel(); }
+  const ut = new SpeechSynthesisUtterance(text);
+  const sel = $('voiceSelect').value; if(sel){ const v = voices.find(x=>x.name===sel); if(v) ut.voice = v; }
+  ut.rate = parseFloat($('rate').value); ut.pitch = parseFloat($('pitch').value); synth.speak(ut);
+});
+$('stopRead').addEventListener('click', ()=> synth.cancel());
+
+let mediaRecorder, audioChunks=[], audioBlob=null, timer=null;
+$('startRec').addEventListener('click', async ()=>{
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    mediaRecorder = new MediaRecorder(stream);
+    audioChunks=[]; mediaRecorder.ondataavailable=e=>audioChunks.push(e.data);
+    mediaRecorder.onstop=async ()=>{
+      audioBlob = new Blob(audioChunks,{type:'audio/webm'});
+      $('audioPlayer').src = URL.createObjectURL(audioBlob);
+      $('recStatus').innerText='Recorded';
+    };
+    mediaRecorder.start();
+    $('recStatus').innerText='Recording...'; timer = setTimeout(()=> { if(mediaRecorder && mediaRecorder.state==='recording') mediaRecorder.stop(); }, 30000);
+  }catch(err){ alert('Mic access error: '+err.message); }
+});
+$('stopRec').addEventListener('click', ()=> { if(mediaRecorder && mediaRecorder.state!=='inactive') mediaRecorder.stop(); clearTimeout(timer); });
+$('playRec').addEventListener('click', ()=> { const p=$('audioPlayer'); if(p.src) p.play(); });
+$('downloadRec').addEventListener('click', ()=> { if(!audioBlob) return alert('No recording'); const a=document.createElement('a'); a.href=URL.createObjectURL(audioBlob); a.download='addy_voice.webm'; a.click(); });
+
+/* -------------------------
+   Quick Actions: Export/Import, Session
+   ------------------------- */
+$('clearAllBtn').addEventListener('click', ()=> {
+  edImg = new Image(); edOriginal = null; edCurrentData = null; try{ ectx.clearRect(0,0,editorCanvas.width,editorCanvas.height);}catch(e){}
+  initDrawCanvas(); $('textInput').value=''; $('textOutput').value=''; $('voiceText').value=''; $('ocrBoxWrapper').innerHTML='';
+  alert('Cleared all (client only)');
+});
+$('exportSession').addEventListener('click', ()=> {
+  const sess = { editor: edCurrentData || edOriginal, text: $('textInput').value, notes: $('sessionNotes').value, draw: drawCanvas.toDataURL() };
+  const blob = new Blob([JSON.stringify(sess,null,2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'addy_session.json'; a.click();
+});
+$('importSession').addEventListener('click', ()=> $('importFile').click());
+$('importFile').addEventListener('change', (e)=> {
+  const f = e.target.files[0]; if(!f) return;
+  const reader = new FileReader(); reader.onload = ev=>{
+    try{
+      const data = JSON.parse(ev.target.result);
+      if(data.editor){ edImg = new Image(); edImg.onload = ()=> { edOriginal = data.editor; fitEditorCanvas(); }; edImg.src = data.editor; }
+      if(data.draw){ const img = new Image(); img.onload = ()=> { dctx.clearRect(0,0,drawCanvas.width,drawCanvas.height); dctx.drawImage(img,0,0); }; img.src = data.draw; }
+      $('textInput').value = data.text || ''; $('sessionNotes').value = data.notes || '';
+      alert('Session imported');
+    }catch(err){ alert('Import error: '+err.message); }
+  }; reader.readAsText(f);
+});
+
+/* -------------------------
+   Buyer Pack & Valuation
+   ------------------------- */
+$('downloadPackBtn').addEventListener('click', ()=> {
+  const readme = `ADDY Buyer Pack\n\nContents:\n- index.html (single-file)\n- README: deploy & monetization steps\n- LICENSE: MIT\n\nDeploy: upload index.html to GitHub Pages.\n`;
+  const zipContent = JSON.stringify({readme},null,2);
+  const blob = new Blob([zipContent],{type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download='ADDY_buyer_pack.json'; a.click();
+});
+$('requestValuation').addEventListener('click', ()=> {
+  alert('Short valuation:\nWith current premium additions, suggested asking price: ₹15,000–₹22,000 (provide screenshots & deployment instructions to buyers).');
+});
+$('contactBuyer').addEventListener('click', ()=> {
+  window.location.href = 'mailto:buyer@example.com?subject=Interested%20in%20ADDY%20Buyer%20Pack';
+});
+
+/* -------------------------
+   Export small helper
+   ------------------------- */
+// save current page as HTML (download)
+function downloadHTML(name='index.html'){
+  const html = '<!doctype html>\\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click();
+}
+
+/* -------------------------
+   Small helpers
+   ------------------------- */
+function escapeHtml(s){ return (s+'').replace(/[&<>"']/g, function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
+
+/* -------------------------
+   Init UI small bits
+   ------------------------- */
+window.addEventListener('load', ()=> {
+  setTimeout(()=> { if(speechSynthesis.getVoices().length) populateVoices(); }, 400);
+  initDrawCanvas();
+  // set version from localStorage
+  const v = localStorage.getItem('addy_ver') || '1.0.0'; $('verBadge').innerText = 'v'+v;
+  // update check (simple)
+  const lastChecked = localStorage.getItem('addy_update_check') || 'never';
+  // set savedFlag
+  $('savedFlag').innerText = (localStorage.getItem('addy_auto') ? 'yes':'no');
+});
+
+/* =========================
+   End of Script
+   ========================= */
 </script>
-
 </body>
 </html>
