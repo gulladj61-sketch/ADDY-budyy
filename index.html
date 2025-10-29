@@ -1,108 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ADDY-Buddy Universal AI Tools</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ADDY Buddy | Universal AI Tools</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #000000, #001a33);
-      font-family: "Poppins", sans-serif;
-      color: white;
-      text-align: center;
-    }
-    header {
-      background: #0ff;
-      color: black;
-      padding: 15px 0;
-      font-size: 1.6em;
-      font-weight: 700;
-      text-shadow: 0 0 6px #00ffff;
-    }
-    .tool-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      padding: 20px;
-      max-width: 1000px;
-      margin: auto;
-    }
-    .tool {
-      background: #111;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 10px #0ff4;
-      transition: transform 0.2s ease;
-      cursor: pointer;
-    }
-    .tool:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 15px #0ff8;
-    }
-    #toolOutput {
-      margin: 30px auto;
-      max-width: 800px;
-      padding: 20px;
-      background: #0008;
-      border-radius: 15px;
-      box-shadow: 0 0 10px #0ff3;
-    }
-    button {
-      background: #0ff;
-      border: none;
-      color: black;
-      padding: 10px 25px;
-      font-weight: 700;
-      border-radius: 10px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    button:hover {
-      background: white;
-    }
-    footer {
-      margin-top: 30px;
-      padding: 10px;
-      color: #0ff;
-      font-size: 0.9em;
-    }
+    body {background:#011627;color:#00ffff;font-family:Arial;text-align:center;padding:20px;}
+    h1 {color:#00ffff;}
+    textarea,button{border:none;border-radius:10px;padding:10px;margin:10px;}
+    textarea{width:90%;height:100px;background:#022;color:#0ff;}
+    button{background:#0ff;color:#011;font-weight:bold;cursor:pointer;}
+    #output{border:2px solid #0ff;padding:10px;border-radius:10px;width:90%;margin:auto;background:#012;}
   </style>
 </head>
 <body>
-  <header>🤖 ADDY-Buddy — 20 Free AI Tools Hub</header>
+  <h1>🤖 ADDY Buddy - AI Tools</h1>
+  <textarea id="prompt" placeholder="Enter your message..."></textarea><br>
+  <button onclick="chat()">💬 Chat</button>
+  <button onclick="imageGen()">🖼️ Image Gen</button>
+  <button onclick="bgRemove()">🪄 BG Remove</button>
+  <button onclick="imgEnhance()">✨ Enhance</button>
+  <div id="output">Your results will appear here...</div>
 
-  <div class="tool-grid">
-    <div class="tool" onclick="useTool('chat')">💬 Chat Assistant</div>
-    <div class="tool" onclick="useTool('enhanceImage')">🖼️ Image Enhancer</div>
-    <div class="tool" onclick="useTool('removeBg')">🧹 Background Remover</div>
-    <div class="tool" onclick="useTool('voiceEnhance')">🎧 Voice Enhancer</div>
-    <div class="tool" onclick="useTool('summarize')">✍️ Text Summarizer</div>
-    <div class="tool" onclick="useTool('translate')">🌐 Translator</div>
-    <div class="tool" onclick="useTool('codeGen')">💻 Code Generator</div>
-    <div class="tool" onclick="useTool('logoMaker')">🖌️ Logo Maker</div>
-    <div class="tool" onclick="useTool('resumeBuilder')">📄 Resume Builder</div>
-    <div class="tool" onclick="useTool('faceCleaner')">📸 AI Face Cleaner</div>
-    <div class="tool" onclick="useTool('quoteGen')">🪄 Quote Generator</div>
-    <div class="tool" onclick="useTool('blogWriter')">📰 Blog Writer</div>
-    <div class="tool" onclick="useTool('artGen')">🎨 Art Generator</div>
-    <div class="tool" onclick="useTool('research')">🔍 Research Assistant</div>
-    <div class="tool" onclick="useTool('seoWriter')">📈 SEO Writer</div>
-    <div class="tool" onclick="useTool('htmlBuilder')">💻 HTML Builder</div>
-    <div class="tool" onclick="useTool('captionGen')">🎬 Caption Generator</div>
-    <div class="tool" onclick="useTool('pdfExtract')">🧾 PDF Text Extractor</div>
-    <div class="tool" onclick="useTool('tts')">🎧 Text-to-Speech</div>
-    <div class="tool" onclick="useTool('stt')">🎤 Speech-to-Text</div>
-  </div>
+  <script>
+    const backend = "https://addy-budyy.onrender.com";
 
-  <div id="toolOutput">
-    <h2>Output</h2>
-    <div id="resultBox">Choose a tool to start 🧠</div>
-  </div>
-
-  <footer>© 2025 ADDY-Buddy AI Universe</footer>
-
-  <script src="tools.js"></script>
-</body>
-</html>
+    async function chat() {
+      const prompt = document.getElementById("prompt").value;
+      document.getElementById("output").innerText = "⏳ Sending to AI...";
+      const res = await fetch(`${backend}/api/chat`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({prompt})
+      });
+      const data = await res.json();
+      document.getElementById("output").innerText = data.reply || "
